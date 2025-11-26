@@ -1,0 +1,661 @@
+{
+  "info": {
+    "name": "Vehicle Leasing Management System API",
+    "description": "Complete API collection for the Vehicle Leasing Management System with Supabase backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "supabase_url",
+      "value": "https://YOUR_PROJECT_REF.supabase.co",
+      "type": "string"
+    },
+    {
+      "key": "supabase_anon_key",
+      "value": "YOUR_ANON_KEY",
+      "type": "string"
+    },
+    {
+      "key": "base_url",
+      "value": "{{supabase_url}}/rest/v1",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "apikey",
+        "value": "{{supabase_anon_key}}",
+        "type": "string"
+      },
+      {
+        "key": "Authorization",
+        "value": "Bearer {{supabase_anon_key}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login with Username",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"superadmin\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{supabase_url}}/auth/v1/token?grant_type=password",
+              "host": ["{{supabase_url}}"],
+              "path": ["auth", "v1", "token"],
+              "query": [
+                {
+                  "key": "grant_type",
+                  "value": "password"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Companies",
+      "item": [
+        {
+          "name": "Get All Companies",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/companies",
+              "host": ["{{base_url}}"],
+              "path": ["companies"]
+            }
+          }
+        },
+        {
+          "name": "Get Company by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/companies?id=eq.550e8400-e29b-41d4-a716-446655440001",
+              "host": ["{{base_url}}"],
+              "path": ["companies"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "eq.550e8400-e29b-41d4-a716-446655440001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Company",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Leasing Company\",\n  \"logo\": \"🚙\",\n  \"interest_rate\": 1.8,\n  \"voen\": \"1234567890\",\n  \"director\": \"John Doe\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/companies",
+              "host": ["{{base_url}}"],
+              "path": ["companies"]
+            }
+          }
+        },
+        {
+          "name": "Update Company",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"interest_rate\": 2.0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/companies?id=eq.550e8400-e29b-41d4-a716-446655440001",
+              "host": ["{{base_url}}"],
+              "path": ["companies"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "eq.550e8400-e29b-41d4-a716-446655440001"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Customers",
+      "item": [
+        {
+          "name": "Get All Customers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/customers",
+              "host": ["{{base_url}}"],
+              "path": ["customers"]
+            }
+          }
+        },
+        {
+          "name": "Get Customers by Company",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/customers?company_id=eq.550e8400-e29b-41d4-a716-446655440001",
+              "host": ["{{base_url}}"],
+              "path": ["customers"],
+              "query": [
+                {
+                  "key": "company_id",
+                  "value": "eq.550e8400-e29b-41d4-a716-446655440001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Customers",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"q\": \"Faiq\",\n  \"limit_count\": 10,\n  \"offset_count\": 0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/rpc/search_customers",
+              "host": ["{{base_url}}"],
+              "path": ["rpc", "search_customers"]
+            }
+          }
+        },
+        {
+          "name": "Create Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_type\": \"individual\",\n  \"first_name\": \"Ahmad\",\n  \"last_name\": \"Hasanov\",\n  \"father_name\": \"Mehdi\",\n  \"national_id\": \"AZE987654321\",\n  \"phone\": \"+994-50-987-6543\",\n  \"address\": \"789 Oak St, Baku, Azerbaijan\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/customers",
+              "host": ["{{base_url}}"],
+              "path": ["customers"]
+            }
+          }
+        },
+        {
+          "name": "Get Customer by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/customers?id=eq.550e8400-e29b-41d4-a716-446655440010",
+              "host": ["{{base_url}}"],
+              "path": ["customers"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "eq.550e8400-e29b-41d4-a716-446655440010"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Vehicles",
+      "item": [
+        {
+          "name": "Get All Vehicles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vehicles",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles"]
+            }
+          }
+        },
+        {
+          "name": "Get Vehicles by Company",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vehicles?company_id=eq.550e8400-e29b-41d4-a716-446655440001",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles"],
+              "query": [
+                {
+                  "key": "company_id",
+                  "value": "eq.550e8400-e29b-41d4-a716-446655440001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Available Vehicles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vehicles?company_id=eq.550e8400-e29b-41d4-a716-446655440001&id=not.in.(SELECT vehicle_id FROM contracts WHERE status=eq.active)",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles"],
+              "query": [
+                {
+                  "key": "company_id",
+                  "value": "eq.550e8400-e29b-41d4-a716-446655440001"
+                },
+                {
+                  "key": "id",
+                  "value": "not.in.(SELECT vehicle_id FROM contracts WHERE status=eq.active)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Vehicle",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"license_plate\": \"10-DD-999\",\n  \"make\": \"Toyota\",\n  \"model\": \"Camry\",\n  \"year\": 2023,\n  \"color\": \"Blue\",\n  \"vin\": \"4T1B11HK5KU123456\",\n  \"body_number\": \"TOY123456789\",\n  \"engine\": \"2.5L Hybrid\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/vehicles",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles"]
+            }
+          }
+        },
+        {
+          "name": "Get Vehicle by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vehicles?id=eq.550e8400-e29b-41d4-a716-446655440030",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "eq.550e8400-e29b-41d4-a716-446655440030"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contracts",
+      "item": [
+        {
+          "name": "Get All Contracts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/contracts",
+              "host": ["{{base_url}}"],
+              "path": ["contracts"]
+            }
+          }
+        },
+        {
+          "name": "Get Contracts by Company",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/contracts?company_id=eq.550e8400-e29b-41d4-a716-446655440001",
+              "host": ["{{base_url}}"],
+              "path": ["contracts"],
+              "query": [
+                {
+                  "key": "company_id",
+                  "value": "eq.550e8400-e29b-41d4-a716-446655440001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Contracts by Customer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/contracts?customer_id=eq.550e8400-e29b-41d4-a716-446655440010",
+              "host": ["{{base_url}}"],
+              "path": ["contracts"],
+              "query": [
+                {
+                  "key": "customer_id",
+                  "value": "eq.550e8400-e29b-41d4-a716-446655440010"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Contract",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_id\": \"550e8400-e29b-41d4-a716-446655440010\",\n  \"vehicle_id\": \"550e8400-e29b-41d4-a716-446655440030\",\n  \"standard_purchase_price\": 75000.00,\n  \"down_payment\": 15000.00,\n  \"yearly_interest_rate\": 11.5,\n  \"term_months\": 24,\n  \"monthly_payment\": 2000.00,\n  \"total_payable\": 48000.00,\n  \"start_date\": \"2024-06-01\",\n  \"payment_start_date\": \"2024-07-01\",\n  \"next_due_date\": \"2024-07-01\",\n  \"remaining_balance\": 48000.00\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/contracts",
+              "host": ["{{base_url}}"],
+              "path": ["contracts"]
+            }
+          }
+        },
+        {
+          "name": "Generate Payment Schedule",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lease_id\": \"550e8400-e29b-41d4-a716-446655440040\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/rpc/generate_payment_schedule",
+              "host": ["{{base_url}}"],
+              "path": ["rpc", "generate_payment_schedule"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Get All Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/payments",
+              "host": ["{{base_url}}"],
+              "path": ["payments"]
+            }
+          }
+        },
+        {
+          "name": "Get Payments by Company",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/payments?company_id=eq.550e8400-e29b-41d4-a716-446655440001",
+              "host": ["{{base_url}}"],
+              "path": ["payments"],
+              "query": [
+                {
+                  "key": "company_id",
+                  "value": "eq.550e8400-e29b-41d4-a716-446655440001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Payments by Contract",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/payments?contract_id=eq.550e8400-e29b-41d4-a716-446655440040",
+              "host": ["{{base_url}}"],
+              "path": ["payments"],
+              "query": [
+                {
+                  "key": "contract_id",
+                  "value": "eq.550e8400-e29b-41d4-a716-446655440040"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contract_id\": \"550e8400-e29b-41d4-a716-446655440040\",\n  \"customer_id\": \"550e8400-e29b-41d4-a716-446655440010\",\n  \"amount\": 2200.00,\n  \"payment_date\": \"2024-05-01\",\n  \"due_date\": \"2024-05-01\",\n  \"payment_method\": \"automatic\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/payments",
+              "host": ["{{base_url}}"],
+              "path": ["payments"]
+            }
+          }
+        },
+        {
+          "name": "Mark Payment as Paid",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment_id\": \"550e8400-e29b-41d4-a716-446655440050\",\n  \"paid_at\": \"2024-05-01T10:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/rpc/mark_payment_paid",
+              "host": ["{{base_url}}"],
+              "path": ["rpc", "mark_payment_paid"]
+            }
+          }
+        },
+        {
+          "name": "Get Overdue Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/payments?is_late=eq.true",
+              "host": ["{{base_url}}"],
+              "path": ["payments"],
+              "query": [
+                {
+                  "key": "is_late",
+                  "value": "eq.true"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Templates",
+      "item": [
+        {
+          "name": "Get All Templates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/templates",
+              "host": ["{{base_url}}"],
+              "path": ["templates"]
+            }
+          }
+        },
+        {
+          "name": "Get Templates by Type",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/templates?type=eq.word",
+              "host": ["{{base_url}}"],
+              "path": ["templates"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "eq.word"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Template",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Contract Template\",\n  \"description\": \"Template for new contracts\",\n  \"type\": \"word\",\n  \"context\": \"contract\",\n  \"assigned_pages\": [\"contracts\"],\n  \"file_name\": \"new-contract.docx\",\n  \"file_size\": 1024,\n  \"file_data\": \"UEsDBBQAAAAIAA...\",\n  \"variables\": [\"customerName\", \"vehicleMake\", \"monthlyPayment\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/templates",
+              "host": ["{{base_url}}"],
+              "path": ["templates"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profiles",
+      "item": [
+        {
+          "name": "Get Current User Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/profiles?user_id=eq.auth.uid()",
+              "host": ["{{base_url}}"],
+              "path": ["profiles"],
+              "query": [
+                {
+                  "key": "user_id",
+                  "value": "eq.auth.uid()"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Updated Name\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/profiles?user_id=eq.auth.uid()",
+              "host": ["{{base_url}}"],
+              "path": ["profiles"],
+              "query": [
+                {
+                  "key": "user_id",
+                  "value": "eq.auth.uid()"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

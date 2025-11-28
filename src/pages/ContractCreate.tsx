@@ -570,14 +570,6 @@ const ContractCreate: React.FC = () => {
           <div className="border-t border-gray-200 pt-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-medium text-gray-900">{t('common.vehicleInformation')}</h3>
-              <button
-                type="button"
-                onClick={() => navigate('/vehicles/create')}
-                className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                <Car className="w-4 h-4 mr-1" />
-                {t('common.addVehicle')}
-              </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -789,7 +781,7 @@ const ContractCreate: React.FC = () => {
               </div>
               <div>
                 <ImprovedDateInput
-                  label="Ödəniş Başlanğıc Tarixi *"
+                  label="Ödəniş Başlanğıc Tarixi"
                   value={formData.payment_start_date}
                   onChange={(value) => setFormData(prev => ({ ...prev, payment_start_date: value }))}
                   required
@@ -811,37 +803,9 @@ const ContractCreate: React.FC = () => {
                 <FileText className="w-5 h-5 mr-2" />
                 {t('common.permissionDocument')}
               </h3>
-              {drivers.length > 0 && generateYolVereqesiData() && (
-                <div className="flex space-x-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowDocumentPreview(!showDocumentPreview)}
-                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-green-600 hover:text-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                  >
-                    <FileText className="w-4 h-4 mr-1" />
-                    {showDocumentPreview ? t('common.hidePreview') : t('common.showPreview')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const data = generateYolVereqesiData();
-                      if (data) {
-                        printYolVereqesi(data);
-                      }
-                    }}
-                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    <FileText className="w-4 h-4 mr-1" />
-                    {t('common.printYolVereqesi')}
-                  </button>
-                </div>
-              )}
             </div>
             
             <p className="text-sm text-gray-600 mb-4">{t('common.permissionDocumentInfo')}</p>
-            
-
-
             {/* Driver Management */}
             <DriverManagement
               drivers={drivers}

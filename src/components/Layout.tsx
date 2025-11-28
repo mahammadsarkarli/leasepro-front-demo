@@ -251,7 +251,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                   )}
                                 </p>
                                 <p className="text-xs text-gray-400 mt-1">
-                                  Due: {notification.dueDate ? formatDisplayDate(notification.dueDate) : 'N/A'}
+                                  {t('notifications.due')}: {notification.dueDate ? formatDisplayDate(notification.dueDate) : 'N/A'}
                                 </p>
                               </div>
                               <span className={`flex-shrink-0 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${

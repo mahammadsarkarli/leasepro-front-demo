@@ -14,6 +14,8 @@ import {
   Trash2,
   RefreshCw,
   Download,
+  Grid3X3,
+  List,
 } from "lucide-react";
 import { differenceInDays } from "date-fns";
 import { useAuth } from "../contexts/AuthContext";
@@ -80,6 +82,13 @@ const Contracts: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<
     ContractStatus | "all" | "overdue"
   >("all");
+  const [viewMode, setViewMode] = useState<"card" | "table">(() => {
+    // Default to table view on desktop, card view on mobile
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768 ? "table" : "card";
+    }
+    return "table";
+  });
   const [isFixingPayments, setIsFixingPayments] = useState(false);
   const [isSynchronizingPayments, setIsSynchronizingPayments] = useState(false);
   const [isFixingBalances, setIsFixingBalances] = useState(false);
@@ -339,9 +348,10 @@ const Contracts: React.FC = () => {
     companiesLoading
   ) {
     return (
-      <div className="space-y-6">
-        <div className="text-center py-8">
-          <p className="text-gray-600">{t("common.loading")}</p>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">{t("common.loading")}</p>
         </div>
       </div>
     );
@@ -910,6 +920,34 @@ const Contracts: React.FC = () => {
               {t("common.tamamlanmis")}
             </option>
           </select>
+          
+          {/* View Toggle */}
+          <div className="flex items-center space-x-2">
+            <div className="flex border border-gray-300 rounded-lg">
+              <button
+                onClick={() => setViewMode("card")}
+                className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+                  viewMode === "card"
+                    ? "bg-blue-600 text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+                title={t("common.cardView")}
+              >
+                <Grid3X3 className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode("table")}
+                className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+                  viewMode === "table"
+                    ? "bg-blue-600 text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+                title={t("common.tableView")}
+              >
+                <List className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Company Filter Row */}
@@ -946,9 +984,171 @@ const Contracts: React.FC = () => {
       </div>
 
       {/* Contracts List */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="mobile-table overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+      {viewMode === "card" ? (
+        /* Contract Cards */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredContracts.map((contract) => {
+            const customer = customers.find(
+              (c) => c.id === contract.customer_id
+            );
+            const company = companies.find(
+              (c) => c.id === contract.company_id
+            );
+
+            const paymentBeginDate = new Date(contract.start_date);
+            const endDate = calculateContractEndDate(
+              paymentBeginDate,
+              contract.term_months + 1
+            );
+            const nextPaymentDate = calculateCorrectNextDueDate(contract, true);
+            
+            const todayDate = new Date(
+              today.getFullYear(),
+              today.getMonth(),
+              today.getDate()
+            );
+            const paymentDate = new Date(
+              nextPaymentDate.getFullYear(),
+              nextPaymentDate.getMonth(),
+              nextPaymentDate.getDate()
+            );
+
+            let displayDate: Date;
+            let daysUntilDue: number;
+            let isDueToday: boolean;
+            let isOverdue: boolean;
+
+            if (
+              contract.status === ContractStatus.COMPLETED ||
+              contract.status === ContractStatus.TAMAMLANMIS
+            ) {
+              displayDate = contract.last_payment_date
+                ? new Date(contract.last_payment_date)
+                : paymentDate;
+              isOverdue = false;
+              isDueToday = false;
+              daysUntilDue = 0;
+            } else {
+              const paymentDateStr = paymentDate.toDateString();
+              const todayDateStr = todayDate.toDateString();
+
+              if (paymentDateStr === todayDateStr) {
+                isOverdue = false;
+                isDueToday = true;
+                daysUntilDue = 0;
+                displayDate = new Date(paymentDate);
+              } else if (paymentDate < todayDate) {
+                isOverdue = true;
+                isDueToday = false;
+                daysUntilDue = differenceInDays(todayDate, paymentDate);
+                displayDate = new Date(paymentDate);
+              } else {
+                isOverdue = false;
+                isDueToday = false;
+                daysUntilDue = differenceInDays(paymentDate, todayDate);
+                displayDate = new Date(paymentDate);
+              }
+            }
+
+            return (
+              <div
+                key={contract.id}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
+              >
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                        {company?.name || t("common.unknownCompany")}
+                      </h3>
+                      <div className="flex items-center space-x-2">
+                        {getStatusBadge(contract)}
+                      </div>
+                    </div>
+                    <div className="flex-shrink-0 flex items-center space-x-2">
+                      <button
+                        onClick={() => navigate(`/contracts/${contract.id}`)}
+                        className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-50"
+                        title={t("common.viewDetails")}
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      {canEdit("contracts") && (
+                        <button
+                          onClick={() =>
+                            navigate(`/contracts/${contract.id}/edit`)
+                          }
+                          className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-50"
+                          title={t("common.edit")}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center text-sm text-gray-600">
+                      <User className="w-4 h-4 mr-2 text-gray-400" />
+                      {customer
+                        ? customer.customer_type === "company" &&
+                          customer.company_name
+                          ? customer.company_name
+                          : `${customer.first_name || ""} ${
+                              customer.last_name || ""
+                            }`.trim() || t("common.unknownCustomer")
+                        : t("common.unknownCustomer")}
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Car className="w-4 h-4 mr-2 text-gray-400" />
+                      {contract.vehicle?.make} {contract.vehicle?.model}
+                      <span className="ml-2 text-gray-400">
+                        {contract.vehicle?.license_plate}
+                      </span>
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <DollarSign className="w-4 h-4 mr-2 text-gray-400" />
+                      ₼{roundPaymentAmount(getDisplayMonthlyPayment(contract))}
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Calendar className="w-4 h-4 mr-2 text-gray-400" />
+                      {t("contracts.nextPaymentDate")}: {formatDate(displayDate)}
+                    </div>
+                  </div>
+
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">{t("contracts.endDate")}:</span>
+                      <span className="font-semibold text-gray-900">
+                        {formatDate(endDate)}
+                      </span>
+                    </div>
+                    <div
+                      className={`mt-2 text-sm ${
+                        isOverdue
+                          ? "text-red-600 font-medium"
+                          : isDueToday
+                          ? "text-yellow-600 font-medium"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {isOverdue
+                        ? `${daysUntilDue} ${t("common.overdueDays")}`
+                        : isDueToday
+                        ? t("common.dueToday")
+                        : `${daysUntilDue} ${t("common.daysLeft")}`}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        /* Contract Table */
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="mobile-table overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -1239,6 +1439,30 @@ const Contracts: React.FC = () => {
           </div>
         )}
       </div>
+      )}
+
+      {filteredContracts.length === 0 && viewMode === "card" && (
+        <div className="text-center py-12">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Calendar className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            {t("contracts.noContracts")}
+          </h3>
+          <p className="text-gray-500 mb-6">
+            {t("pages.contracts.noContracts")}
+          </p>
+          {canCreate("contracts") && (
+            <button
+              onClick={() => navigate("/contracts/create")}
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              {t("pages.contracts.newContract")}
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog

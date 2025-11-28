@@ -20,7 +20,7 @@ i18n
   .init({
     resources,
     fallbackLng: "en",
-    debug: false, // Disable debug for production
+    debug: true, // Enable debug to see translation issues
     interpolation: {
       escapeValue: false,
     },
@@ -39,6 +39,9 @@ i18n
     missingKeyHandler: (lng, ns, key) => {
       console.warn(`Missing translation key: ${key} for language: ${lng}`);
     },
+    // Ensure translations are loaded correctly
+    load: 'languageOnly',
+    cleanCode: true,
   })
   .then(() => {});
 

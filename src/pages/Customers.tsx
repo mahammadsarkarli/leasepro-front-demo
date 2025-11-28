@@ -49,7 +49,13 @@ const Customers: React.FC = () => {
   const { successMessages, errorMessages } = useNotifications();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
+  const [viewMode, setViewMode] = useState<"cards" | "table">(() => {
+    // Default to table view on desktop, card view on mobile
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768 ? "table" : "cards";
+    }
+    return "table";
+  });
   const [sortField, setSortField] = useState<keyof Customer>("created_at");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [deleteDialog, setDeleteDialog] = useState<{
@@ -92,9 +98,10 @@ const Customers: React.FC = () => {
   // Show loading state while data is being fetched
   if (customersLoading || companiesLoading || contractsLoading) {
     return (
-      <div className="space-y-6">
-        <div className="text-center py-8">
-          <p className="text-gray-600">{t("common.loading")}</p>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">{t("common.loading")}</p>
         </div>
       </div>
     );

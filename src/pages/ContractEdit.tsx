@@ -576,10 +576,6 @@ const ContractEdit: React.FC = () => {
 
       if (additionalPayments > 0) {
         try {
-          console.log(
-            `Creating ${additionalPayments} additional payment records for contract ${contract.id} (from ${originalPaymentCount} to ${formData.months_already_paid})`
-          );
-
           for (
             let month = originalPaymentCount;
             month < formData.months_already_paid;
@@ -624,45 +620,19 @@ const ContractEdit: React.FC = () => {
 
           // Check if the payments_count was automatically updated by database triggers
           const contractAfterPayments = await getContractById(contract.id);
-          console.log("🔧 ContractEdit: Contract after creating payments:", {
-            contractId: contract.id,
-            paymentsCountAfterPayments: contractAfterPayments?.payments_count,
-            expectedPaymentsCount: formData.months_already_paid,
-            wasOverridden:
-              contractAfterPayments?.payments_count !==
-              formData.months_already_paid,
-          });
-
           // If the payments_count was overridden by database triggers, force update it again
           if (
             contractAfterPayments?.payments_count !==
             formData.months_already_paid
           ) {
-            console.log(
-              "🔧 ContractEdit: Payments count was overridden by database triggers. Force updating..."
-            );
             await updateContract(contract.id, {
               payments_count: formData.months_already_paid,
             });
-            console.log(
-              "🔧 ContractEdit: Payments count force updated to:",
-              formData.months_already_paid
-            );
           }
         } catch (paymentError) {
           console.error("Error creating payment records:", paymentError);
-          // Don't throw the error here - we still want to save the contract
-          // The user can manually create payments if needed
         }
-      } else if (additionalPayments < 0) {
-        console.log(
-          `Payment count decreased from ${originalPaymentCount} to ${formData.months_already_paid}. This is not supported - please manually delete payments if needed.`
-        );
-      } else {
-        console.log(
-          `No additional payments needed. Payment count remains at ${formData.months_already_paid}`
-        );
-      }
+      } 
 
       // Save permission document (always save to handle both adding and removing drivers)
       if (contract.id) {
@@ -678,13 +648,6 @@ const ContractEdit: React.FC = () => {
 
       // Final check: Get the contract one more time to see the final state
       const finalContract = await getContractById(contract.id);
-      console.log("🔧 ContractEdit: Final contract state before navigation:", {
-        contractId: contract.id,
-        finalPaymentsCount: finalContract?.payments_count,
-        expectedPaymentsCount: formData.months_already_paid,
-        finalStatus: finalContract?.status,
-      });
-
       // Refresh contracts and payments data before navigating
       await Promise.all([
         loadContracts(),
@@ -716,8 +679,6 @@ const ContractEdit: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
-
-    console.log("Form field changed:", { name, value, type });
 
     if (name === "selected_vehicle_id") {
       const selectedVehicle = vehicles.find((v) => v.id === value);
@@ -780,18 +741,6 @@ const ContractEdit: React.FC = () => {
   };
 
   const handleOpenCustomerModal = () => {
-    console.log(
-      "Opening customer selection modal with customers:",
-      customers.length
-    );
-    console.log(
-      "Available customers:",
-      customers.map((c) => ({
-        id: c.id,
-        name: `${c.first_name} ${c.last_name}`,
-        type: c.customer_type,
-      }))
-    );
     setIsCustomerSelectionModalOpen(true);
   };
 
@@ -1262,23 +1211,14 @@ const ContractEdit: React.FC = () => {
                   <option value={ContractStatus.ACTIVE}>
                     {t("common.active")}
                   </option>
-                  <option value={ContractStatus.OPEN}>
-                    {t("common.open")}
-                  </option>
                   <option value={ContractStatus.COMPLETED}>
                     {t("common.completed")}
-                  </option>
-                  <option value={ContractStatus.DEFAULTED}>
-                    {t("common.defaulted")}
                   </option>
                   <option value={ContractStatus.IMTINA_EDILMIS}>
                     {t("common.imtina_edilmis")}
                   </option>
                   <option value={ContractStatus.ALQI_SATQI}>
                     {t("common.alqi_satqi")}
-                  </option>
-                  <option value={ContractStatus.TAMAMLANMIS}>
-                    {t("common.tamamlanmis")}
                   </option>
                 </select>
               </div>

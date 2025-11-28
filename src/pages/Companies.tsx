@@ -52,7 +52,13 @@ const Companies: React.FC = () => {
   const [companyToDelete, setCompanyToDelete] = useState<Company | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessages, setErrorMessages] = useState<Record<string, string>>({});
-  const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
+  const [viewMode, setViewMode] = useState<'card' | 'table'>(() => {
+    // Default to table view on desktop, card view on mobile
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768 ? "table" : "card";
+    }
+    return "table";
+  });
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState<{
@@ -267,28 +273,7 @@ const Companies: React.FC = () => {
           <p className="text-gray-600">{t('pages.companies.subtitle')}</p>
         </div>
         <div className="flex space-x-3">
-          <button 
-            onClick={async () => {
-              setIsLoading(true);
-              try {
-                await Promise.all([
-                  loadCompanies(),
-                  loadCustomers(),
-                  loadContractsWithoutPermissions(),
-                  loadVehicles()
-                ]);
-              } finally {
-                setIsLoading(false);
-              }
-            }}
-            disabled={isLoading}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-          >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            {isLoading ? t('common.loading') : t('common.refresh')}
-          </button>
+         
           <button 
             onClick={() => navigate('/companies/create')}
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"

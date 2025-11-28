@@ -1,0 +1,15 @@
+{
+  "name": "LeasePro",
+  "short_name": "LeasePro",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ],
+  "theme_color": "#3b82f6",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
+

@@ -13,7 +13,9 @@ import {
   Loader2,
   Eye,
   FileImage,
-  Info
+  Info,
+  Grid3X3,
+  List
 } from 'lucide-react';
 import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -34,9 +36,11 @@ const Vehicles: React.FC = () => {
     setSelectedCompany, 
     refreshData,
     loadVehicles,
+    loadCustomers,
     loadContractsWithoutPermissions,
     vehiclesLoading,
-    contractsLoading
+    contractsLoading,
+    customersLoading
   } = useData();
   const { canEdit, canCreate, canDelete } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -45,6 +49,13 @@ const Vehicles: React.FC = () => {
   const [filterCompany, setFilterCompany] = useState(selectedCompany || '');
   const [downloadingTemplate, setDownloadingTemplate] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'occupied'>('all');
+  const [viewMode, setViewMode] = useState<'card' | 'table'>(() => {
+    // Default to table view on desktop, card view on mobile
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768 ? "table" : "card";
+    }
+    return "table";
+  });
   const [deleteDialog, setDeleteDialog] = useState<{
     isOpen: boolean;
     vehicleId: string | null;
@@ -65,6 +76,10 @@ const Vehicles: React.FC = () => {
         if (vehicles.length === 0 && !vehiclesLoading) {
           promises.push(loadVehicles());
         }
+        // Load customers if missing (needed for customer name display)
+        if (customers.length === 0 && !customersLoading) {
+          promises.push(loadCustomers());
+        }
         // Always load contracts without permissions for vehicles page
         promises.push(loadContractsWithoutPermissions());
         
@@ -83,8 +98,8 @@ const Vehicles: React.FC = () => {
 
   // Set loading state based on DataContext loading states
   useEffect(() => {
-    setLoading(vehiclesLoading || contractsLoading);
-  }, [vehiclesLoading, contractsLoading]);
+    setLoading(vehiclesLoading || contractsLoading || customersLoading);
+  }, [vehiclesLoading, contractsLoading, customersLoading]);
 
   // Efficient helper function to check if vehicle is in active contract using existing data
   const isVehicleInActiveContract = useCallback((vehicleId: string): boolean => {
@@ -192,9 +207,10 @@ const Vehicles: React.FC = () => {
   // Show loading state while data is being fetched
   if (loading || vehiclesLoading || contractsLoading) {
     return (
-      <div className="space-y-6">
-        <div className="text-center py-8">
-          <p className="text-gray-600">{t('common.loading')}</p>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -287,6 +303,34 @@ const Vehicles: React.FC = () => {
               })}
             </select>
           </div>
+          
+          {/* View Toggle */}
+          <div className="flex items-center space-x-2">
+            <div className="flex border border-gray-300 rounded-lg">
+              <button
+                onClick={() => setViewMode("card")}
+                className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+                  viewMode === "card"
+                    ? "bg-blue-600 text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+                title={t("common.cardView")}
+              >
+                <Grid3X3 className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode("table")}
+                className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+                  viewMode === "table"
+                    ? "bg-blue-600 text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+                title={t("common.tableView")}
+              >
+                <List className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         </div>
         
         {/* Status Filter Buttons */}
@@ -339,15 +383,105 @@ const Vehicles: React.FC = () => {
         )}
       </div>
 
-      {/* Vehicles Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">
-            {t("pages.vehicles.vehicleList")} ({filteredVehicles.length})
-          </h3>
+      {/* Vehicles List */}
+      {viewMode === "card" ? (
+        /* Vehicle Cards */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredVehicles.map((vehicle) => {
+            const vehicleContracts = getVehicleContracts(vehicle.id);
+            const activeContract = getActiveContractForVehicle(vehicle.id);
+            const isOccupied = isVehicleInActiveContract(vehicle.id);
+
+            return (
+              <div
+                key={vehicle.id}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
+              >
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                        {vehicle.license_plate}
+                      </h3>
+                      <div className="flex items-center space-x-2">
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                            isOccupied
+                              ? "bg-red-100 text-red-800"
+                              : "bg-green-100 text-green-800"
+                          }`}
+                        >
+                          {isOccupied ? t("common.occupied") : t("common.available")}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex-shrink-0 flex items-center space-x-2">
+                      <button
+                        onClick={() => navigate(`/vehicles/${vehicle.id}`)}
+                        className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-50"
+                        title={t("common.viewDetails")}
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      {canEdit("vehicles") && (
+                        <button
+                          onClick={() => navigate(`/vehicles/${vehicle.id}/edit`)}
+                          className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-50"
+                          title={t("common.edit")}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Car className="w-4 h-4 mr-2 text-gray-400" />
+                      {vehicle.make} {vehicle.model}
+                    </div>
+                    {vehicle.body_number && (
+                      <div className="flex items-center text-sm text-gray-600">
+                        <FileText className="w-4 h-4 mr-2 text-gray-400" />
+                        {t("common.bodyNumber")}: {vehicle.body_number}
+                      </div>
+                    )}
+                    {vehicle.engine && (
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Car className="w-4 h-4 mr-2 text-gray-400" />
+                        {t("common.engine")}: {vehicle.engine}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">{t("pages.vehicles.table.contracts")}:</span>
+                      <span className="font-semibold text-gray-900">
+                        {vehicleContracts.length}
+                      </span>
+                    </div>
+                    {activeContract && (
+                      <div className="mt-2 text-xs text-gray-500">
+                        {t("common.activeContract")}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+      ) : (
+        /* Vehicle Table */
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h3 className="text-lg font-medium text-gray-900">
+              {t("pages.vehicles.vehicleList")} ({filteredVehicles.length})
+            </h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -409,7 +543,15 @@ const Vehicles: React.FC = () => {
                                   const activeContract = getActiveContractForVehicle(vehicle.id);
                                   if (activeContract) {
                                     const customer = customers.find(c => c.id === activeContract.customer_id);
-                                    return customer ? `${customer.first_name} ${customer.last_name}` : t('common.unknownCustomer');
+                                    if (customer) {
+                                      if (customer.customer_type === "company" && customer.company_name) {
+                                        return customer.company_name;
+                                      } else {
+                                        const fullName = `${customer.first_name || ""} ${customer.last_name || ""}`.trim();
+                                        return fullName || t('common.unknownCustomer');
+                                      }
+                                    }
+                                    return t('common.unknownCustomer');
                                   }
                                   return '';
                                 })()}
@@ -486,6 +628,16 @@ const Vehicles: React.FC = () => {
           </table>
         </div>
       </div>
+      )}
+
+      {filteredVehicles.length === 0 && viewMode === "card" && (
+        <div className="text-center py-12">
+          <Car className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            {t("pages.vehicles.noVehicles")}
+          </h3>
+        </div>
+      )}
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog

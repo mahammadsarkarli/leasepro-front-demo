@@ -39,7 +39,9 @@ const VehicleDetails: React.FC = () => {
     companies, 
     customers, 
     contracts,
-    canEdit 
+    canEdit,
+    loadCustomers,
+    customersLoading
   } = useData();
   const { canEdit: canEditAuth } = useAuth();
   
@@ -66,6 +68,13 @@ const VehicleDetails: React.FC = () => {
 
     loadVehicle();
   }, [id]);
+
+  // Load customers if missing (needed for customer name display)
+  useEffect(() => {
+    if (customers.length === 0 && !customersLoading) {
+      loadCustomers();
+    }
+  }, [customers.length, customersLoading, loadCustomers]);
 
   // Get vehicle contracts
   const vehicleContracts = contracts.filter(contract => 
@@ -471,7 +480,15 @@ const VehicleDetails: React.FC = () => {
                          <p className="text-sm font-semibold text-gray-900">
                            {(() => {
                              const customer = customers.find(c => c.id === activeContract.customer_id);
-                             return customer ? `${customer.first_name} ${customer.last_name}` : t('common.unknownCustomer');
+                             if (customer) {
+                               if (customer.customer_type === "company" && customer.company_name) {
+                                 return customer.company_name;
+                               } else {
+                                 const fullName = `${customer.first_name || ""} ${customer.last_name || ""}`.trim();
+                                 return fullName || t('common.unknownCustomer');
+                               }
+                             }
+                             return t('common.unknownCustomer');
                            })()}
                          </p>
                        </div>

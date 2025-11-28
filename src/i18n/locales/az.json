@@ -458,6 +458,8 @@
     "enterFatherName": "Ata adını daxil edin",
     "enterPhoneNumber": "Telefon nömrəsini daxil edin",
     "enterFullAddress": "Tam ünvanı daxil edin",
+    "enterAddress": "Ünvanı daxil edin",
+    "enterEmail": "E-poçt ünvanını daxil edin",
     "nationalId": "Şəxsiyyət Nömrəsi",
     "enterNationalId": "Şəxsiyyət nömrəsini daxil edin",
     "customerIsActive": "Müştəri aktivdir",
@@ -523,6 +525,7 @@
     "createCompany": "Şirkət Yarat",
     "createNewContract": "Yeni Müqavilə Yarat",
     "addNewContract": "Sistemə yeni lizinq müqaviləsi əlavə edin",
+    "selectACompanyFirst": "Əvvəlcə şirkət seçin",
     "selectACustomer": "Müştəri seçin",
     "vehicleInformation": "Nəqliyyat Vasitəsi Məlumatları",
     "licensePlate": "DQN",
@@ -964,8 +967,8 @@
     "sessionRefreshed": "Sessiya uğurla yeniləndi",
     "loggingOut": "Çıxış edilir...",
     "redirectingToLogin": "Giriş səhifəsinə yönləndirilir...",
-    "usernameOrEmail": "İstifadəçi adı və ya E-poçt",
-    "enterUsernameOrEmail": "İstifadəçi adınızı və ya e-poçtunuzu daxil edin",
+    "usernameOrEmail": "İstifadəçi adı",
+    "enterUsernameOrEmail": "İstifadəçi adınızı daxil edin",
     "quickLoginAsSuperadmin": "Superadmin kimi Sürətli Giriş",
     "loggingIn": "Daxil olunur...",
     "defaultSuperadminCredentials": "Standart Superadmin Məlumatları",
@@ -975,7 +978,9 @@
     "supabaseDescription": "Bu tətbiq təhlükəsiz təsdiqləmə üçün Supabase istifadə edir. İstifadəçilər şifrələnmiş şifrələrlə Supabase verilənlər bazasında saxlanılır.",
     "contactAdministrator": "Hesabınız yoxdursa, zəhmət olmasa administratorunuzla əlaqə saxlayın.",
     "quickLoginFailed": "Sürətli giriş uğursuz oldu. Zəhmət olmasa adi girişi sınayın.",
-    "unexpectedError": "Gözlənilməz xəta baş verdi. Zəhmət olmasa bağlantınızı yoxlayın və yenidən sınayın."
+    "unexpectedError": "Gözlənilməz xəta baş verdi. Zəhmət olmasa bağlantınızı yoxlayın və yenidən sınayın.",
+    "superadminCredentials": "Superadmin Giriş Məlumatları",
+    "clickToAutoFill": "Avtomatik doldurmaq üçün klikləyin"
   },
   "dashboard": {
     "title": "İdarəetmə Paneli",
@@ -1243,6 +1248,7 @@
     "paymentNotifications": "Ödəniş Bildirişləri",
     "dueToday": "Bu Gün Ödənilməlidir",
     "overdue": "Gecikmiş",
+    "due": "Ödənilməlidir",
     "noPendingNotifications": "Gözləyən bildiriş yoxdur",
     "viewAllOverdue": "Bütün Gecikmişləri Gör"
   },
@@ -2503,6 +2509,9 @@
     "imported": "{{entity}} uğurla idxal edildi",
     "paymentNotifications": "Ödəniş Bildirişləri",
     "viewAllOverdue": "Bütün Gecikmişləri Gör",
+    "overdue": "Gecikmiş",
+    "dueToday": "Bu Gün Ödənilməlidir",
+    "due": "Ödənilməlidir",
     "noPendingNotifications": "Gözləyən bildiriş yoxdur"
   },
   "apiErrors": {

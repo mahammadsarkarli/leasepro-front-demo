@@ -470,6 +470,8 @@
     "enterFatherName": "Enter father name",
     "enterPhoneNumber": "Enter phone number",
     "enterFullAddress": "Enter full address",
+    "enterAddress": "Enter address",
+    "enterEmail": "Enter email address",
     "nationalId": "National ID",
     "enterNationalId": "Enter national ID",
     "customerIsActive": "Customer is active",
@@ -1014,7 +1016,11 @@
     "supabaseDescription": "This application uses Supabase for secure authentication. Users are stored in the Supabase database with encrypted passwords.",
     "contactAdministrator": "If you don't have an account, please contact your administrator to create one.",
     "quickLoginFailed": "Quick login failed. Please try the regular login.",
-    "unexpectedError": "An unexpected error occurred. Please check your connection and try again."
+    "unexpectedError": "An unexpected error occurred. Please check your connection and try again.",
+    "superadminCredentials": "Superadmin Login Credentials",
+    "usernameLabel": "Username:",
+    "passwordLabel": "Password:",
+    "clickToAutoFill": "Click to auto-fill"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -1254,6 +1260,7 @@
     "paymentNotifications": "Payment Notifications",
     "dueToday": "Due Today",
     "overdue": "Overdue",
+    "due": "Due",
     "noPendingNotifications": "No pending notifications",
     "viewAllOverdue": "View All Overdue"
   },

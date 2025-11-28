@@ -80,6 +80,13 @@ const UserEdit: React.FC = () => {
           lastLoginAt: undefined,
         };
 
+        // Check if user is superadmin - demo account, cannot be edited
+        if (userData.role === 'superadmin') {
+          showApiError('Superadmin hesabı demo hesap olduğu için düzenlenemez.', 'user');
+          navigate("/users");
+          return;
+        }
+
         setUser(userData);
         setFormData({
           full_name: foundUser.fullName || "", // Use fullName directly from foundUser

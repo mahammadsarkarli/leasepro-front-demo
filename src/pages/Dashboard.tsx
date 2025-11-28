@@ -317,9 +317,10 @@ const Dashboard: React.FC = () => {
   // Show loading state while data is being fetched
   if (customersLoading || contractsLoading || paymentsLoading) {
     return (
-      <div className="space-y-4 sm:space-y-6">
-        <div className="text-center py-8">
-          <p className="text-gray-600">{t('common.loading')}</p>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">{t('common.loading')}</p>
         </div>
       </div>
     );

@@ -20,6 +20,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   const availableLanguages = [
     { code: 'en', name: 'English', nativeName: 'English' },
     { code: 'az', name: 'Azerbaijani', nativeName: 'Azərbaycanca' },
+    { code: 'ru', name: 'Russian', nativeName: 'Русский' },
   ];
 
   const changeLanguage = (language: string) => {

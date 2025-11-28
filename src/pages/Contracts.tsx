@@ -769,12 +769,12 @@ const Contracts: React.FC = () => {
               className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               title={
                 filteredContracts.length === 0
-                  ? "İxrac üçün kontrakt yoxdur"
-                  : "Kontratları Excel faylına ixrac et"
+                  ? t("pages.contracts.noContractsToExport")
+                  : t("pages.contracts.exportContractsToExcel")
               }
             >
               <Download className="w-4 h-4 mr-2" />
-              Excel İxrac
+              {t("pages.contracts.excelExport")}
             </button>
 
             {/* Export Dropdown Menu */}
@@ -787,9 +787,9 @@ const Contracts: React.FC = () => {
                   >
                     <Download className="w-4 h-4 mr-3 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="font-medium">Sadə İxrac</div>
+                      <div className="font-medium">{t("pages.contracts.simpleExport")}</div>
                       <div className="text-xs text-gray-500 mt-1">
-                        Bütün kontratlar bir siyahıda
+                        {t("pages.contracts.simpleExportDesc")}
                       </div>
                     </div>
                   </button>
@@ -799,9 +799,9 @@ const Contracts: React.FC = () => {
                   >
                     <Download className="w-4 h-4 mr-3 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="font-medium">Şirkətlərə Görə</div>
+                      <div className="font-medium">{t("pages.contracts.groupedByCompany")}</div>
                       <div className="text-xs text-gray-500 mt-1">
-                        Hər şirkət üçün ayrı sheet + ümumi məlumat
+                        {t("pages.contracts.groupedByCompanyDesc")}
                       </div>
                     </div>
                   </button>

@@ -22,6 +22,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
 import CustomEtibarnameModal from './CustomEtibarnameModal';
+import LanguageSwitcher from './LanguageSwitcher';
 import { PAGES } from '../utils/permissions';
 
 interface LayoutProps {
@@ -197,7 +198,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </button>
 
               {/* Language Switcher */}
-              {/* <LanguageSwitcher /> */}
+              <LanguageSwitcher />
               
 
               

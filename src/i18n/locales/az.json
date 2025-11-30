@@ -21,6 +21,9 @@
     "deleting": "Silinir...",
     "print": "Çap Et",
     "download": "Yüklə",
+    "import": "İdxal Et",
+    "cardView": "Kart Görünüşü",
+    "tableView": "Cədvəl Görünüşü",
     "customer": "Müştəri",
     "company": "Şirkət",
     "documentType": "Sənəd Növü",
@@ -312,6 +315,7 @@
     "anErrorOccurred": "Xəta baş verdi",
     "failedToReadFile": "Fayl oxumaq mümkün olmadı",
     "failedToUpdateVehicle": "Nəqliyyat vasitəsi yenilənmədi",
+    "errorDeletingVehicle": "Nəqliyyat vasitəsini silərkən xəta baş verdi",
     "invalidNextPaymentDate": "Yanlış növbəti ödəniş tarixi hesablandı:",
     "selectCustomer": "Müştəri Seç",
     "searchCustomers": "Müştəriləri axtar...",
@@ -614,6 +618,7 @@
     "choosePaymentMethods": "Ödəniş üsullarını seç",
     "addDetailedNotes": "Ətraflı qeydlər əlavə et",
     "continue": "Davam Et",
+    "understood": "Başa Düşdüm",
     "noContractsFound": "Müqavilə tapılmadı",
     "noActiveContracts": "Aktiv müqavilə mövcud deyil",
     "unknownCustomer": "Naməlum Müştəri",
@@ -1390,6 +1395,7 @@
         "noContracts": "Aktiv müqavilə yoxdur",
         "viewContract": "Müqaviləni Gör",
         "editVehicle": "Nəqliyyat Vasitəsini Redaktə Et",
+        "deleteVehicle": "Nəqliyyat Vasitəsini Sil",
         "viewDetails": "Məlumatları Gör"
       },
       "filterOptions": {
@@ -2756,5 +2762,749 @@
     "utilization": "İstifadə",
     "profitMargin": "Mənfəət Marjı",
     "avgContract": "Orta Müqavilə"
+  },
+  "hoverGuide": {
+    "title": "Proqram Rehberi",
+    "startGuide": "Rehberi Başlat",
+    "finish": "Bitir",
+    "step": "Addım",
+    "infoModal": {
+      "title": "Proqram Rehberi",
+      "subtitle": "Yeni gələnlər üçün tam təlimat",
+      "description": "Bu rehber sistemi ilə proqramın bütün funksiyalarını öyrənə bilərsiniz. Hər səhifədə sağ üstdəki soru işarəsi (?) ikonuna tıklayaraq o səhifə haqqında ətraflı məlumat ala bilərsiniz. Hər səhifənin öz rehberi var və siz istədiyiniz zaman aktiv edə bilərsiniz.",
+      "howToUse": "İstifadə Qaydası:",
+      "step1": "İstədiyiniz səhifəyə daxil olun (Müştərilər, Müqavilələr, Ödənişlər və s.)",
+      "step2": "Sağ üstdəki soru işarəsi (?) ikonuna tıklayın",
+      "step3": "O səhifə üçün xüsusi rehberi görəcəksiniz. Hər addımda elementlər vurğulanacaq və izah ediləcək",
+      "whatYouLearn": "Nə öyrənəcəksiniz:",
+      "learn1": "Hər səhifənin funksiyaları və istifadə qaydası",
+      "learn2": "Düymələrin və əməliyyatların məqsədi",
+      "learn3": "Proqramın bütün imkanlarından səmərəli istifadə"
+    },
+    "dashboard": {
+      "sidebar": {
+        "title": "Yan Panəl",
+        "content": "Bu yan paneldə bütün əsas səhifələrə keçid edə bilərsiniz. Dashboard, Müştərilər, Müqavilələr, Nəqliyyat Vasitələri və Ödənişlər kimi bölmələrə buradan çata bilərsiniz."
+      },
+      "dashboardLink": {
+        "title": "Dashboard",
+        "content": "Dashboard səhifəsi proqramın əsas idarəetmə panelidir. Burada aktiv müqavilələr, bu gün ödənilməli olan ödənişlər və gecikmiş ödənişlər haqqında məlumat görə bilərsiniz."
+      },
+      "customersLink": {
+        "title": "Müştərilər",
+        "content": "Müştərilər bölməsində bütün müştərilərin siyahısını görə, yeni müştəri əlavə edə və ya mövcud müştəriləri redaktə edə bilərsiniz."
+      },
+      "contractsLink": {
+        "title": "Müqavilələr",
+        "content": "Müqavilələr bölməsində bütün leasing müqavilələrinin siyahısını görə, yeni müqavilə yarada və mövcud müqavilələri idarə edə bilərsiniz."
+      },
+      "vehiclesLink": {
+        "title": "Nəqliyyat Vasitələri",
+        "content": "Nəqliyyat Vasitələri bölməsində şirkətin bütün nəqliyyat vasitələrinin siyahısını görə, yeni nəqliyyat vasitəsi əlavə edə bilərsiniz."
+      },
+      "paymentsLink": {
+        "title": "Ödənişlər",
+        "content": "Ödənişlər bölməsində bütün ödənişlərin siyahısını görə, yeni ödəniş qeydiyyatı edə bilərsiniz."
+      },
+      "notifications": {
+        "title": "Bildirişlər",
+        "content": "Bu zəng ikonu ilə bu gün ödənilməli olan və gecikmiş ödənişlər haqqında bildirişləri görə bilərsiniz."
+      },
+      "userMenu": {
+        "title": "İstifadəçi Menusu",
+        "content": "Buradan istifadəçi məlumatlarınızı görə və sistemdən çıxa bilərsiniz."
+      },
+      "languageSwitcher": {
+        "title": "Dil Dəyişdirici",
+        "content": "Bu düymə ilə proqramın dilini dəyişdirə bilərsiniz. Azərbaycan, İngilis və Rus dilləri dəstəklənir."
+      },
+      "activeContracts": {
+        "title": "Aktiv Müqavilələr",
+        "content": "Bu kartda hal-hazırda aktiv olan müqavilələrin sayını görə bilərsiniz. Bu, şirkətin cari iş yükünü göstərir."
+      },
+      "dueToday": {
+        "title": "Bu Gün Ödənilməlidir",
+        "content": "Bu kartda bu gün ödənilməli olan ödənişlərin sayını görə bilərsiniz. Bu, gündəlik iş planınızı təşkil etməyə kömək edir."
+      },
+      "overdue": {
+        "title": "Gecikmiş Ödənişlər",
+        "content": "Bu kartda gecikmiş ödənişlərin sayını görə bilərsiniz. Bu, diqqət tələb edən məsələləri tez müəyyən etməyə kömək edir."
+      },
+      "guideTourButton": {
+        "title": "Rehber Turu",
+        "content": "Bu düymə ilə proqramın istənilən səhifəsində rehber turunu başlada bilərsiniz. Rehber turu sizə hər səhifədəki funksiyaların necə işlədiyini göstərir və elementləri vurğulayır. İstənilən vaxt bu düyməyə basaraq rehber turunu başlada bilərsiniz."
+      }
+    },
+    "customers": {
+      "header": {
+        "title": "Müştərilər Səhifəsi",
+        "content": "Bu səhifədə bütün müştərilərin siyahısını görə bilərsiniz. Müştəriləri axtara, filtrləyə və idarə edə bilərsiniz."
+      },
+      "addButton": {
+        "title": "Yeni Müştəri Əlavə Et",
+        "content": "Bu düymə ilə yeni müştəri əlavə edə bilərsiniz. Müştəri məlumatlarını doldurduqdan sonra yadda saxlayın."
+      },
+      "importButton": {
+        "title": "Müştəriləri İdxal Et",
+        "content": "Excel faylından müştəriləri toplu şəkildə idxal edə bilərsiniz. Şablonu yükləyib doldurduqdan sonra buradan yükləyin."
+      },
+      "search": {
+        "title": "Axtarış",
+        "content": "Bu sahədə müştəri adı, soyadı, telefon və ya digər məlumatlara görə axtarış edə bilərsiniz."
+      },
+      "viewMode": {
+        "title": "Görünüş Rejimi",
+        "content": "Kart və ya cədvəl görünüşü arasında keçid edə bilərsiniz. Kart görünüşü mobil cihazlar üçün daha uyğundur."
+      },
+      "actions": {
+        "title": "Əməliyyatlar",
+        "content": "Hər müştəri üçün bax, redaktə et və sil əməliyyatlarını görə bilərsiniz. Müştəri detallarına daxil olmaq üçün bax düyməsini istifadə edin."
+      },
+      "viewButton": {
+        "title": "Bax Butonu",
+        "content": "Müştərinin ətraflı məlumatlarını və müqavilələrini görüntüləmək üçün bu butona klikləyin."
+      },
+      "editButton": {
+        "title": "Redaktə Butonu",
+        "content": "Müştəri məlumatlarını dəyişdirmək üçün bu butona klikləyin."
+      },
+      "deleteButton": {
+        "title": "Sil Butonu",
+        "content": "Müştərini silmək üçün bu butona klikləyin. Diqqət: Aktiv müqaviləsi olan müştərilər silinə bilməz."
+      }
+    },
+    "contracts": {
+      "header": {
+        "title": "Müqavilələr Səhifəsi",
+        "content": "Bu səhifədə bütün leasing müqavilələrinin siyahısını görə bilərsiniz. Müqavilələri status, müştəri və ya tarixə görə filtrləyə bilərsiniz."
+      },
+      "createButton": {
+        "title": "Yeni Müqavilə Yarat",
+        "content": "Bu düymə ilə yeni leasing müqaviləsi yarada bilərsiniz. Müştəri, nəqliyyat vasitəsi və maliyyə məlumatlarını doldurun."
+      },
+      "search": {
+        "title": "Axtarış",
+        "content": "Müqavilə nömrəsi, müştəri adı və ya nəqliyyat vasitəsi nömrəsinə görə axtarış edə bilərsiniz."
+      },
+      "filters": {
+        "title": "Filtrlər",
+        "content": "Müqavilələri status (aktiv, tamamlanmış, gecikmiş) və ya şirkətə görə filtrləyə bilərsiniz."
+      },
+      "viewMode": {
+        "title": "Görünüş Rejimi",
+        "content": "Kart və ya cədvəl görünüşü arasında keçid edə bilərsiniz."
+      },
+      "exportButton": {
+        "title": "İxrac Et",
+        "content": "Müqavilələri Excel faylına ixrac edə bilərsiniz. Bütün müqavilələri və ya filtrlənmiş siyahını ixrac edə bilərsiniz."
+      },
+      "viewButton": {
+        "title": "Bax Butonu",
+        "content": "Müqavilənin ətraflı məlumatlarını, ödəniş tarixçəsini və digər detalları görüntüləmək üçün bu butona klikləyin."
+      },
+      "editButton": {
+        "title": "Redaktə Butonu",
+        "content": "Müqavilə məlumatlarını dəyişdirmək üçün bu butona klikləyin."
+      },
+      "deleteButton": {
+        "title": "Sil Butonu",
+        "content": "Müqaviləni silmək üçün bu butona klikləyin. Diqqət: Bu əməliyyat bütün əlaqəli ödənişləri də siləcək."
+      }
+    },
+    "vehicles": {
+      "header": {
+        "title": "Nəqliyyat Vasitələri Səhifəsi",
+        "content": "Bu səhifədə şirkətin bütün nəqliyyat vasitələrinin siyahısını görə bilərsiniz. Nəqliyyat vasitələrini şirkətə görə filtrləyə bilərsiniz."
+      },
+      "addButton": {
+        "title": "Yeni Nəqliyyat Vasitəsi Əlavə Et",
+        "content": "Bu düymə ilə yeni nəqliyyat vasitəsi əlavə edə bilərsiniz. Nəqliyyat vasitəsi məlumatlarını və sənədlərini doldurun."
+      },
+      "importButton": {
+        "title": "Nəqliyyat Vasitələrini İdxal Et",
+        "content": "Excel faylından nəqliyyat vasitələrini toplu şəkildə idxal edə bilərsiniz."
+      },
+      "search": {
+        "title": "Axtarış",
+        "content": "Nəqliyyat vasitəsi markası, modeli, qeydiyyat nömrəsi və ya VIN koduna görə axtarış edə bilərsiniz."
+      },
+      "statusFilter": {
+        "title": "Status Filtrı",
+        "content": "Nəqliyyat vasitələrini mövcud, istifadədə və ya hamısı kimi filtrləyə bilərsiniz."
+      },
+      "companyFilter": {
+        "title": "Şirkət Filtrı",
+        "content": "Müəyyən bir şirkətə aid nəqliyyat vasitələrini görə bilərsiniz."
+      },
+      "viewButton": {
+        "title": "Bax Butonu",
+        "content": "Nəqliyyat vasitəsinin ətraflı məlumatlarını, müqavilələrini və sənədlərini görüntüləmək üçün bu butona klikləyin."
+      },
+      "editButton": {
+        "title": "Redaktə Butonu",
+        "content": "Nəqliyyat vasitəsi məlumatlarını dəyişdirmək üçün bu butona klikləyin."
+      },
+      "deleteButton": {
+        "title": "Sil Butonu",
+        "content": "Nəqliyyat vasitəsini silmək üçün bu butona klikləyin. Diqqət: Aktiv müqavilədə istifadə olunan nəqliyyat vasitələri silinə bilməz."
+      }
+    },
+    "payments": {
+      "header": {
+        "title": "Ödənişlər Səhifəsi",
+        "content": "Bu səhifədə bütün ödənişlərin siyahısını görə bilərsiniz. Ödənişləri tarix, metod və statusa görə filtrləyə bilərsiniz."
+      },
+      "addButton": {
+        "title": "Yeni Ödəniş Əlavə Et",
+        "content": "Bu düymə ilə yeni ödəniş qeydiyyatı edə bilərsiniz. Müqaviləni seçib ödəniş məlumatlarını doldurun."
+      },
+      "search": {
+        "title": "Axtarış",
+        "content": "Müştəri adı, müqavilə nömrəsi və ya ödəniş məbləğinə görə axtarış edə bilərsiniz."
+      },
+      "dateFilter": {
+        "title": "Tarix Filtrı",
+        "content": "Ödənişləri müəyyən bir tarix aralığına görə filtrləyə bilərsiniz. Bu günün ödənişləri default olaraq göstərilir."
+      },
+      "methodFilter": {
+        "title": "Ödəniş Metodu Filtrı",
+        "content": "Ödənişləri metoduna görə filtrləyə bilərsiniz: nağd, bank köçürməsi, kartdan-karta və s."
+      },
+      "viewButton": {
+        "title": "Bax Butonu",
+        "content": "Ödənişin ətraflı məlumatlarını və müqavilə ilə əlaqəsini görüntüləmək üçün bu butona klikləyin."
+      },
+      "editButton": {
+        "title": "Redaktə Butonu",
+        "content": "Ödəniş məlumatlarını dəyişdirmək üçün bu butona klikləyin."
+      },
+      "deleteButton": {
+        "title": "Sil Butonu",
+        "content": "Ödənişi silmək üçün bu butona klikləyin. Diqqət: Bu əməliyyat geri alına bilməz."
+      }
+    },
+    "companies": {
+      "header": {
+        "title": "Şirkətlər Səhifəsi",
+        "content": "Bu səhifədə bütün şirkətlərin siyahısını görə bilərsiniz. Şirkətləri idarə edə və məlumatlarını redaktə edə bilərsiniz."
+      },
+      "addButton": {
+        "title": "Yeni Şirkət Əlavə Et",
+        "content": "Bu düymə ilə yeni şirkət əlavə edə bilərsiniz. Şirkət məlumatlarını, faiz dərəcəsini və əlaqə məlumatlarını doldurun."
+      },
+      "companyList": {
+        "title": "Şirkət Siyahısı",
+        "content": "Burada bütün şirkətlərin siyahısını görə bilərsiniz. Hər şirkət üçün detallara baxa, redaktə edə və silə bilərsiniz."
+      },
+      "viewButton": {
+        "title": "Bax Butonu",
+        "content": "Şirkətin ətraflı məlumatlarını, statistikalarını və müqavilələrini görüntüləmək üçün bu butona klikləyin."
+      },
+      "editButton": {
+        "title": "Redaktə Butonu",
+        "content": "Şirkət məlumatlarını dəyişdirmək üçün bu butona klikləyin."
+      },
+      "deleteButton": {
+        "title": "Sil Butonu",
+        "content": "Şirkəti silmək üçün bu butona klikləyin. Diqqət: Bu əməliyyat geri alına bilməz."
+      }
+    },
+    "users": {
+      "header": {
+        "title": "İstifadəçilər Səhifəsi",
+        "content": "Bu səhifədə sistem istifadəçilərinin siyahısını görə bilərsiniz. Yalnız admin və superadmin istifadəçiləri idarə edə bilər."
+      },
+      "addButton": {
+        "title": "Yeni İstifadəçi Yarat",
+        "content": "Bu düymə ilə yeni istifadəçi yarada bilərsiniz. İstifadəçi məlumatlarını, rolunu və icazələrini təyin edin."
+      },
+      "userList": {
+        "title": "İstifadəçi Siyahısı",
+        "content": "Burada bütün istifadəçilərin siyahısını görə bilərsiniz. Hər istifadəçi üçün redaktə və sil əməliyyatlarını görə bilərsiniz."
+      },
+      "editButton": {
+        "title": "Redaktə Butonu",
+        "content": "İstifadəçi məlumatlarını, rolunu və icazələrini dəyişdirmək üçün bu butona klikləyin."
+      },
+      "deleteButton": {
+        "title": "Sil Butonu",
+        "content": "İstifadəçini silmək üçün bu butona klikləyin. Diqqət: Superadmin və öz hesabınızı silə bilməzsiniz."
+      }
+    },
+    "settings": {
+      "header": {
+        "title": "Tənzimləmələr Səhifəsi",
+        "content": "Bu səhifədə proqram tənzimləmələrini görə və dəyişdirə bilərsiniz."
+      },
+      "sections": {
+        "title": "Tənzimləmə Bölmələri",
+        "content": "Müxtəlif tənzimləmə bölmələri var: şirkət əlaqə məlumatları, sistem parametrləri və digər konfiqurasiyalar."
+      }
+    },
+    "analytics": {
+      "header": {
+        "title": "Analitika Səhifəsi",
+        "content": "Bu səhifədə şirkətin performansını analiz edə bilərsiniz. Gəlir, müqavilələr və müştəri statistikalarını görə bilərsiniz."
+      },
+      "charts": {
+        "title": "Qrafiklər",
+        "content": "Müxtəlif qrafiklər və diaqramlar ilə məlumatları vizuallaşdıra bilərsiniz."
+      }
+    },
+    "overdueNotifications": {
+      "header": {
+        "title": "Gecikmiş Ödəniş Bildirişləri",
+        "content": "Bu səhifədə gecikmiş ödənişləri görə bilərsiniz. Hansı müqavilələrin ödənişləri gecikib və nə qədər gün gecikib."
+      },
+      "notificationList": {
+        "title": "Bildiriş Siyahısı",
+        "content": "Burada gecikmiş ödənişlərin siyahısını görə bilərsiniz. Hər bildiriş üçün müştəri, məbləğ və gecikmə günləri göstərilir."
+      }
+    },
+    "customerCreate": {
+      "header": {
+        "title": "Yeni Müştəri Yaratma",
+        "content": "Bu səhifədə yeni müştəri əlavə edə bilərsiniz. Müştəri növünü seçin və məlumatları doldurun."
+      },
+      "customerType": {
+        "title": "Müştəri Növü",
+        "content": "Fərdi və ya Hüquqi şəxs seçin. Fərdi müştərilər üçün ad, soyad, ata adı, Hüquqi şəxslər üçün şirkət adı və VOEN doldurulmalıdır."
+      },
+      "formFields": {
+        "title": "Müştəri Məlumatları",
+        "content": "Müştərinin əsas məlumatlarını doldurun: ad, soyad, telefon, ünvan, şəxsiyyət vəsiqəsi nömrəsi və digər məlumatlar."
+      },
+      "contactInformation": {
+        "title": "Əlaqə Məlumatları",
+        "content": "Müştəri ilə əlaqə saxlamaq üçün əlaqə şəxsləri əlavə edin. Həyat yoldaşı, valideyn, dost və ya digər əlaqə şəxslərinin ad, soyad, əlaqə növü və telefon nömrəsini daxil edin."
+      },
+      "companyDetailsForEtibarname": {
+        "title": "Etibarnamədə Şirkət Məlumatları",
+        "content": "Müqavilə fərdi şəxsin adına olub, amma yol verəqəsi şirkət adına olduğu zaman bu seçimi aktivləşdirin. Bu halda etibarnamədə şirkət məlumatları göstəriləcək."
+      },
+      "saveButton": {
+        "title": "Yadda Saxla",
+        "content": "Məlumatları doldurduqdan sonra bu düymə ilə müştərini yadda saxlayın."
+      }
+    },
+    "customerEdit": {
+      "header": {
+        "title": "Müştəri Redaktəsi",
+        "content": "Bu səhifədə mövcud müştərinin məlumatlarını redaktə edə bilərsiniz."
+      },
+      "form": {
+        "title": "Redaktə Formu",
+        "content": "Müştəri məlumatlarını dəyişdirin və yeniləyin."
+      },
+      "saveButton": {
+        "title": "Dəyişiklikləri Yadda Saxla",
+        "content": "Dəyişiklikləri tətbiq etmək üçün bu düyməyə basın."
+      }
+    },
+    "customerDetail": {
+      "header": {
+        "title": "Müştəri Detalları",
+        "content": "Bu səhifədə müştərinin ətraflı məlumatlarını görə bilərsiniz."
+      },
+      "infoSection": {
+        "title": "Müştəri Məlumatları",
+        "content": "Müştərinin əsas məlumatları, ünvanı, əlaqə məlumatları və digər detallar burada göstərilir."
+      },
+      "contractsSection": {
+        "title": "Müştəri Müqavilələri",
+        "content": "Bu müştəri ilə bağlı bütün leasing müqavilələrinin siyahısını görə bilərsiniz."
+      }
+    },
+    "customerImport": {
+      "header": {
+        "title": "Müştəriləri İdxal Et",
+        "content": "Excel faylından müştəriləri toplu şəkildə idxal edin."
+      },
+      "upload": {
+        "title": "Fayl Yüklə",
+        "content": "Excel faylını seçin və yükləyin. Fayl düzgün formatda olmalıdır."
+      },
+      "template": {
+        "title": "Şablon Yüklə",
+        "content": "Düzgün format üçün şablonu yükləyin və məlumatları doldurun."
+      }
+    },
+    "contractCreate": {
+      "header": {
+        "title": "Yeni Müqavilə Yaratma",
+        "content": "Bu səhifədə yeni leasing müqaviləsi yarada bilərsiniz."
+      },
+      "customerSelect": {
+        "title": "Müştəri Seçimi",
+        "content": "Müqavilə üçün müştəri seçin. Müştəri siyahıdan seçilməlidir."
+      },
+      "vehicleSelect": {
+        "title": "Nəqliyyat Vasitəsi Seçimi",
+        "content": "Müqavilə üçün nəqliyyat vasitəsi seçin. Yalnız mövcud nəqliyyat vasitələri göstərilir."
+      },
+      "financialFields": {
+        "title": "Maliyyə Məlumatları",
+        "content": "Müqavilə məbləği, faiz dərəcəsi, müddət və digər maliyyə məlumatlarını doldurun."
+      },
+      "extraDrivers": {
+        "title": "Əlavə Sürücülər",
+        "content": "Bu bölümdə yol verəqəsində görünən əlavə sürücüləri əlavə edə bilərsiniz. Müqavilə fərdi şəxsin adına olub, amma yol verəqəsi şirkət adına olduğu zaman bu sürücülər yol verəqəsində göstəriləcək."
+      },
+      "saveButton": {
+        "title": "Müqaviləni Yadda Saxla",
+        "content": "Məlumatları doldurduqdan sonra müqaviləni yadda saxlayın."
+      }
+    },
+    "contractEdit": {
+      "header": {
+        "title": "Müqavilə Redaktəsi",
+        "content": "Bu səhifədə mövcud müqavilənin məlumatlarını redaktə edə bilərsiniz."
+      },
+      "form": {
+        "title": "Redaktə Formu",
+        "content": "Müqavilə məlumatlarını dəyişdirin və yeniləyin."
+      },
+      "extraDrivers": {
+        "title": "Əlavə Sürücülər",
+        "content": "Bu bölümdə yol verəqəsində görünən əlavə sürücüləri əlavə edə və ya redaktə edə bilərsiniz. Müqavilə fərdi şəxsin adına olub, amma yol verəqəsi şirkət adına olduğu zaman bu sürücülər yol verəqəsində göstəriləcək."
+      },
+      "saveButton": {
+        "title": "Dəyişiklikləri Yadda Saxla",
+        "content": "Dəyişiklikləri tətbiq etmək üçün bu düyməyə basın."
+      }
+    },
+    "contractDetail": {
+      "header": {
+        "title": "Müqavilə Detalları",
+        "content": "Bu səhifədə müqavilənin ətraflı məlumatlarını görə bilərsiniz."
+      },
+      "actionButtons": {
+        "title": "Əməliyyat Düymələri",
+        "content": "Bu düymələrlə müqaviləni redaktə edə, icazə sənədi yarada və ya müqaviləni silə bilərsiniz."
+      },
+      "financialOverview": {
+        "title": "Maliyyə Baxışı",
+        "content": "Bu kartda müqavilənin maliyyə məlumatlarını görə bilərsiniz: ilkin ödəniş, ümumi ödəniləcək məbləğ, aylıq ödəniş, ümumi faiz və ödəniş irəliləyişi."
+      },
+      "detailsCard": {
+        "title": "Müqavilə Detalları",
+        "content": "Bu kartda müqavilənin şərtləri, müddəti, faiz dərəcəsi, başlama tarixi, növbəti ödəniş tarixi və statusu göstərilir. Həmçinin ödəniş xülasəsi də burada mövcuddur."
+      },
+      "vehicleInformation": {
+        "title": "Nəqliyyat Vasitəsi Məlumatları",
+        "content": "Bu kartda müqaviləyə aid nəqliyyat vasitəsinin məlumatları göstərilir: nömrə nişanı, marka, model, il, rəng, şassi nömrəsi və qeydiyyat sənədi nömrəsi."
+      },
+      "driverInformation": {
+        "title": "Sürücü Məlumatları",
+        "content": "Bu kartda yol verilən sənəddə göstərilən sürücülərin məlumatları göstərilir: ad, soyad, sürücülük vəsiqəsi nömrəsi, kateqoriya və digər məlumatlar."
+      },
+      "quickActions": {
+        "title": "Sürətli Əməliyyatlar",
+        "content": "Bu kartda müqavilə ilə bağlı sürətli əməliyyatlar var: ödəniş qeydiyyatı, müqavilə redaktəsi, müştəri məlumatlarına baxış, bütün ödənişlər və ödəniş cədvəli."
+      },
+      "customerInformation": {
+        "title": "Müştəri Məlumatları",
+        "content": "Bu kartda müqaviləyə aid müştərinin ətraflı məlumatları göstərilir: şəxsi məlumatlar, əlaqə məlumatları və status."
+      },
+      "companyInformation": {
+        "title": "Şirkət Məlumatları",
+        "content": "Bu kartda müqaviləyə aid şirkətin məlumatları göstərilir: şirkət adı, faiz dərəcəsi və status."
+      },
+      "recentPayments": {
+        "title": "Son Ödənişlər",
+        "content": "Bu kartda bu müqavilə üçün edilən son 5 ödənişin siyahısı göstərilir. Hər ödənişin məbləği, tarixi və ödəniş üsulu göstərilir."
+      },
+      "printDocuments": {
+        "title": "Sənədləri Çap Et",
+        "content": "Bu bölmədə müqavilə ilə bağlı müxtəlif sənədləri çap edə və ya PDF formatında yükləyə bilərsiniz: müqavilə, təhvil-təslim, xitam, iltizam, alqı-satqı və ərizə."
+      }
+    },
+    "paymentCreate": {
+      "header": {
+        "title": "Yeni Ödəniş Yaratma",
+        "content": "Bu səhifədə yeni ödəniş qeydiyyatı edə bilərsiniz."
+      },
+      "contractSelect": {
+        "title": "Müqavilə Seçimi",
+        "content": "Ödəniş üçün müqavilə seçin. Yalnız aktiv müqavilələr göstərilir."
+      },
+      "amountField": {
+        "title": "Ödəniş Məbləği",
+        "content": "Ödənilən məbləği daxil edin. Bu məbləğ müqavilənin qalan borcunu azaldacaq."
+      },
+      "dateField": {
+        "title": "Ödəniş Tarixi",
+        "content": "Ödənişin edildiyi tarixi seçin."
+      },
+      "calculationSection": {
+        "title": "Ödəniş Hesablaması",
+        "content": "Bu bölmədə ödənişin hesablaması göstərilir: aylıq ödəniş, gecikmə günləri, faiz və cərimə məbləği."
+      },
+      "dailyInterestRate": {
+        "title": "Günlük Faiz Dərəcəsi",
+        "content": "Bu, şirkətin günlük faiz dərəcəsidir. Gecikmiş ödənişlər üçün cərimə hesablanarkən bu dərəcə istifadə olunur. Məsələn, 1% günlük faiz deməkdir ki, hər gecikmiş gün üçün qalan borcun 1%-i cərimə kimi əlavə olunur."
+      },
+      "treatAsOnTime": {
+        "title": "Vaxtında Ödəniş Kimi Təqdim Et",
+        "content": "Gecikmiş ödənişi vaxtında ödəniş kimi təqdim etmək üçün bu seçimi işarələyin. Bu halda cərimə hesablanmayacaq və yalnız əsas ödəniş məbləği alınacaq."
+      },
+      "partialPayment": {
+        "title": "Hissəli Ödəniş",
+        "content": "Aylıq ödənişin bir hissəsini ödəmək üçün bu seçimi işarələyin. Hissəli ödəniş zamanı ödənilən məbləğ qalan borcdan çıxılır və növbəti ödənişdə qalan məbləğ hesablanır. Gecikmiş ödənişlərdə faiz əvvəlcə ödənilir."
+      },
+      "extraPayment": {
+        "title": "Əlavə Ödəniş",
+        "content": "Aylıq ödənişdən artıq məbləğ ödəmək üçün bu seçimi işarələyin. Əlavə ödənişlər müqavilənin qalan borcunu azaldır və növbəti ödənişləri təsir edir."
+      },
+      "paymentMethod": {
+        "title": "Ödəniş Üsulu",
+        "content": "Ödənişin edildiyi üsulu seçin: Nağd, Bank köçürməsi, Kartdan-karta və ya Avtomatik."
+      },
+      "notesField": {
+        "title": "Qeydlər",
+        "content": "Ödəniş haqqında əlavə qeydlər və ya məlumatlar əlavə edə bilərsiniz. Bu sahə isteğe bağlıdır."
+      },
+      "saveButton": {
+        "title": "Ödənişi Yadda Saxla",
+        "content": "Ödəniş məlumatlarını yadda saxlayın."
+      }
+    },
+    "paymentEdit": {
+      "header": {
+        "title": "Ödəniş Redaktəsi",
+        "content": "Bu səhifədə mövcud ödənişin məlumatlarını redaktə edə bilərsiniz."
+      },
+      "form": {
+        "title": "Redaktə Formu",
+        "content": "Ödəniş məlumatlarını dəyişdirin və yeniləyin."
+      },
+      "saveButton": {
+        "title": "Dəyişiklikləri Yadda Saxla",
+        "content": "Dəyişiklikləri tətbiq etmək üçün bu düyməyə basın."
+      }
+    },
+    "paymentDetail": {
+      "header": {
+        "title": "Ödəniş Detalları",
+        "content": "Bu səhifədə ödənişin ətraflı məlumatlarını görə bilərsiniz."
+      },
+      "infoSection": {
+        "title": "Ödəniş Məlumatları",
+        "content": "Ödənişin məbləği, tarixi, üsulu və digər detallar burada göstərilir."
+      }
+    },
+    "vehicleCreate": {
+      "header": {
+        "title": "Yeni Nəqliyyat Vasitəsi Yaratma",
+        "content": "Bu səhifədə yeni nəqliyyat vasitəsi əlavə edə bilərsiniz."
+      },
+      "formFields": {
+        "title": "Nəqliyyat Vasitəsi Məlumatları",
+        "content": "Nəqliyyat vasitəsinin markası, modeli, nömrəsi və digər məlumatlarını doldurun."
+      },
+      "saveButton": {
+        "title": "Yadda Saxla",
+        "content": "Məlumatları doldurduqdan sonra nəqliyyat vasitəsini yadda saxlayın."
+      }
+    },
+    "vehicleEdit": {
+      "header": {
+        "title": "Nəqliyyat Vasitəsi Redaktəsi",
+        "content": "Bu səhifədə mövcud nəqliyyat vasitəsinin məlumatlarını redaktə edə bilərsiniz."
+      },
+      "form": {
+        "title": "Redaktə Formu",
+        "content": "Nəqliyyat vasitəsi məlumatlarını dəyişdirin və yeniləyin."
+      },
+      "saveButton": {
+        "title": "Dəyişiklikləri Yadda Saxla",
+        "content": "Dəyişiklikləri tətbiq etmək üçün bu düyməyə basın."
+      }
+    },
+    "vehicleDetail": {
+      "header": {
+        "title": "Nəqliyyat Vasitəsi Detalları",
+        "content": "Bu səhifədə nəqliyyat vasitəsinin ətraflı məlumatlarını görə bilərsiniz."
+      },
+      "infoSection": {
+        "title": "Nəqliyyat Vasitəsi Məlumatları",
+        "content": "Nəqliyyat vasitəsinin əsas məlumatları, sənədləri və müqavilələri burada göstərilir."
+      }
+    },
+    "vehicleImport": {
+      "header": {
+        "title": "Nəqliyyat Vasitələrini İdxal Et",
+        "content": "Excel faylından nəqliyyat vasitələrini toplu şəkildə idxal edin."
+      },
+      "upload": {
+        "title": "Fayl Yüklə",
+        "content": "Excel faylını seçin və yükləyin. Fayl düzgün formatda olmalıdır."
+      }
+    },
+    "companyCreate": {
+      "header": {
+        "title": "Yeni Şirkət Yaratma",
+        "content": "Bu səhifədə yeni şirkət əlavə edə bilərsiniz."
+      },
+      "formFields": {
+        "title": "Şirkət Məlumatları",
+        "content": "Şirkətin adı, ünvanı, telefonu və digər məlumatlarını doldurun."
+      },
+      "saveButton": {
+        "title": "Yadda Saxla",
+        "content": "Məlumatları doldurduqdan sonra şirkəti yadda saxlayın."
+      }
+    },
+    "companyEdit": {
+      "header": {
+        "title": "Şirkət Redaktəsi",
+        "content": "Bu səhifədə mövcud şirkətin məlumatlarını redaktə edə bilərsiniz."
+      },
+      "form": {
+        "title": "Redaktə Formu",
+        "content": "Şirkət məlumatlarını dəyişdirin və yeniləyin."
+      },
+      "saveButton": {
+        "title": "Dəyişiklikləri Yadda Saxla",
+        "content": "Dəyişiklikləri tətbiq etmək üçün bu düyməyə basın."
+      }
+    },
+    "companyDetail": {
+      "header": {
+        "title": "Şirkət Detalları",
+        "content": "Bu səhifədə şirkətin ətraflı məlumatlarını görə bilərsiniz."
+      },
+      "infoSection": {
+        "title": "Şirkət Məlumatları",
+        "content": "Şirkətin əsas məlumatları, müştəriləri, müqavilələri və nəqliyyat vasitələri burada göstərilir."
+      }
+    },
+    "userCreate": {
+      "header": {
+        "title": "Yeni İstifadəçi Yaratma",
+        "content": "Bu səhifədə yeni sistem istifadəçisi yarada bilərsiniz."
+      },
+      "formFields": {
+        "title": "İstifadəçi Məlumatları",
+        "content": "İstifadəçinin adı, e-poçtu, şifrəsi və digər məlumatlarını doldurun."
+      },
+      "nameField": {
+        "title": "Ad Sahəsi",
+        "content": "İstifadəçinin tam adını daxil edin. Bu sahə məcburidir."
+      },
+      "usernameField": {
+        "title": "İstifadəçi Adı Sahəsi",
+        "content": "İstifadəçi adını daxil edin. Minimum 3 simvol olmalıdır və yalnız hərf, rəqəm və alt xətt ehtiva edə bilər."
+      },
+      "securitySection": {
+        "title": "Təhlükəsizlik Bölməsi",
+        "content": "Bu bölmədə istifadəçi üçün şifrə təyin edin. Şifrə minimum 6 simvol olmalıdır və təsdiq şifrəsi ilə uyğun olmalıdır."
+      },
+      "roleSelect": {
+        "title": "İcazələr Cədvəli",
+        "content": "Bu cədvəldə istifadəçi üçün icazələri konfiqurasiya edə bilərsiniz. Hər səhifə üçün oxumaq, yaratmaq, redaktə etmək və silmək icazələrini seçə bilərsiniz. Qeyd: İcazələr yalnız User rolunda konfiqurasiya edilə bilər."
+      },
+      "saveButton": {
+        "title": "İstifadəçini Yadda Saxla",
+        "content": "Məlumatları doldurduqdan sonra istifadəçini yadda saxlayın."
+      }
+    },
+    "userEdit": {
+      "header": {
+        "title": "İstifadəçi Redaktəsi",
+        "content": "Bu səhifədə mövcud istifadəçinin məlumatlarını redaktə edə bilərsiniz."
+      },
+      "form": {
+        "title": "Redaktə Formu",
+        "content": "İstifadəçi məlumatlarını dəyişdirin və yeniləyin."
+      },
+      "saveButton": {
+        "title": "Dəyişiklikləri Yadda Saxla",
+        "content": "Dəyişiklikləri tətbiq etmək üçün bu düyməyə basın."
+      }
+    },
+    "paymentSchedule": {
+      "header": {
+        "title": "Ödəniş Cədvəli",
+        "content": "Bu səhifədə müqavilənin bütün ödənişlərinin cədvəlini görə bilərsiniz."
+      },
+      "table": {
+        "title": "Ödəniş Cədvəli",
+        "content": "Hər ödəniş üçün tarix, məbləğ, faiz, əsas borc və qalan borc məlumatları göstərilir."
+      },
+      "actions": {
+        "title": "Əməliyyatlar",
+        "content": "Ödəniş cədvəlini çap edə və ya PDF olaraq yükləyə bilərsiniz."
+      }
+    },
+    "contractDemo": {
+      "header": {
+        "title": "Müqavilə Demo",
+        "content": "Bu səhifədə müqavilə sənədlərinin nümunəsini görə bilərsiniz."
+      },
+      "form": {
+        "title": "Müqavilə Məlumatları",
+        "content": "Müqavilə məlumatlarını doldurun və sənədləri yaradın."
+      },
+      "actions": {
+        "title": "Sənəd Əməliyyatları",
+        "content": "Etibarnamə və digər sənədləri çap edə və ya yükləyə bilərsiniz."
+      }
+    },
+    "dypSenedleri": {
+      "header": {
+        "title": "DYP Sənədləri",
+        "content": "Bu səhifədə DYP (Dövlət Yol Polisi) sənədlərini yarada bilərsiniz."
+      },
+      "form": {
+        "title": "Sənəd Məlumatları",
+        "content": "Nəqliyyat vasitəsi və satıcı məlumatlarını doldurun."
+      },
+      "actions": {
+        "title": "Sənəd Əməliyyatları",
+        "content": "DYP sənədlərini çap edə və ya PDF olaraq yükləyə bilərsiniz."
+      }
+    },
+    "general": {
+      "sidebar": {
+        "title": "Yan Panəl",
+        "content": "Bu yan paneldə bütün əsas səhifələrə keçid edə bilərsiniz."
+      }
+    },
+    "users": {
+      "header": {
+        "title": "İstifadəçilər Səhifəsi",
+        "content": "Bu səhifədə bütün sistem istifadəçilərinin siyahısını görə, yeni istifadəçi əlavə edə və mövcud istifadəçiləri idarə edə bilərsiniz."
+      },
+      "addButton": {
+        "title": "Yeni İstifadəçi Yarat",
+        "content": "Bu düymə ilə yeni istifadəçi hesabı yarada bilərsiniz."
+      },
+      "search": {
+        "title": "İstifadəçi Axtarışı",
+        "content": "Bu sahədə istifadəçi adı, rol və ya digər məlumatlara görə axtarış edə bilərsiniz."
+      },
+      "roleFilter": {
+        "title": "Rol Filtrləri",
+        "content": "İstifadəçiləri roluna görə filtrləyə bilərsiniz: Superadmin, Admin və ya User."
+      },
+      "viewMode": {
+        "title": "Görünüş Rejimi",
+        "content": "Kart və ya cədvəl görünüşü arasında keçid edə bilərsiniz. Kart görünüşü mobil cihazlar üçün daha uyğundur."
+      },
+      "userList": {
+        "title": "İstifadəçi Siyahısı",
+        "content": "Burada bütün sistem istifadəçilərinin siyahısını görə bilərsiniz."
+      },
+      "editButton": {
+        "title": "Redaktə Butonu",
+        "content": "İstifadəçi məlumatlarını, rolunu və icazələrini dəyişdirmək üçün bu butona klikləyin."
+      },
+      "deleteButton": {
+        "title": "Sil Butonu",
+        "content": "İstifadəçini silmək üçün bu butona klikləyin. Diqqət: Superadmin istifadəçiləri silinə bilməz."
+      }
+    },
+    "elementNotFound": "Element tapılmadı"
   }
 }

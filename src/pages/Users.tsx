@@ -156,7 +156,7 @@ const Users: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
+        <div data-guide-id="users-header">
           <h1 className="text-2xl font-bold text-gray-900 flex items-center">
             <UsersIcon className="w-6 h-6 mr-2" />
             {t('users.title')}
@@ -165,6 +165,7 @@ const Users: React.FC = () => {
         </div>
         {canCreate('users') && (
           <Button
+            data-guide-id="add-user-button"
             onClick={handleCreateUser}
             className="flex items-center"
           >
@@ -178,7 +179,7 @@ const Users: React.FC = () => {
       <Card className="p-4">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
-            <div className="relative">
+            <div className="relative" data-guide-id="search-users">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
                 type="text"
@@ -189,7 +190,7 @@ const Users: React.FC = () => {
               />
             </div>
           </div>
-          <div className="sm:w-48">
+          <div className="sm:w-48" data-guide-id="role-filter">
             <Select
               value={roleFilter}
               onValueChange={setRoleFilter}
@@ -202,7 +203,7 @@ const Users: React.FC = () => {
           </div>
           
           {/* View Toggle */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2" data-guide-id="view-mode-toggle">
             <div className="flex border border-gray-300 rounded-lg">
               <button
                 onClick={() => setViewMode("card")}
@@ -234,7 +235,7 @@ const Users: React.FC = () => {
       {/* Users List */}
       {viewMode === "card" ? (
         /* User Cards */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-guide-id="user-list">
           {filteredUsers.map((user) => (
             <Card key={user.id} className="hover:shadow-md transition-shadow">
               <div className="p-6">
@@ -269,6 +270,7 @@ const Users: React.FC = () => {
                   <div className="flex-shrink-0 flex items-center space-x-2">
                     {canEdit('users') && user.role !== 'superadmin' && (
                       <button
+                        data-guide-id="user-edit-button"
                         onClick={() => handleEditUser(user)}
                         className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-50"
                         title={t('common.edit')}
@@ -278,6 +280,7 @@ const Users: React.FC = () => {
                     )}
                     {canDelete('users') && user.id !== currentUser.id && user.role !== 'superadmin' && (
                       <button
+                        data-guide-id="user-delete-button"
                         onClick={() => handleDeleteUser(user)}
                         className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-gray-50"
                         title={t('common.delete')}
@@ -362,7 +365,7 @@ const Users: React.FC = () => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white divide-y divide-gray-200" data-guide-id="user-list">
                   {filteredUsers.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -407,6 +410,7 @@ const Users: React.FC = () => {
                     <div className="flex items-center space-x-2">
                       {canEdit('users') && user.role !== 'superadmin' && (
                         <Button
+                          data-guide-id="user-edit-button"
                           variant="outline"
                           size="sm"
                           onClick={() => handleEditUser(user)}
@@ -418,6 +422,7 @@ const Users: React.FC = () => {
                       )}
                       {canDelete('users') && user.id !== currentUser.id && user.role !== 'superadmin' && (
                         <Button
+                          data-guide-id="user-delete-button"
                           variant="outline"
                           size="sm"
                           onClick={() => handleDeleteUser(user)}

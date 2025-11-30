@@ -31,8 +31,17 @@ const CompanyDetail: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
+  // Redirect if id is missing
+  useEffect(() => {
+    if (!id) {
+      navigate('/companies');
+    }
+  }, [id, navigate]);
+
   // Load data if not already loaded
   useEffect(() => {
+    if (!id) return;
+    
     const loadData = async () => {
       try {
         setIsLoading(true);
@@ -52,7 +61,7 @@ const CompanyDetail: React.FC = () => {
     };
 
     loadData();
-  }, [loadCompanies, loadCustomers, loadPayments, t]);
+  }, [id, loadCompanies, loadCustomers, loadPayments, t]);
 
   // Find company and related data from context
   const company = useMemo(() => {
@@ -122,7 +131,7 @@ const CompanyDetail: React.FC = () => {
   return (
     <div className="w-full space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between" data-guide-id="company-detail-header">
         <div className="flex items-center space-x-4">
           <button
             onClick={() => navigate('/companies')}
@@ -139,7 +148,7 @@ const CompanyDetail: React.FC = () => {
       </div>
 
       {/* Company Information */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6" data-guide-id="company-info-section">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('common.companyInformation')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>

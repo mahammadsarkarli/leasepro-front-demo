@@ -45,13 +45,8 @@ const PaymentEdit: React.FC = () => {
         if (companies.length === 0) {
           await loadCompanies();
         }
-        console.log('Contracts loaded:', contracts.length);
-        console.log('Customers loaded:', customers.length);
-        console.log('Contract data sample:', contracts[0]);
-        console.log('Customer data sample:', customers[0]);
         
         const paymentData = await getPaymentById(id);
-        console.log('Payment data loaded:', paymentData);
         if (paymentData) {
           // Convert string dates to Date objects for the application
           const paymentWithDates = {
@@ -63,11 +58,21 @@ const PaymentEdit: React.FC = () => {
           };
           
           setPayment(paymentWithDates);
+          const formatDate = (date: string | Date): string => {
+            if (date instanceof Date) {
+              return date.toISOString().split('T')[0];
+            }
+            if (typeof date === 'string') {
+              return date.split('T')[0];
+            }
+            return new Date().toISOString().split('T')[0];
+          };
+
           setFormData({
             contract_id: paymentData.contract_id,
             amount: paymentData.amount.toString(),
-            payment_date: paymentData.payment_date.split('T')[0], // Handle string date from database
-            due_date: paymentData.due_date.split('T')[0], // Handle string date from database
+            payment_date: formatDate(paymentData.payment_date),
+            due_date: formatDate(paymentData.due_date),
             payment_method: paymentData.payment_method,
             notes: paymentData.notes || ''
           });
@@ -106,14 +111,6 @@ const PaymentEdit: React.FC = () => {
             overdueDays,
             company.interest_rate || 1
           );
-          
-          console.log('Payment calculation:', {
-            paymentDate: paymentDate.toISOString(),
-            dueDate: dueDate.toISOString(),
-            overdueDays,
-            isOverdue,
-            overduePenalty
-          });
           
           setPaymentCalculation({
             isOverdue,
@@ -201,16 +198,6 @@ const PaymentEdit: React.FC = () => {
         overdueDays,
         company.interest_rate || 1
       );
-      
-      console.log('Submit calculation:', {
-        paymentDate: paymentDate.toISOString(),
-        dueDate: dueDate.toISOString(),
-        overdueDays,
-        isOverdue,
-        overduePenalty,
-        monthlyPayment: selectedContract.monthly_payment,
-        interestRate: company.interest_rate
-      });
 
       // Prepare updates object for the service
       const updates = {
@@ -229,9 +216,7 @@ const PaymentEdit: React.FC = () => {
         updated_at: new Date().toISOString()
       };
 
-      console.log('Updating payment with:', updates);
       await updatePayment(payment.id, updates);
-      console.log('Payment updated successfully');
       navigate('/payments');
     } catch (error) {
       console.error('Error updating payment:', error);
@@ -272,14 +257,14 @@ const PaymentEdit: React.FC = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200" data-guide-id="payment-edit-header">
             <h1 className="text-2xl font-semibold text-gray-900">{t('pages.payments.edit.title')}</h1>
             <p className="mt-1 text-sm text-gray-600">
               {t('pages.payments.edit.subtitle')}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="px-6 py-6 space-y-6">
+          <form onSubmit={handleSubmit} className="px-6 py-6 space-y-6" data-guide-id="payment-edit-form">
             {errors.submit && (
               <div className="bg-red-50 border border-red-200 rounded-md p-4">
                 <p className="text-sm text-red-600">{errors.submit}</p>
@@ -440,6 +425,7 @@ const PaymentEdit: React.FC = () => {
               </button>
               <button
                 type="submit"
+                data-guide-id="payment-edit-save"
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {t('pages.payments.edit.updatePayment')}

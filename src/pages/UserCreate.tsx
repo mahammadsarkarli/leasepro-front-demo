@@ -56,8 +56,6 @@ const UserCreate: React.FC = () => {
     action: string,
     checked: boolean
   ) => {
-    console.log(`🔐 Permission change: ${page} - ${action} = ${checked}`);
-
     setFormData((prev) => {
       const newPermissions = [...prev.permissions];
       const existingPermission = newPermissions.find((p) => p.page === page);
@@ -112,7 +110,6 @@ const UserCreate: React.FC = () => {
         });
       }
 
-      console.log("📋 Updated permissions:", newPermissions);
       return { ...prev, permissions: newPermissions };
     });
   };
@@ -156,8 +153,6 @@ const UserCreate: React.FC = () => {
     setLoading(true);
 
     try {
-      console.log("🔧 Creating user with permissions:", formData.permissions);
-
       const userData = {
         username: formData.username,
         full_name: formData.full_name,
@@ -166,9 +161,6 @@ const UserCreate: React.FC = () => {
         permissions: formData.permissions,
       };
 
-      console.log("📋 User data being sent:", userData);
-      console.log("📋 Form data full_name field:", formData.full_name);
-      console.log("📋 UserData full_name field:", userData.full_name);
       await createUser(userData);
 
       // Navigate back to users list
@@ -227,7 +219,7 @@ const UserCreate: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between" data-guide-id="user-create-header">
         <div className="flex items-center space-x-4">
           <Button
             variant="outline"
@@ -268,14 +260,15 @@ const UserCreate: React.FC = () => {
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
       
-        <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">
-            {t("users.basicInformation")}
-          </h2>
+        <div data-guide-id="user-form-fields">
+          <Card className="p-6">
+            <h2 className="text-lg font-semibold mb-4">
+              {t("users.basicInformation")}
+            </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Name */}
-            <div>
+            <div data-guide-id="user-name-field">
               <Label htmlFor="full_name">{t("users.name")} *</Label>
               <Input
                 id="full_name"
@@ -291,7 +284,7 @@ const UserCreate: React.FC = () => {
             </div>
 
             {/* Username */}
-            <div>
+            <div data-guide-id="user-username-field">
               <Label htmlFor="username">{t("users.username")} *</Label>
               <Input
                 id="username"
@@ -306,11 +299,13 @@ const UserCreate: React.FC = () => {
               )}
             </div>
           </div>
-        </Card>
+          </Card>
+        </div>
 
         {/* Security Section */}
-        <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">{t("users.security")}</h2>
+        <div data-guide-id="user-security-section">
+          <Card className="p-6">
+            <h2 className="text-lg font-semibold mb-4">{t("users.security")}</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Password */}
@@ -381,10 +376,12 @@ const UserCreate: React.FC = () => {
               )}
             </div>
           </div>
-        </Card>
+          </Card>
+        </div>
 
         {/* Permissions Section */}
-        <Card className="p-6">
+        <div data-guide-id="user-role-select">
+          <Card className="p-6">
           <h2 className="text-lg font-semibold mb-4">
             {t("users.permissions")}
           </h2>
@@ -551,7 +548,8 @@ const UserCreate: React.FC = () => {
           <div className="mt-4 text-sm text-gray-600">
             <p>{t("users.permissionsNote")}</p>
           </div>
-        </Card>
+          </Card>
+        </div>
 
         {/* Submit Buttons */}
         <div className="flex justify-end space-x-4">
@@ -565,6 +563,7 @@ const UserCreate: React.FC = () => {
           </Button>
           <Button
             type="submit"
+            data-guide-id="user-save-button"
             disabled={loading}
             className="flex items-center"
           >

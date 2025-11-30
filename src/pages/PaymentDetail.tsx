@@ -22,8 +22,17 @@ const PaymentDetail: React.FC = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAuthorizationDialog, setShowAuthorizationDialog] = useState(false);
 
+  // Redirect if id is missing
+  useEffect(() => {
+    if (!id) {
+      navigate('/payments');
+    }
+  }, [id, navigate]);
+
   // Load data if not already loaded
   useEffect(() => {
+    if (!id) return;
+    
     const loadData = async () => {
       try {
         setLoading(true);
@@ -41,7 +50,7 @@ const PaymentDetail: React.FC = () => {
     };
 
     loadData();
-  }, []); // Remove function dependencies to prevent repeated calls
+  }, [id]); // Remove function dependencies to prevent repeated calls
 
   // Find payment and related data from context
   const payment = useMemo(() => {
@@ -49,10 +58,20 @@ const PaymentDetail: React.FC = () => {
     if (!foundPayment) return null;
     
     // Convert string dates to Date objects if needed
+    const safeDate = (date: string | Date | null | undefined): Date => {
+      if (date instanceof Date) return date;
+      if (!date) return new Date();
+      try {
+        return new Date(date);
+      } catch {
+        return new Date();
+      }
+    };
+
     return {
       ...foundPayment,
-      payment_date: foundPayment.payment_date instanceof Date ? foundPayment.payment_date : new Date(foundPayment.payment_date),
-      due_date: foundPayment.due_date instanceof Date ? foundPayment.due_date : new Date(foundPayment.due_date)
+      payment_date: safeDate(foundPayment.payment_date),
+      due_date: safeDate(foundPayment.due_date)
     };
   }, [payments, id]);
 
@@ -168,7 +187,7 @@ const PaymentDetail: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8" data-guide-id="payment-detail-header">
           <button
             onClick={() => navigate('/payments')}
             className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 mb-4 transition-colors"
@@ -217,7 +236,7 @@ const PaymentDetail: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Payment Information */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-6" data-guide-id="payment-info-section">
             {/* Payment Status Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-4">

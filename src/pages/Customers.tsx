@@ -191,15 +191,6 @@ const Customers: React.FC = () => {
       (c) => c.status === "active"
     );
 
-    // Debug logging for the specific customer
-    if (customerId === "0b9144ee-9c7e-4530-aaf9-322e25087558") {
-      console.log("Customer contracts:", customerContracts);
-      console.log("Active contracts:", activeContracts);
-      console.log(
-        "All contracts statuses:",
-        customerContracts.map((c) => ({ id: c.id, status: c.status }))
-      );
-    }
 
     return activeContracts.length;
   };
@@ -300,7 +291,7 @@ const Customers: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-        <div>
+        <div data-guide-id="customers-header">
           <h1 className="text-2xl font-bold text-gray-900">
             {t("pages.customers.title")}
           </h1>
@@ -311,12 +302,23 @@ const Customers: React.FC = () => {
           user?.role === "user") && (
           <div className="flex space-x-3">
             <button
+              data-guide-id="add-customer-button"
               onClick={() => navigate("/customers/create")}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
             >
               <Plus className="w-4 h-4 mr-2" />
               {t("pages.customers.addCustomer")}
             </button>
+            {(user?.role === "admin" || user?.role === "superadmin") && (
+              <button
+                data-guide-id="import-customer-button"
+                onClick={() => navigate("/customers/import")}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                {t("common.importCustomers")}
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -348,7 +350,7 @@ const Customers: React.FC = () => {
       <div className="mobile-search-filters flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
         {/* Search and View Toggle Row */}
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-          <div className="flex-1 relative">
+          <div className="flex-1 relative" data-guide-id="search-customers">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
@@ -359,7 +361,7 @@ const Customers: React.FC = () => {
             />
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2" data-guide-id="view-mode-toggle">
             <div className="flex border border-gray-300 rounded-lg">
               <button
                 onClick={() => setViewMode("cards")}
@@ -602,8 +604,9 @@ const Customers: React.FC = () => {
                   )}
 
                   {/* Quick Actions */}
-                  <div className="mt-4 flex space-x-2">
+                  <div className="mt-4 flex space-x-2" data-guide-id="customer-actions">
                     <button
+                      data-guide-id="customer-view-button"
                       onClick={() => {
                         const firstContract = getFirstContract(customer.id);
                         if (firstContract) {
@@ -619,6 +622,7 @@ const Customers: React.FC = () => {
                     {canEdit(user, "customers") && (
                       <>
                         <button
+                          data-guide-id="customer-edit-button"
                           onClick={() =>
                             navigate(`/customers/${customer.id}/edit`)
                           }
@@ -628,6 +632,7 @@ const Customers: React.FC = () => {
                         </button>
                         {canDelete(user, "customers") && (
                           <button
+                            data-guide-id="customer-delete-button"
                             onClick={() =>
                               handleDeleteClick(
                                 customer.id,
@@ -673,7 +678,7 @@ const Customers: React.FC = () => {
                   <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {t("common.contractBeginDate")}
                   </th>
-                  <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider" data-guide-id="customer-actions">
                     {t("common.actions")}
                   </th>
                 </tr>
@@ -771,6 +776,7 @@ const Customers: React.FC = () => {
                     <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end space-x-1 sm:space-x-2">
                         <button
+                          data-guide-id="customer-view-button"
                           onClick={() => {
                             const firstContract = getFirstContract(customer.id);
                             if (firstContract) {
@@ -786,6 +792,7 @@ const Customers: React.FC = () => {
                         </button>
                         {canEdit(user, "customers") && (
                           <button
+                            data-guide-id="customer-edit-button"
                             onClick={() =>
                               navigate(`/customers/${customer.id}/edit`)
                             }
@@ -797,6 +804,7 @@ const Customers: React.FC = () => {
                         )}
                         {canDelete(user, "customers") && (
                           <button
+                            data-guide-id="customer-delete-button"
                             onClick={() =>
                               handleDeleteClick(
                                 customer.id || "",

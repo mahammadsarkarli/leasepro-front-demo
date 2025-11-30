@@ -239,9 +239,6 @@ export const showApiError = (
     timer: 4000, // Hata mesajları için daha uzun süre
     showConfirmButton: true
   });
-  
-  // Console'a da log et (debug için)
-  console.error(`[API Error - ${entity}]:`, errorMessage);
 };
 
 /**

@@ -30,14 +30,6 @@ const Analytics: React.FC = () => {
   // Load data when component mounts
   useEffect(() => {
     const loadAnalyticsData = async () => {
-      console.log('Analytics: Loading data...', {
-        companies: companies.length,
-        customers: customers.length,
-        contracts: contracts.length,
-        payments: payments.length,
-        vehicles: vehicles.length
-      });
-      
       const promises = [];
       
       if (companies.length === 0) {
@@ -58,9 +50,6 @@ const Analytics: React.FC = () => {
       
       if (promises.length > 0) {
         await Promise.all(promises);
-        console.log('Analytics: Data loaded successfully');
-      } else {
-        console.log('Analytics: All data already loaded');
       }
     };
     
@@ -69,20 +58,13 @@ const Analytics: React.FC = () => {
 
   // Set default company when companies are loaded
   useEffect(() => {
-    if (companies.length > 0 && !selectedCompanyId) {
+    if (companies.length > 0 && !selectedCompanyId && companies[0]?.id) {
       setSelectedCompanyId(companies[0].id);
     }
   }, [companies, selectedCompanyId]);
 
   // Filter data based on selected company
   const filteredData = useMemo(() => {
-    console.log('Analytics: Filtering data for company:', selectedCompanyId, {
-      totalCustomers: customers.length,
-      totalContracts: contracts.length,
-      totalPayments: payments.length,
-      totalVehicles: vehicles.length
-    });
-    
     if (!selectedCompanyId) {
       return {
         customers: [],
@@ -99,14 +81,12 @@ const Analytics: React.FC = () => {
       vehicles: vehicles.filter(v => v.company_id === selectedCompanyId)
     };
     
-    console.log('Analytics: Filtered data:', {
-      filteredCustomers: filtered.customers.length,
-      filteredContracts: filtered.contracts.length,
+    return {
+      customers: filtered.customers,
+      contracts: filtered.contracts,
       filteredPayments: filtered.payments.length,
       filteredVehicles: filtered.vehicles.length
-    });
-    
-    return filtered;
+    };
   }, [selectedCompanyId, customers, contracts, payments, vehicles]);
 
   // Calculate KPI metrics
@@ -226,7 +206,7 @@ const Analytics: React.FC = () => {
       {/* Header */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-          <div>
+          <div data-guide-id="analytics-header">
             <h1 className="text-2xl font-bold text-gray-900 flex items-center">
               <BarChart3 className="w-6 h-6 mr-3 text-blue-600" />
               Analitik Raporlar
@@ -304,7 +284,7 @@ const Analytics: React.FC = () => {
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 gap-6" data-guide-id="analytics-charts">
         {/* Monthly Contract Signings */}
         <LineChart 
           data={monthlyContractData}

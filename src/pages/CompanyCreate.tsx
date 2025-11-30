@@ -60,7 +60,7 @@ const CompanyCreate: React.FC = () => {
   return (
     <div className="w-full space-y-6">
       {/* Header */}
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4" data-guide-id="company-create-header">
         <button
           onClick={() => navigate("/companies")}
           className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50"
@@ -101,7 +101,7 @@ const CompanyCreate: React.FC = () => {
       )}
 
       {/* Form */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6" data-guide-id="company-form-fields">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Company Name */}
           <div>
@@ -312,6 +312,7 @@ const CompanyCreate: React.FC = () => {
             </button>
             <button
               type="submit"
+              data-guide-id="company-save-button"
               disabled={isSubmitting || !formData.name}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >

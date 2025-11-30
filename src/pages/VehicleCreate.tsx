@@ -77,17 +77,12 @@ const VehicleCreate: React.FC = () => {
         texpasport_document: formData.texpasport_document || undefined
       };
 
-      // Debug logging
-      console.log('🔍 Form data company_id:', formData.company_id);
-      console.log('🔍 Vehicle data being sent:', vehicleData);
-
       await createVehicle(vehicleData);
       await loadVehicles(); // Refresh vehicles data
       showApiSuccess(t('notifications.created', { entity: t('common.vehicle') }), 'vehicle');
       navigate('/vehicles');
-    } catch (error) {
-      console.error('Error creating vehicle:', error);
-      showApiError(error, 'vehicle');
+      } catch (error) {
+        showApiError(error, 'vehicle');
     } finally {
       setIsSubmitting(false);
     }
@@ -104,7 +99,7 @@ const VehicleCreate: React.FC = () => {
   return (
     <div className="w-full space-y-6">
       {/* Header */}
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4" data-guide-id="vehicle-create-header">
         <button
           onClick={() => navigate('/vehicles')}
           className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50"
@@ -118,7 +113,7 @@ const VehicleCreate: React.FC = () => {
       </div>
 
       {/* Form */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6" data-guide-id="vehicle-form-fields">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Company Selection */}
           <div>
@@ -310,6 +305,7 @@ const VehicleCreate: React.FC = () => {
             </button>
             <button
               type="submit"
+              data-guide-id="vehicle-save-button"
               disabled={isSubmitting}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >

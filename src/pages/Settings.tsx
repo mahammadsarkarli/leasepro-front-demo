@@ -62,20 +62,19 @@ const Settings: React.FC = () => {
   const handleContactInfoSave = (updatedContactInfo: CompanyContactInfo) => {
     setContactInfo(updatedContactInfo);
     // In a real application, you would save this to your backend
-    console.log('Saving contact info:', updatedContactInfo);
   };
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
+      <div data-guide-id="settings-header">
         <h1 className="text-2xl font-bold text-gray-900">{t('pages.settings.title')}</h1>
         <p className="text-gray-600">{t('pages.settings.subtitle')}</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Sidebar Navigation */}
-        <div className="lg:w-64 flex-shrink-0">
+        <div className="lg:w-64 flex-shrink-0" data-guide-id="settings-sections">
           <nav className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <ul className="space-y-1">
               {tabs.map((tab) => {

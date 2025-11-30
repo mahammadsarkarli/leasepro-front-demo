@@ -38,6 +38,9 @@ import Settings from './pages/Settings';
 import DypSenedleri from './pages/DypSenedleri';
 import OverdueNotifications from './pages/OverdueNotifications';
 import Analytics from './pages/Analytics';
+import HoverGuide from './components/HoverGuide';
+import GuideTourWelcome from './components/GuideTourWelcome';
+import GuideInfoModal from './components/GuideInfoModal';
 
 // Component to redirect to first accessible page
 function FirstAccessiblePage() {
@@ -120,6 +123,43 @@ function ProtectedRoute({
 function AuthenticatedApp() {
   const { t } = useTranslation();
   const { isAuthenticated, isLoading } = useAuth();
+  const [showGuideWelcome, setShowGuideWelcome] = React.useState(false);
+  const [showHoverGuide, setShowHoverGuide] = React.useState(false);
+  const [showGuideInfo, setShowGuideInfo] = React.useState(false);
+
+  // Check if guide should be shown on first visit
+  React.useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      const guideCompleted = localStorage.getItem('app_hover_guide_completed');
+      const tourCompleted = localStorage.getItem('app_guide_tour_completed');
+      
+      // Show info modal on first visit
+      const hasSeenInfo = localStorage.getItem('app_guide_info_seen');
+      if (!hasSeenInfo) {
+        setShowGuideInfo(true);
+        localStorage.setItem('app_guide_info_seen', 'true');
+      }
+      
+      // Show welcome modal if neither guide has been completed
+      // For testing, you can comment out the localStorage check
+      if (!guideCompleted && !tourCompleted) {
+        const hasSeenWelcome = sessionStorage.getItem('has_seen_guide_welcome');
+        if (!hasSeenWelcome) {
+          setShowGuideWelcome(true);
+          sessionStorage.setItem('has_seen_guide_welcome', 'true');
+        }
+      }
+    }
+  }, [isAuthenticated, isLoading]);
+
+  const handleStartGuide = () => {
+    setShowGuideWelcome(false);
+    setShowHoverGuide(true);
+  };
+
+  const handleCloseGuide = () => {
+    setShowHoverGuide(false);
+  };
 
   if (isLoading) {
     return (
@@ -137,8 +177,11 @@ function AuthenticatedApp() {
   }
 
   return (
-    <Layout>
-      <Routes>
+    <>
+      <Layout onStartGuide={() => {
+        setShowHoverGuide(true);
+      }}>
+        <Routes>
         <Route path="/dashboard" element={<ProtectedRoute requiredPermission={{ page: 'dashboard', action: 'read' }}><Dashboard /></ProtectedRoute>} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/first-accessible" element={<FirstAccessiblePage />} />
@@ -176,7 +219,27 @@ function AuthenticatedApp() {
         <Route path="/" element={<Navigate to="/first-accessible" replace />} />
         <Route path="*" element={<Navigate to="/first-accessible" replace />} />
       </Routes>
-    </Layout>
+      </Layout>
+      
+      {/* Guide Welcome Modal */}
+      <GuideTourWelcome
+        isOpen={showGuideWelcome}
+        onClose={() => setShowGuideWelcome(false)}
+        onStartTour={handleStartGuide}
+      />
+      
+      {/* Hover Guide */}
+      <HoverGuide
+        isActive={showHoverGuide}
+        onClose={handleCloseGuide}
+      />
+      
+      {/* Guide Info Modal */}
+      <GuideInfoModal
+        isOpen={showGuideInfo}
+        onClose={() => setShowGuideInfo(false)}
+      />
+    </>
   );
 }
 

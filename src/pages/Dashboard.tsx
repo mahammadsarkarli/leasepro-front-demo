@@ -94,16 +94,6 @@ const Dashboard: React.FC = () => {
     //   filteredPayments = filteredPayments.filter(p => p.company_id === user.companyId);
     // }
 
-    // Debug logging for filtered data
-    console.log('Dashboard filtered data:', {
-      totalPayments: payments.length,
-      filteredPayments: filteredPayments.length,
-      totalContracts: contracts.length,
-      filteredContracts: filteredContracts.length,
-      totalCustomers: customers.length,
-      filteredCustomers: filteredCustomers.length
-    });
-
     return { filteredCustomers, filteredContracts, filteredPayments };
   }, [customers, contracts, payments, dateStart, dateEnd, user]);
 
@@ -184,32 +174,6 @@ const Dashboard: React.FC = () => {
       return dueDate < todayDate;
     }).length;
 
-    // Debug logging for amount calculations
-    console.log('Dashboard metrics calculation:', {
-      totalPayments: filteredPayments.length,
-      validPayments: validPayments.length,
-      totalRevenue,
-      totalInterest,
-      outstandingBalance,
-      avgPaymentAmount,
-      paymentMethodsCount: Object.keys(paymentMethods).length,
-      // New metrics
-      activeContracts,
-      todayPaymentDueContracts,
-      finalTodayDue,
-      overdueNotifications,
-      todayString,
-      // Comparison with DataContext notifications
-      dataContextOverdueCount: notifications.filter(n => n.daysOverdue && n.daysOverdue > 0).length,
-      samplePayments: validPayments.slice(0, 3).map(p => ({
-        id: p.id,
-        amount: p.amount,
-        interest_amount: p.interest_amount,
-        payment_date: p.payment_date,
-        payment_method: p.payment_method
-      }))
-    });
-
     // Validate calculations and provide fallbacks
     const validatedMetrics = {
       totalRevenue: isNaN(totalRevenue) ? 0 : totalRevenue,
@@ -221,10 +185,22 @@ const Dashboard: React.FC = () => {
       outstandingBalance: isNaN(outstandingBalance) ? 0 : outstandingBalance,
       avgPaymentAmount: isNaN(avgPaymentAmount) ? 0 : avgPaymentAmount,
       paymentMethods: paymentMethods || {},
+      paymentMethodsCount: Object.keys(paymentMethods).length,
       latePayments: isNaN(latePayments) ? 0 : latePayments,
       totalPayments: isNaN(totalPayments) ? 0 : totalPayments,
       todayPaymentDueContracts: isNaN(finalTodayDue) ? 0 : finalTodayDue,
-      overdueNotifications: isNaN(overdueNotifications) ? 0 : overdueNotifications
+      finalTodayDue: isNaN(finalTodayDue) ? 0 : finalTodayDue,
+      overdueNotifications: isNaN(overdueNotifications) ? 0 : overdueNotifications,
+      todayString,
+      // Comparison with DataContext notifications
+      dataContextOverdueCount: notifications.filter(n => n.daysOverdue && n.daysOverdue > 0).length,
+      samplePayments: validPayments.slice(0, 3).map(p => ({
+        id: p.id,
+        amount: p.amount,
+        interest_amount: p.interest_amount,
+        payment_date: p.payment_date,
+        payment_method: p.payment_method
+      }))
     };
 
     return validatedMetrics;
@@ -398,8 +374,14 @@ const Dashboard: React.FC = () => {
       <div className="mobile-dashboard-stats grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {stats.map((stat) => {
           const Icon = stat.icon;
+          const guideId = stat.name === t('dashboard.activeContracts') ? 'active-contracts-stat' : 
+                         stat.name === t('common.dueToday') ? 'due-today-stat' : 
+                         stat.name === t('common.overdue') ? 'overdue-stat' : undefined;
           return (
-            <div key={stat.name} className="stats-card bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow duration-200">
+            <div 
+              key={stat.name} 
+              data-guide-id={guideId}
+              className="stats-card bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow duration-200">
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
                   <p className="stats-card-title text-gray-600 text-sm sm:text-base">{stat.name}</p>

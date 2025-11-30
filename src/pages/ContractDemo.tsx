@@ -112,7 +112,7 @@ const ContractDemo: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-12" data-guide-id="contract-demo-header">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Təkmilləşdirilmiş Etibarnamə Sistemi
           </h1>
@@ -177,7 +177,7 @@ const ContractDemo: React.FC = () => {
         </div>
 
         {/* Demo Section */}
-        <div className="bg-white rounded-xl shadow-xl p-8 border border-gray-200">
+        <div className="bg-white rounded-xl shadow-xl p-8 border border-gray-200" data-guide-id="contract-demo-form">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
               Demo Etibarnamə
@@ -228,6 +228,7 @@ const ContractDemo: React.FC = () => {
           <div className="flex flex-wrap justify-center gap-4">
             <button
               onClick={handlePrintDemo}
+              data-guide-id="contract-demo-actions"
               className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-lg"
             >
               <FileText className="w-5 h-5 mr-2" />

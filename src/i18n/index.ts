@@ -24,7 +24,7 @@ i18n
   .init({
     resources,
     fallbackLng: "en",
-    debug: true, // Enable debug to see translation issues
+    debug: false, // Disabled to reduce console noise
     interpolation: {
       escapeValue: false,
     },

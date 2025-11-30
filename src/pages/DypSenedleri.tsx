@@ -98,21 +98,21 @@ const DypSenedleri: React.FC = () => {
   };
 
   const handlePrint = () => {
-    const company = companies.find(c => c.id === selectedCompany) || companies[0];
+    const company = companies.find(c => c.id === selectedCompany) || (companies.length > 0 ? companies[0] : null);
     if (!company) return;
     const html = generateDypDocumentHTML(formData as any, company, selectedTemplate);
     printDocument(html, 'dyp-sened');
   };
 
   const handleDownloadPDF = () => {
-    const company = companies.find(c => c.id === selectedCompany) || companies[0];
+    const company = companies.find(c => c.id === selectedCompany) || (companies.length > 0 ? companies[0] : null);
     if (!company) return;
     const html = generateDypDocumentHTML(formData as any, company, selectedTemplate);
     downloadPDF(html, 'dyp-sened');
   };
 
   const handlePrintAll = () => {
-    const company = companies.find(c => c.id === selectedCompany) || companies[0];
+    const company = companies.find(c => c.id === selectedCompany) || (companies.length > 0 ? companies[0] : null);
     if (!company) return;
     const html = generateDypAllDocumentsHTML(formData as any, company);
     printDocument(html, 'dyp-sened-all');
@@ -121,7 +121,7 @@ const DypSenedleri: React.FC = () => {
   const handleShowTemplate = () => {
     const company =
       companies.find(c => c.id === selectedCompany) ||
-      companies[0] ||
+      (companies.length > 0 ? companies[0] : null) ||
       ({ id: 'preview', name: 'Şirkət', interest_rate: 0, created_at: new Date(), is_active: true } as any);
     const html = generateDypDocumentHTML(formData as any, company, selectedTemplate);
     const preview = window.open('', '_blank');
@@ -438,6 +438,7 @@ const DypSenedleri: React.FC = () => {
             </button>
             <button
               onClick={handlePrint}
+              data-guide-id="dyp-actions"
               className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900"
             >
               {t('print.print')}
@@ -499,7 +500,7 @@ const DypSenedleri: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
+        <div className="mb-8" data-guide-id="dyp-header">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             {t('dypSenedleri.title')}
           </h1>
@@ -539,7 +540,7 @@ const DypSenedleri: React.FC = () => {
 
         {renderStepIndicator()}
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6" data-guide-id="dyp-form">
           {renderCurrentStep()}
 
           {currentStep < 4 && (

@@ -4,22 +4,18 @@ import { useTranslation } from '../i18n';
 import { 
   Plus, 
   Search, 
-  Filter, 
   Car, 
   Edit, 
   Trash2, 
-  FileText, 
-  Download, 
-  Loader2,
   Eye,
-  FileImage,
-  Info,
   Grid3X3,
-  List
+  List,
+  Info,
+  FileText,
+  FileImage
 } from 'lucide-react';
 import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
-import { Vehicle, ContractStatus } from '../types';
 import { deleteVehicle } from '../services/vehicles';
 import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog';
 
@@ -31,7 +27,6 @@ const Vehicles: React.FC = () => {
     customers, 
     contracts, 
     vehicles,
-    templates, 
     selectedCompany, 
     setSelectedCompany, 
     refreshData,
@@ -44,10 +39,7 @@ const Vehicles: React.FC = () => {
   } = useData();
   const { canEdit, canCreate, canDelete } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterCompany, setFilterCompany] = useState(selectedCompany || '');
-  const [downloadingTemplate, setDownloadingTemplate] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'occupied'>('all');
   const [viewMode, setViewMode] = useState<'card' | 'table'>(() => {
     // Default to table view on desktop, card view on mobile
@@ -88,7 +80,6 @@ const Vehicles: React.FC = () => {
         }
       } catch (error) {
         console.error('Error loading data:', error);
-        setError('Failed to load data');
       }
     };
 
@@ -164,19 +155,6 @@ const Vehicles: React.FC = () => {
     );
   };
 
-  const handleTemplateDownload = async (template: Template) => {
-    setDownloadingTemplate(template.id);
-    try {
-      // Simulate template processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      // Here you would implement actual template processing logic
-      console.log('Template download:', template.name);
-    } catch (error) {
-      console.error('Error downloading template:', error);
-    } finally {
-      setDownloadingTemplate(null);
-    }
-  };
 
   const handleDeleteVehicle = (vehicleId: string, vehicleName: string) => {
     setDeleteDialog({
@@ -220,7 +198,7 @@ const Vehicles: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-        <div>
+        <div data-guide-id="vehicles-header">
           <h1 className="text-2xl font-bold text-gray-900">
             {t("pages.vehicles.title")}
           </h1>
@@ -229,12 +207,14 @@ const Vehicles: React.FC = () => {
         {canCreate('vehicles') && (
           <div className="flex space-x-3">
             <button
+              data-guide-id="add-vehicle-button"
               onClick={() => navigate('/vehicles/create')}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <Plus className="w-4 h-4 mr-2" />
               {t("common.createVehicle")}
             </button>
+          
           </div>
         )}
       </div>
@@ -274,7 +254,7 @@ const Vehicles: React.FC = () => {
       {/* Filters */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
+          <div className="flex-1" data-guide-id="search-vehicles">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
@@ -286,7 +266,7 @@ const Vehicles: React.FC = () => {
               />
             </div>
           </div>
-          <div className="sm:w-64">
+          <div className="sm:w-64" data-guide-id="company-filter-vehicles">
             <select
               value={selectedCompany || ''}
               onChange={(e) => setSelectedCompany(e.target.value || null)}
@@ -334,7 +314,7 @@ const Vehicles: React.FC = () => {
         </div>
         
         {/* Status Filter Buttons */}
-        <div className="mt-4">
+        <div className="mt-4" data-guide-id="status-filter-vehicles">
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setStatusFilter('all')}
@@ -417,6 +397,7 @@ const Vehicles: React.FC = () => {
                     </div>
                     <div className="flex-shrink-0 flex items-center space-x-2">
                       <button
+                        data-guide-id="vehicle-view-button"
                         onClick={() => navigate(`/vehicles/${vehicle.id}`)}
                         className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-50"
                         title={t("common.viewDetails")}
@@ -425,11 +406,22 @@ const Vehicles: React.FC = () => {
                       </button>
                       {canEdit("vehicles") && (
                         <button
+                          data-guide-id="vehicle-edit-button"
                           onClick={() => navigate(`/vehicles/${vehicle.id}/edit`)}
                           className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-50"
                           title={t("common.edit")}
                         >
                           <Edit className="w-4 h-4" />
+                        </button>
+                      )}
+                      {canDelete("vehicles") && !isVehicleInActiveContract(vehicle.id) && (
+                        <button
+                          data-guide-id="vehicle-delete-button"
+                          onClick={() => handleDeleteVehicle(vehicle.id, `${vehicle.make} ${vehicle.model} (${vehicle.license_plate})`)}
+                          className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50"
+                          title={t("common.delete")}
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       )}
                     </div>
@@ -595,6 +587,7 @@ const Vehicles: React.FC = () => {
                           )}
                           {canEdit('vehicles') && (
                             <button
+                              data-guide-id="vehicle-edit-button"
                               onClick={() => navigate(`/vehicles/${vehicle.id}/edit`)}
                               className="text-indigo-600 hover:text-indigo-900 p-1 rounded-lg hover:bg-indigo-50"
                               title={t("pages.vehicles.table.editVehicle")}
@@ -604,6 +597,7 @@ const Vehicles: React.FC = () => {
                           )}
                           {canDelete('vehicles') && !isVehicleInActiveContract(vehicle.id) && (
                             <button
+                              data-guide-id="vehicle-delete-button"
                               onClick={() => handleDeleteVehicle(vehicle.id, `${vehicle.make} ${vehicle.model} (${vehicle.license_plate})`)}
                               className="text-red-600 hover:text-red-900 p-1 rounded-lg hover:bg-red-50"
                               title={t("pages.vehicles.table.deleteVehicle")}
@@ -612,6 +606,7 @@ const Vehicles: React.FC = () => {
                             </button>
                           )}
                           <button
+                            data-guide-id="vehicle-view-button"
                             onClick={() => navigate(`/vehicles/${vehicle.id}`)}
                             className="text-purple-600 hover:text-purple-900 p-1 rounded-lg hover:bg-purple-50"
                             title={t("pages.vehicles.table.viewDetails")}

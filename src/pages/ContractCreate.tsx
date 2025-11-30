@@ -243,8 +243,6 @@ const ContractCreate: React.FC = () => {
 
       // Create payment records for months already paid
       if (formData.months_already_paid > 0) {
-        console.log(`Creating ${formData.months_already_paid} payment records for contract ${createdContract.id}`);
-        
         try {
           for (let month = 0; month < formData.months_already_paid; month++) {
             // Use addMonths from date-fns to handle month calculations correctly
@@ -267,19 +265,13 @@ const ContractCreate: React.FC = () => {
               notes: `Payment for month ${month + 1} (created during contract creation)`
             };
             
-            console.log(`Creating payment ${month + 1}:`, paymentData);
-            
-            const createdPayment = await createPayment(paymentData);
-            console.log(`Payment ${month + 1} created successfully:`, createdPayment);
+            await createPayment(paymentData);
           }
-          
-          console.log(`All ${formData.months_already_paid} payment records created successfully`);
           
           // Verify payments were created by querying them
           try {
             const { getPaymentsByContract } = await import('../services/payments');
-            const createdPayments = await getPaymentsByContract(createdContract.id);
-            console.log(`Verified ${createdPayments.length} payments exist for contract ${createdContract.id}:`, createdPayments);
+            await getPaymentsByContract(createdContract.id);
           } catch (verifyError) {
             console.error('Error verifying payments:', verifyError);
           }
@@ -297,19 +289,8 @@ const ContractCreate: React.FC = () => {
         }
       }
       
-      // Show success message about payments created
-      if (formData.months_already_paid > 0) {
-        console.log(`Contract created successfully with ${formData.months_already_paid} payment records`);
-      }
-      
       // Save permission document (always save to handle both adding and removing drivers)
       // Do this BEFORE navigation to ensure it completes and any errors are visible
-      console.log('Saving permission document with drivers:', {
-        driversCount: drivers.length,
-        drivers: drivers,
-        contractId: createdContract.id
-      });
-      
       // Always try to save permission document, even if drivers array is empty
       // This ensures we can handle both adding and removing drivers
       const permissionDoc: PermissionDocument = {
@@ -319,21 +300,8 @@ const ContractCreate: React.FC = () => {
         drivers: drivers
       };
       
-      console.log('Attempting to save permission document:', {
-        contractId: createdContract.id,
-        driversCount: drivers.length,
-        drivers: drivers,
-        permissionDoc: permissionDoc
-      });
-      
       try {
-        const savedPermissionDoc = await upsertPermissionDocument(permissionDoc);
-        console.log('Permission document saved successfully:', savedPermissionDoc);
-        
-        // Show success message if drivers were saved
-        if (drivers.length > 0) {
-          console.log(`Successfully saved ${drivers.length} drivers for contract ${createdContract.id}`);
-        }
+        await upsertPermissionDocument(permissionDoc);
       } catch (permissionError) {
         console.error('Error saving permission document:', permissionError);
         console.error('Permission document data that failed:', permissionDoc);
@@ -490,7 +458,7 @@ const ContractCreate: React.FC = () => {
   return (
     <div className="w-full space-y-6">
       {/* Header */}
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4" data-guide-id="contract-create-header">
         <button
           onClick={() => navigate('/contracts')}
           className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50"
@@ -535,7 +503,7 @@ const ContractCreate: React.FC = () => {
                 ))}
               </select>
             </div>
-            <div>
+            <div data-guide-id="contract-customer-select">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 {t('common.customer')} *
               </label>
@@ -567,7 +535,7 @@ const ContractCreate: React.FC = () => {
           </div>
 
           {/* Vehicle Selection */}
-          <div className="border-t border-gray-200 pt-6">
+          <div className="border-t border-gray-200 pt-6" data-guide-id="contract-vehicle-select">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-medium text-gray-900">{t('common.vehicleInformation')}</h3>
             </div>
@@ -659,7 +627,7 @@ const ContractCreate: React.FC = () => {
           </div>
 
           {/* Financial Information */}
-          <div className="border-t border-gray-200 pt-6">
+          <div className="border-t border-gray-200 pt-6" data-guide-id="contract-financial-fields">
             <h3 className="text-lg font-medium text-gray-900 mb-4">{t('common.financialInformation')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
@@ -797,7 +765,7 @@ const ContractCreate: React.FC = () => {
           </div>
 
           {/* Permission Document Section */}
-          <div className="border-t border-gray-200 pt-6">
+          <div className="border-t border-gray-200 pt-6" data-guide-id="contract-extra-drivers">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-medium text-gray-900 flex items-center">
                 <FileText className="w-5 h-5 mr-2" />
@@ -865,6 +833,7 @@ const ContractCreate: React.FC = () => {
             </button>
             <button
               type="submit"
+              data-guide-id="contract-save-button"
               disabled={isSubmitting || !formData.customer_id || !formData.company_id}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >

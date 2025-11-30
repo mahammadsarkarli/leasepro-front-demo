@@ -20,7 +20,6 @@ import { useAuth } from "../contexts/AuthContext";
 import { getDisplayMonthlyPayment } from "../utils/paymentCalculationUtils";
 import { roundPaymentAmount, roundInterestAmount } from "../utils/customRoundingUtils";
 import { useNotifications } from "../hooks/useNotifications";
-// import { startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
 import { formatDisplayDate } from "../utils/dateUtils";
 import DeleteConfirmationDialog from "../components/DeleteConfirmationDialog";
 import EnhancedExtraPaymentModal from "../components/EnhancedExtraPaymentModal";
@@ -86,13 +85,11 @@ const Payments: React.FC = () => {
         if (contractIdFromUrl) {
           // If contract ID in URL, load all payments for that contract (no date filter)
           paymentParams.contract_id = contractIdFromUrl;
-          console.log("🔍 Initial load - Loading ALL payments for contract:", contractIdFromUrl);
         } else {
           // If no contract ID, load today's payments with date filter
           const today = getTodayDateString();
           paymentParams.payment_date_from = today;
           paymentParams.payment_date_to = today;
-          console.log("🔍 Initial load - Loading ONLY today's payments:", today);
         }
         
         const promises = [];
@@ -105,7 +102,7 @@ const Payments: React.FC = () => {
         
         await Promise.all(promises);
       } catch (err) {
-        console.error("Error loading data:", err);
+        // Error loading data, will be handled by error boundaries
       }
     };
 
@@ -154,7 +151,7 @@ const Payments: React.FC = () => {
         
         await loadPayments(params);
       } catch (err) {
-        console.error("Error loading filtered payments:", err);
+        // Error loading filtered payments, will be handled by error boundaries
       }
     };
 
@@ -175,23 +172,20 @@ const Payments: React.FC = () => {
         if (contractIdFromUrl) {
           // If contract ID in URL, load all payments for that contract (no date filter)
           params.contract_id = contractIdFromUrl;
-          console.log("🔍 Loading ALL payments for contract:", contractIdFromUrl);
         } else if (startDate && endDate) {
           // If no contract ID, apply date filter
           params.payment_date_from = startDate;
           params.payment_date_to = endDate;
-          console.log("🔍 Loading payments with date range:", { startDate, endDate });
         } else {
           // If no date range, load today's payments by default
           const today = getTodayDateString();
           params.payment_date_from = today;
           params.payment_date_to = today;
-          console.log("🔍 Loading today's payments:", today);
         }
         
         await loadPayments(params);
       } catch (err) {
-        console.error("Error loading payments by date:", err);
+        // Error loading payments by date, will be handled by error boundaries
       }
     };
 
@@ -277,32 +271,6 @@ const Payments: React.FC = () => {
       : t("common.allCompanies"),
   };
 
-  // Debug logging for payments display
-  
-  console.log("🔍 Payments page - final filtered payments:", {
-    totalPayments: payments.length,
-    filteredPayments: filteredPayments.length,
-    searchTerm,
-    paymentMethodFilter,
-    statusFilter,
-    contractFilter,
-    startDate: startDate || "No start date filter",
-    endDate: endDate || "No end date filter",
-    selectedCompany,
-    userRole: user?.role,
-    filteringMethod: searchParams.get("contractId") 
-      ? "Contract filtering (all payments for specific contract)" 
-      : "API date filtering + client-side sorting (newest first)",
-    apiLimit: "1000 records max",
-    showStats: "Always show payment statistics",
-    defaultBehavior: searchParams.get("contractId") 
-      ? "All payments for specific contract (no date filter)" 
-      : "API filtered payments + sorted by date (newest first)",
-    todayDateString: getTodayDateString(),
-    dateFilterActive: (!!startDate && !!endDate),
-    stats,
-  });
-
   const handleDeleteClick = (paymentId: string, paymentInfo: string) => {
     setDeleteDialog({
       isOpen: true,
@@ -328,7 +296,6 @@ const Payments: React.FC = () => {
       if (contractIdFromUrl) {
         // If contract ID in URL, load all payments for that contract (no date filter)
         params.contract_id = contractIdFromUrl;
-        console.log("🔍 After delete - Reloading ALL payments for contract:", contractIdFromUrl);
       } else if (contractFilter) {
         // If contract filter is set (but not from URL), load payments for specific contract with date filtering
         params.contract_id = contractFilter;
@@ -339,7 +306,6 @@ const Payments: React.FC = () => {
           params.payment_date_from = today;
           params.payment_date_to = today;
         }
-        console.log("🔍 After delete - Reloading payments for contract with date filter:", contractFilter);
       } else {
         // If no contract filter, apply date filter only
         if (startDate && endDate) {
@@ -349,7 +315,6 @@ const Payments: React.FC = () => {
           params.payment_date_from = today;
           params.payment_date_to = today;
         }
-        console.log("🔍 After delete - Reloading payments with date filter only");
       }
       
       await loadPayments(params);
@@ -443,24 +408,6 @@ const Payments: React.FC = () => {
       return true; // Admin can see all contracts
     });
 
-    // Debug logging for contracts with extra payments
-    const contractsWithExtraPayments = availableContracts.filter(
-      (c) => c.total_extra_payments > 0
-    );
-    if (contractsWithExtraPayments.length > 0) {
-      console.log(
-        "🔍 Payments - Contracts with extra payments:",
-        contractsWithExtraPayments.map((c) => ({
-          id: c.id,
-          monthly_payment: c.monthly_payment,
-          original_monthly_payment: c.original_monthly_payment,
-          adjusted_monthly_payment: c.adjusted_monthly_payment,
-          total_extra_payments: c.total_extra_payments,
-          hasAdjustedPayment: !!c.adjusted_monthly_payment,
-        }))
-      );
-    }
-
     // Apply search filter
     if (contractSearchTerm.trim()) {
       const term = contractSearchTerm.toLowerCase();
@@ -490,7 +437,7 @@ const Payments: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="mobile-flex-col flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-        <div>
+        <div data-guide-id="payments-header">
           <h1 className="text-2xl font-bold text-gray-900">
             {t("pages.payments.title")}
           </h1>
@@ -499,6 +446,7 @@ const Payments: React.FC = () => {
         <div className="flex space-x-3">
           {canCreate("payments") && (
             <button
+              data-guide-id="add-payment-button"
               onClick={() => navigate("/payments/create")}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
             >
@@ -618,7 +566,7 @@ const Payments: React.FC = () => {
       <div className="flex flex-col space-y-4">
         {/* First row: Search, Date filters and Company filter */}
         <div className="flex flex-col xl:flex-row space-y-4 xl:space-y-0 xl:space-x-4">
-          <div className="flex-1 relative">
+          <div className="flex-1 relative" data-guide-id="search-payments">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
@@ -629,7 +577,7 @@ const Payments: React.FC = () => {
             />
           </div>
 
-          <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
+          <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4" data-guide-id="date-filter-payments">
             <div className="w-full lg:w-60 relative">
               <ImprovedDateInput
                 value={startDate}
@@ -678,6 +626,7 @@ const Payments: React.FC = () => {
           </select>
 
           <select
+            data-guide-id="method-filter-payments"
             value={paymentMethodFilter}
             onChange={(e) => setPaymentMethodFilter(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -865,6 +814,7 @@ const Payments: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex space-x-2">
                         <button
+                          data-guide-id="payment-view-button"
                           onClick={() => navigate(`/payments/${payment.id}`)}
                           className="text-blue-600 hover:text-blue-900"
                           title={t("common.viewDetails")}
@@ -873,6 +823,7 @@ const Payments: React.FC = () => {
                         </button>
                         {canEdit("payments") && (
                           <button
+                            data-guide-id="payment-edit-button"
                             onClick={() =>
                               navigate(`/payments/${payment.id}/edit`)
                             }
@@ -884,6 +835,7 @@ const Payments: React.FC = () => {
                         )}
                         {canDelete("payments") && (
                           <button
+                            data-guide-id="payment-delete-button"
                             onClick={() =>
                               handleDeleteClick(
                                 payment.id,

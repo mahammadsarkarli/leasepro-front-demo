@@ -143,7 +143,7 @@ const CustomerCreate: React.FC = () => {
   return (
     <div className="w-full space-y-6">
       {/* Header */}
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4" data-guide-id="customer-create-header">
         <button
           onClick={() => navigate("/customers")}
           className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50"
@@ -159,7 +159,7 @@ const CustomerCreate: React.FC = () => {
       </div>
 
       {/* Form */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6" data-guide-id="customer-form-fields">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Company Selection */}
           <div>
@@ -190,7 +190,7 @@ const CustomerCreate: React.FC = () => {
           </div>
 
           {/* Customer Type Selection */}
-          <div>
+          <div data-guide-id="customer-type-select">
             <label
               htmlFor="customerType"
               className="block text-sm font-medium text-gray-700 mb-2"
@@ -216,8 +216,8 @@ const CustomerCreate: React.FC = () => {
 
           {/* Extra Company Details for Etibarname (for individual customers) */}
           {formData.customer_type === CustomerType.INDIVIDUAL && (
-            <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-              <div className="flex items-center mb-3">
+            <div className="border-2 border-blue-300 rounded-lg p-5 bg-blue-50 shadow-md" data-guide-id="customer-company-details-for-etibarname">
+              <div className="flex items-start mb-3">
                 <input
                   type="checkbox"
                   id="use_company_details_for_etibarname"
@@ -235,17 +235,24 @@ const CustomerCreate: React.FC = () => {
                       }));
                     }
                   }}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mt-0.5"
                 />
-                <label htmlFor="use_company_details_for_etibarname" className="ml-2 text-sm font-medium text-gray-700">
-                  Etibarnamədə şirkət məlumatları göstər (fərdi müştəri üçün)
-                </label>
+                <div className="ml-3 flex-1">
+                  <label htmlFor="use_company_details_for_etibarname" className="text-base font-semibold text-blue-900 cursor-pointer">
+                    Etibarnamədə şirkət məlumatları göstər (fərdi müştəri üçün)
+                  </label>
+                  <div className="mt-2 p-3 bg-white rounded-md border border-blue-200">
+                    <p className="text-sm text-blue-800 leading-relaxed">
+                      <strong className="font-semibold">⚠️ Əhəmiyyətli:</strong> Bu seçim müqavilə fərdi şəxsin adına olub, amma yol verəqəsi şirkət adına olduğu zaman seçilir. Bu halda etibarnamədə şirkət məlumatları göstəriləcək.
+                    </p>
+                  </div>
+                </div>
               </div>
               
               {useCompanyDetailsForEtibarname && (
-                <div className="space-y-4">
-                  <div className="text-sm text-gray-600 mb-3">
-                    <p>Bu seçim etibarnamədə şirkət məlumatlarının göstərilməsini təmin edəcək. Şirkət adı və VÖEN məlumatlarını aşağıdakı sahələrdə daxil edin.</p>
+                <div className="space-y-4 mt-4">
+                  <div className="text-sm text-blue-700 mb-3 bg-white p-3 rounded-md border border-blue-200">
+                    <p className="font-medium">Şirkət adı və VÖEN məlumatlarını aşağıdakı sahələrdə daxil edin. Bu məlumatlar etibarnamədə göstəriləcək.</p>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -528,7 +535,7 @@ const CustomerCreate: React.FC = () => {
 
 
           {/* Contact Information */}
-          <div>
+          <div data-guide-id="customer-contact-information">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-medium text-gray-900">
                 {t("common.contactInformation")}
@@ -659,6 +666,7 @@ const CustomerCreate: React.FC = () => {
             </button>
             <button
               type="submit"
+              data-guide-id="customer-save-button"
               disabled={
                 isSubmitting ||
                 !formData.company_id ||

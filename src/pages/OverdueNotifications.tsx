@@ -98,11 +98,11 @@ interface OverdueNotification {
     totalPaid: number;
     remainingToPay: number;
     interestFromPartials: number;
-    lastPartialPaymentDate?: Date;
+    lastPartialPaymentDate: Date | undefined;
     daysSinceLastPartial: number;
   };
   // Multi-month overdue calculation
-  isMultiMonthOverdue?: boolean;
+  isMultiMonthOverdue: boolean;
   multiMonthCalculation?: {
     totalDaysOverdue: number;
     monthsOverdue: number;
@@ -171,15 +171,8 @@ const OverdueNotifications: React.FC = () => {
     // Calculate overdue and due today contracts using consistent logic
     const today = new Date();
     
-    console.log('🔍 OverdueNotifications - Processing contracts:', {
-      totalContracts: contracts.length,
-      activeContracts: contracts.filter(c => c.status === 'active').length,
-      today: today.toISOString().split('T')[0]
-    });
-    
     const overdueContracts = contracts.filter((contract) => {
       if (contract.status !== "active") {
-        console.log(`❌ Contract ${contract.id} not active, status: ${contract.status}`);
         return false;
       }
 
@@ -192,40 +185,23 @@ const OverdueNotifications: React.FC = () => {
       
       const isOverdue = dueDate <= todayDate;
       
-      console.log(`🔍 Contract ${contract.id} overdue check:`, {
-        contractId: contract.id,
-        status: contract.status,
-        paymentsCount: contract.payments_count,
-        calculatedDueDate: correctDueDate.toISOString().split('T')[0],
-        todayDate: todayDate.toISOString().split('T')[0],
-        dueDate: dueDate.toISOString().split('T')[0],
-        isOverdue,
-        daysDifference: Math.floor((todayDate.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24))
-      });
-      
       // Include both overdue (past due) and due today contracts
       return isOverdue;
     });
-    
-    console.log('🔍 OverdueNotifications - Filtered results:', {
-      overdueContractsCount: overdueContracts.length,
-      overdueContractIds: overdueContracts.map(c => c.id)
-    });
 
-    return overdueContracts.map((contract) => {
+    return overdueContracts
+      .map((contract): OverdueNotification | null => {
       const customer = customers.find((c) => c.id === contract.customer_id);
       const company = companies.find((c) => c.id === contract.company_id);
 
       // Skip contracts with missing customer data
       if (!customer) {
-        console.warn(`Customer not found for contract ${contract.id} with customer_id ${contract.customer_id}`);
         return null;
       }
 
       // Create fallback company if not found (similar to PaymentCreate.tsx)
       let companyToUse = company;
       if (!company) {
-        console.warn(`Company not found for contract ${contract.id} with company_id ${contract.company_id}, using fallback`);
         companyToUse = {
           id: contract.company_id,
           name: 'Unknown Company',
@@ -292,40 +268,10 @@ const OverdueNotifications: React.FC = () => {
         )
       );
 
-      // Debug logging for all overdue calculations
-      console.log('🔍 Overdue Calculation Debug:', {
-        contractId: contract.id,
-        customerName: customer?.first_name + ' ' + customer?.last_name,
-        contractStartDate: contractStartDate.toISOString().split('T')[0],
-        paymentsCount,
-        calculatedDueDate: correctDueDate.toISOString().split('T')[0],
-        todayDate: todayOnly.toISOString().split('T')[0],
-        daysOverdue,
-        isOverdue: daysOverdue > 0,
-        status: contract.status
-      });
-      
       // Calculate remaining balance after partial payments for this specific due date
       const contractPayments = payments.filter(
         (p) => p.contract_id === contract.id
       );
-
-      // Special debug for the specific contract mentioned
-      if (contract.id === 'b15ee69d-70cf-4ed0-b705-44b71f251c5a') {
-        console.log('🔍 SPECIAL OVERDUE DEBUG for contract b15ee69d-70cf-4ed0-b705-44b71f251c5a:', {
-          contractId: contract.id,
-          customerName: customer?.first_name + ' ' + customer?.last_name,
-          contractStartDate: contractStartDate.toISOString().split('T')[0],
-          paymentsCount,
-          calculatedDueDate: correctDueDate.toISOString().split('T')[0],
-          todayDate: todayOnly.toISOString().split('T')[0],
-          daysOverdue,
-          isOverdue: daysOverdue > 0,
-          status: contract.status,
-          lastPaymentDate: contract.last_payment_date,
-          partialPayments: contractPayments.filter(p => p.is_partial)
-        });
-      }
 
       // Use the display monthly payment (which includes adjusted amount if available)
       const displayMonthlyPayment = getDisplayMonthlyPayment(contract);
@@ -361,28 +307,12 @@ const OverdueNotifications: React.FC = () => {
       );
 
       // Check if this is a multi-month overdue (more than 30 days)
-      console.log('🔍 Checking multi-month overdue for contract:', {
-        contractId: contract.id,
-        daysOverdue,
-        isMultiMonth: daysOverdue > 30
-      });
-      
       const multiMonthCalculation = calculateMultiMonthOverdueAmount(
         contract,
         today,
         companyToUse,
         contractPayments
       );
-      
-      console.log('🔍 Multi-month calculation result:', {
-        contractId: contract.id,
-        hasMultiMonth: !!multiMonthCalculation,
-        multiMonthData: multiMonthCalculation ? {
-          totalDaysOverdue: multiMonthCalculation.totalDaysOverdue,
-          monthsOverdue: multiMonthCalculation.monthsOverdue,
-          monthlyBreakdown: multiMonthCalculation.monthlyBreakdown
-        } : null
-      });
 
       let actualRemainingAmount = 0;
       let remainingInterestAfterPartials = 0;
@@ -397,15 +327,6 @@ const OverdueNotifications: React.FC = () => {
         totalAmountDue = safeNumber(multiMonthCalculation.totalDue);
         totalOverdueAmount = Math.ceil(safeNumber(totalAmountDue));
         actualLateFees = safeNumber(remainingInterestAfterPartials);
-        
-        console.log('🔍 MULTI-MONTH OVERDUE Calculation for Contract', contract.id, ':', {
-          totalDaysOverdue: multiMonthCalculation.totalDaysOverdue,
-          monthsOverdue: multiMonthCalculation.monthsOverdue,
-          monthlyBreakdown: multiMonthCalculation.monthlyBreakdown,
-          totalAmount: multiMonthCalculation.totalAmount,
-          totalInterest: multiMonthCalculation.totalInterest,
-          totalDue: multiMonthCalculation.totalDue
-        });
       } else {
         // Use standard calculation for overdue <= 30 days
         const paymentCalculation = calculatePaymentDetailsWithPartialPayments(
@@ -447,40 +368,6 @@ const OverdueNotifications: React.FC = () => {
         daysSinceLastPartial: safeNumber(daysSinceLastPartial)
       };
 
-      // Debug logging for penalty calculation - Enhanced for debugging specific contracts
-      const vehiclePlate = contract.vehicle?.license_plate || 'N/A';
-      console.log(
-        `🔍 Contract ${vehiclePlate} (${contract.id}) - Overdue Calculation:`,
-        {
-          vehicle: vehiclePlate,
-          baseData: {
-            displayMonthlyPayment: displayMonthlyPayment,
-            totalPartialPayments: totalPartialPayments,
-            daysOverdue: daysOverdue,
-            dailyInterestRate: dailyInterestRate + "%",
-            correctDueDate: correctDueDate.toISOString().split('T')[0],
-            today: today.toISOString().split('T')[0],
-          },
-          calculation: {
-            actualRemainingAmount: actualRemainingAmount,
-            remainingInterestAfterPartials: remainingInterestAfterPartials,
-            totalAmountDue: totalAmountDue,
-          },
-          finalAmounts: {
-            baseRemaining: Math.round(actualRemainingAmount),
-            remainingInterest: Math.round(remainingInterestAfterPartials),
-            totalDue: Math.round(totalOverdueAmount),
-          },
-          formula: `Remaining Principal = ${Math.round(
-            actualRemainingAmount
-          )}, Remaining Interest After Partials = ${Math.round(
-            remainingInterestAfterPartials
-          )}, Total = ${Math.round(totalAmountDue)}`,
-          multiMonth: !!multiMonthCalculation,
-          hasPartialPayments: totalPartialPayments > 0
-        }
-      );
-
       return {
         id: `overdue-${contract.id}`,
         customerId: contract.customer_id,
@@ -518,7 +405,8 @@ const OverdueNotifications: React.FC = () => {
         isMultiMonthOverdue: !!multiMonthCalculation,
         multiMonthCalculation: multiMonthCalculation || undefined,
       };
-    }).filter((notification): notification is OverdueNotification => notification !== null);
+      })
+      .filter((notification): notification is OverdueNotification => notification !== null);
   }, [contracts, customers, companies, payments, t]);
 
   // Filter and sort notifications
@@ -623,7 +511,7 @@ const OverdueNotifications: React.FC = () => {
           <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
             <AlertTriangle className="w-6 h-6 text-red-600" />
           </div>
-          <div>
+          <div data-guide-id="overdue-header">
             <h1 className="text-2xl font-bold text-gray-900">
               {t("pages.overdueNotifications.title")}
             </h1>
@@ -814,7 +702,7 @@ const OverdueNotifications: React.FC = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-200" data-guide-id="notification-list">
               {filteredNotifications.length === 0 ? (
                 <tr>
                   <td

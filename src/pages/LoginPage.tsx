@@ -34,18 +34,13 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      console.log('🔐 Attempting Supabase login with username:', username);
-      
       // Use the auth context login function which now uses Supabase
       const success = await login(username, password);
       
       if (!success) {
         showApiError(t('apiErrors.user.invalidCredentials'), 'user');
-      } else {
-        console.log('✅ Login successful');
       }
     } catch (err) {
-      console.error('❌ Login error:', err);
       showApiError(err, 'user');
     } finally {
       setLoading(false);

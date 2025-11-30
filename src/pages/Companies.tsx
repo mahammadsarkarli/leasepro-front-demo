@@ -268,13 +268,14 @@ const Companies: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-        <div>
+        <div data-guide-id="companies-header">
           <h1 className="text-2xl font-bold text-gray-900">{t('pages.companies.title')}</h1>
           <p className="text-gray-600">{t('pages.companies.subtitle')}</p>
         </div>
         <div className="flex space-x-3">
          
           <button 
+            data-guide-id="add-company-button"
             onClick={() => navigate('/companies/create')}
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
           >
@@ -373,7 +374,7 @@ const Companies: React.FC = () => {
       {/* Companies Content */}
       {viewMode === 'card' ? (
         /* Card View */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-guide-id="company-list">
           {filteredCompanies.map((company) => {
             const stats = companyStats.get(company.id);
             
@@ -400,6 +401,7 @@ const Companies: React.FC = () => {
                     </div>
                     <div className="flex items-center space-x-2">
                       <button 
+                        data-guide-id="company-view-button"
                         onClick={() => navigate(`/companies/${company.id}`)}
                         className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-50"
                         title={t('common.viewDetails')}
@@ -408,6 +410,7 @@ const Companies: React.FC = () => {
                       </button>
                       {canEdit(user, "companies") && (
                         <button 
+                          data-guide-id="company-edit-button"
                           onClick={() => navigate(`/companies/${company.id}/edit`)}
                           className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-50"
                           title={t('common.editCompany')}
@@ -476,6 +479,7 @@ const Companies: React.FC = () => {
                   {/* Quick Actions */}
                   <div className="mt-4 flex space-x-2">
                     <button 
+                      data-guide-id="company-view-button"
                       onClick={() => navigate(`/companies/${company.id}`)}
                       className="flex-1 px-3 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200"
                     >
@@ -483,6 +487,7 @@ const Companies: React.FC = () => {
                     </button>
                     {canEdit(user, "companies") && (
                       <button 
+                        data-guide-id="company-edit-button"
                         onClick={() => navigate(`/companies/${company.id}/edit`)}
                         className="flex-1 px-3 py-2 text-sm text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
                       >
@@ -491,6 +496,7 @@ const Companies: React.FC = () => {
                     )}
                     {canDelete(user, "companies") && (
                       <button 
+                        data-guide-id="company-delete-button"
                         onClick={() => handleDeleteClick(company.id, company.name)}
                         className="px-3 py-2 text-sm text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors duration-200"
                         title={t('common.delete')}
@@ -546,7 +552,7 @@ const Companies: React.FC = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white divide-y divide-gray-200" data-guide-id="company-list">
                 {filteredCompanies.map((company) => {
                   const stats = companyStats.get(company.id);
                   
@@ -598,6 +604,7 @@ const Companies: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex items-center justify-end space-x-2">
                           <button 
+                            data-guide-id="company-view-button"
                             onClick={() => navigate(`/companies/${company.id}`)}
                             className="p-1 text-gray-400 hover:text-blue-600 rounded"
                             title={t('common.viewDetails')}
@@ -606,6 +613,7 @@ const Companies: React.FC = () => {
                           </button>
                           {canEdit(user, "companies") && (
                             <button 
+                              data-guide-id="company-edit-button"
                               onClick={() => navigate(`/companies/${company.id}/edit`)}
                               className="p-1 text-gray-400 hover:text-blue-600 rounded"
                               title={t('common.editCompany')}
@@ -615,6 +623,7 @@ const Companies: React.FC = () => {
                           )}
                           {canDelete(user, "companies") && (
                             <button 
+                              data-guide-id="company-delete-button"
                               onClick={() => handleDeleteClick(company.id, company.name)}
                               className="p-1 text-gray-400 hover:text-red-600 rounded"
                               title={t('common.delete')}

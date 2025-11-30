@@ -135,9 +135,6 @@ const Contracts: React.FC = () => {
       if (!hasRunDataFixRef.current) {
         const fixDataIssues = async () => {
           try {
-            console.log(
-              "🔧 Auto-fix DISABLED to prevent excessive network requests (1,700+ requests)..."
-            );
             // TEMPORARILY DISABLED: Auto-fix functions were causing 1,700+ individual contract requests
             // Each fix function was making individual .eq('id', contract.id) requests for each contract
             // TODO: Implement proper batch updates or make fixes more selective
@@ -146,8 +143,6 @@ const Contracts: React.FC = () => {
             // const syncResult = await synchronizePaymentTracking();
             // const fixCompletedResult = await fixIncorrectlyCompletedContracts();
             // const fixPaymentCountResult = await fixIncorrectPaymentCounts();
-
-            console.log("✅ Auto-fix skipped to prevent network overload");
 
             // Mark as completed to prevent re-running
             hasRunDataFixRef.current = true;
@@ -248,12 +243,6 @@ const Contracts: React.FC = () => {
 
   // Filter contracts - moved before conditional return
   const filteredContracts = useMemo(() => {
-    console.log(
-      "Filtering contracts with searchTerm:",
-      searchTerm,
-      "selectedCompany:",
-      selectedCompany
-    );
     return contracts.filter((contract) => {
       const customer = customers.find((c) => c.id === contract.customer_id);
       const vehicle = contract.vehicle;
@@ -316,19 +305,7 @@ const Contracts: React.FC = () => {
       const matchesCompany =
         !selectedCompany || contract.company_id === selectedCompany;
 
-      const result = matchesSearch && matchesStatus && matchesCompany;
-      if (searchTerm && result) {
-        console.log(
-          "Contract matches search:",
-          contract.id,
-          "customer:",
-          customer?.first_name,
-          customer?.last_name,
-          "vehicle:",
-          vehicle?.license_plate
-        );
-      }
-      return result;
+      return matchesSearch && matchesStatus && matchesCompany;
     });
   }, [
     contracts,
@@ -499,9 +476,6 @@ const Contracts: React.FC = () => {
   const handleFixPrincipalPaid = async () => {
     setIsFixingPrincipal(true);
     try {
-      console.log(
-        "🔧 Starting to fix principal paid calculations for all contracts..."
-      );
       const result = await fixPrincipalPaid();
 
       if (result.success && result.updated > 0) {
@@ -541,7 +515,6 @@ const Contracts: React.FC = () => {
   const handleFixRemainingBalances = async () => {
     setIsFixingBalances(true);
     try {
-      console.log("🔧 Starting to fix remaining balances for all contracts...");
       const result = await fixAllRemainingBalances();
 
       if (result.success && result.updated > 0) {
@@ -579,7 +552,6 @@ const Contracts: React.FC = () => {
   const handleFixMonthlyPayments = async () => {
     setIsFixingPayments(true);
     try {
-      console.log("🔧 Starting to fix missing monthly payments...");
       const result = await fixMissingMonthlyPayments();
 
       if (result.updated > 0) {
@@ -611,7 +583,6 @@ const Contracts: React.FC = () => {
   const handleSynchronizePayments = async () => {
     setIsSynchronizingPayments(true);
     try {
-      console.log("🔄 Starting payment synchronization...");
       const result = await synchronizePaymentTracking();
 
       if (result.updated > 0) {
@@ -643,8 +614,6 @@ const Contracts: React.FC = () => {
 
   const handleExportToExcel = () => {
     try {
-      console.log("📊 Exporting filtered contracts to Excel...");
-
       // Generate filename with current date
       const today = new Date();
       const dateStr = `${today.getDate().toString().padStart(2, "0")}.${(
@@ -689,8 +658,6 @@ const Contracts: React.FC = () => {
 
   const handleExportGroupedByCompany = () => {
     try {
-      console.log("📊 Exporting contracts grouped by company...");
-
       // Generate filename with current date
       const today = new Date();
       const dateStr = `${today.getDate().toString().padStart(2, "0")}.${(
@@ -739,7 +706,7 @@ const Contracts: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="mobile-flex-col flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-        <div>
+        <div data-guide-id="contracts-header">
           <h1 className="text-2xl font-bold text-gray-900">
             {t("contracts.title")}
           </h1>
@@ -764,6 +731,7 @@ const Contracts: React.FC = () => {
           </button> */}
           <div className="relative">
             <button
+              data-guide-id="export-contracts-button"
               onClick={() => setShowExportMenu(!showExportMenu)}
               disabled={filteredContracts.length === 0}
               className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -811,6 +779,7 @@ const Contracts: React.FC = () => {
           </div>
           {canCreate("contracts") && (
             <button
+              data-guide-id="create-contract-button"
               onClick={() => navigate("/contracts/create")}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
@@ -885,7 +854,7 @@ const Contracts: React.FC = () => {
       <div className="mobile-search-filters flex flex-col space-y-4">
         {/* Search and Status Filter Row */}
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-          <div className="flex-1 relative">
+          <div className="flex-1 relative" data-guide-id="search-contracts">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
@@ -896,6 +865,7 @@ const Contracts: React.FC = () => {
             />
           </div>
           <select
+            data-guide-id="contract-filters"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as any)}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -922,7 +892,7 @@ const Contracts: React.FC = () => {
           </select>
           
           {/* View Toggle */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2" data-guide-id="contract-view-mode">
             <div className="flex border border-gray-300 rounded-lg">
               <button
                 onClick={() => setViewMode("card")}
@@ -1067,6 +1037,7 @@ const Contracts: React.FC = () => {
                     </div>
                     <div className="flex-shrink-0 flex items-center space-x-2">
                       <button
+                        data-guide-id="contract-view-button"
                         onClick={() => navigate(`/contracts/${contract.id}`)}
                         className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-50"
                         title={t("common.viewDetails")}
@@ -1075,6 +1046,7 @@ const Contracts: React.FC = () => {
                       </button>
                       {canEdit("contracts") && (
                         <button
+                          data-guide-id="contract-edit-button"
                           onClick={() =>
                             navigate(`/contracts/${contract.id}/edit`)
                           }
@@ -1082,6 +1054,25 @@ const Contracts: React.FC = () => {
                           title={t("common.edit")}
                         >
                           <Edit className="w-4 h-4" />
+                        </button>
+                      )}
+                      {canDelete("contracts") && (
+                        <button
+                          data-guide-id="contract-delete-button"
+                          onClick={() =>
+                            handleDeleteClick(
+                              contract.id,
+                              `${company?.name || t("common.unknownCompany")} - ${customer
+                                ? customer.customer_type === "company" && customer.company_name
+                                  ? customer.company_name
+                                  : `${customer.first_name || ""} ${customer.last_name || ""}`.trim() || t("common.unknownCustomer")
+                                : t("common.unknownCustomer")}`
+                            )
+                          }
+                          className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50"
+                          title={t("common.delete")}
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       )}
                     </div>
@@ -1365,6 +1356,7 @@ const Contracts: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-2">
                         <button
+                          data-guide-id="contract-view-button"
                           onClick={() => navigate(`/contracts/${contract.id}`)}
                           className="text-blue-600 hover:text-blue-900"
                           title={t("common.viewDetails")}
@@ -1373,6 +1365,7 @@ const Contracts: React.FC = () => {
                         </button>
                         {canEdit("contracts") && (
                           <button
+                            data-guide-id="contract-edit-button"
                             onClick={() =>
                               navigate(`/contracts/${contract.id}/edit`)
                             }
@@ -1384,6 +1377,7 @@ const Contracts: React.FC = () => {
                         )}
                         {canDelete("contracts") && (
                           <button
+                            data-guide-id="contract-delete-button"
                             onClick={() =>
                               handleDeleteClick(
                                 contract.id,

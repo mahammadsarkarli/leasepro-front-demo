@@ -15,7 +15,6 @@ import {
   ChevronDown,
   X,
 } from "lucide-react";
-// import GoogleDriveFileUpload from '../components/GoogleDriveFileUpload';
 import { addMonths } from "date-fns";
 import DatePicker from "../components/ui/DatePicker";
 import { roundPaymentAmount, roundInterestAmount, roundPrincipalAmount } from "../utils/customRoundingUtils";
@@ -29,9 +28,7 @@ import {
 import { calculateCorrectNextDueDate } from "../utils/contractUtils";
 import { getPermissionDocumentByContractId } from "../services/permissionDocuments";
 import { showApiError, showApiSuccess } from "../utils/errorHandler";
-// import { printEtibarname } from '../utils/etibarnameUtils';
 import PaymentSuccessModal from "../components/PaymentSuccessModal";
-import { testPartialPaymentCalculationFix } from "../utils/testPartialPaymentFix";
 
 const PaymentCreate: React.FC = () => {
   const navigate = useNavigate();
@@ -55,10 +52,6 @@ const PaymentCreate: React.FC = () => {
   // Force refresh contract data when component mounts to ensure we have latest values
   useEffect(() => {
     loadContracts();
-    
-    // Test the partial payment calculation fix
-    console.log('🧪 Running partial payment calculation test...');
-    testPartialPaymentCalculationFix();
   }, [loadContracts]);
 
   // Load payments when component mounts to ensure we have payment data
@@ -218,7 +211,7 @@ const PaymentCreate: React.FC = () => {
           try {
             await getPermissionDocumentByContractId(contract.id);
           } catch (e) {
-            console.error("Failed to load default drivers for contract", e);
+            // Failed to load default drivers, continue without them
           }
         })();
 
@@ -316,24 +309,6 @@ const PaymentCreate: React.FC = () => {
         const contractPayments = payments.filter(
           (p) => p.contract_id === selectedContract.id
         );
-        
-        // Debug: Log payments data
-        console.log('🔍 PaymentCreate Debug:', {
-          allPayments: payments.length,
-          contractPayments: contractPayments.length,
-          selectedContractId: selectedContract.id,
-          formPaymentDate: formData.paymentDate,
-          currentPaymentDate: paymentDate.toISOString().split('T')[0],
-          currentDateLocal: new Date().toLocaleDateString('en-CA'),
-          paymentsDetails: payments.map(p => ({
-            id: p.id,
-            contract_id: p.contract_id,
-            amount: p.amount,
-            payment_date: p.payment_date,
-            is_partial: p.is_partial,
-            is_extra: p.is_extra
-          }))
-        });
 
         // Use enhanced payment calculation utility with proper partial payment handling
         const calculation = calculatePaymentDetailsWithPartialPayments(
@@ -549,15 +524,6 @@ const PaymentCreate: React.FC = () => {
         
         // Send only the principal portion to the backend
         paymentAmount = breakdown.principalPaid;
-        
-        console.log('🔧 CRITICAL FIX: API Payment Amount Calculation:', {
-          enteredAmount,
-          remainingAmount,
-          breakdown: breakdown.calculationDebug,
-          interestPaid: breakdown.interestPaid,
-          principalPaid: breakdown.principalPaid,
-          paymentAmount
-        });
     
       } else if (isPartialPayment && treatAsOnTime) {
         // For partial payments when treating as on-time, use the full entered amount (no interest calculation)
@@ -594,23 +560,8 @@ const PaymentCreate: React.FC = () => {
         // Check if this payment completes the monthly amount
         if (totalAfterThisPayment >= monthlyPayment) {
           shouldMarkAsComplete = true;
-          console.log('🔧 CRITICAL FIX: Partial payments complete monthly payment:', {
-            totalExistingPartialPayments,
-            currentPayment: paymentAmount,
-            totalAfterThisPayment,
-            monthlyPayment,
-            shouldMarkAsComplete
-          });
         }
       }
-
-      // Debug: Log payment parameters
-      console.log('🔍 PaymentCreate Debug:', {
-        isPartialPayment,
-        isExtraPayment,
-        paymentAmount,
-        formData
-      });
 
       // Create regular payment first
       const createdPayment = await addPayment({
@@ -642,7 +593,7 @@ const PaymentCreate: React.FC = () => {
           });
           setCreatedExtraPayment(extraPayment);
         } catch (error) {
-          console.error("Error creating extra payment:", error);
+          // Error creating extra payment, will be handled by showApiError
           // Don't fail the whole operation if extra payment fails
         }
       }
@@ -684,11 +635,11 @@ const PaymentCreate: React.FC = () => {
 
         setContractDrivers(drivers);
       } catch (e) {
-        console.error("Loading drivers failed:", e);
+        // Loading drivers failed, continue without them
         setContractDrivers([]);
       }
     } catch (error) {
-      console.error("Error creating payment:", error);
+      // Error creating payment, will be handled by showApiError
       showApiError(error, 'payment');
     } finally {
       setIsSubmitting(false);
@@ -754,7 +705,7 @@ const PaymentCreate: React.FC = () => {
   return (
     <div className="w-full space-y-6">
       {/* Header */}
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4" data-guide-id="payment-create-header">
         <button
           onClick={() => navigate("/payments")}
           className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50"
@@ -781,7 +732,7 @@ const PaymentCreate: React.FC = () => {
           )}
 
           {/* Contract Selection */}
-          <div>
+          <div data-guide-id="payment-contract-select">
             <label
               htmlFor="contractId"
               className="block text-sm font-medium text-gray-700 mb-2"
@@ -1006,7 +957,7 @@ const PaymentCreate: React.FC = () => {
         
           {/* Payment Calculation */}
           {selectedContract && (
-            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200" data-guide-id="payment-calculation-section">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-medium text-gray-900">
                   {t("pages.payments.createPayment.paymentCalculation")}
@@ -1061,7 +1012,7 @@ const PaymentCreate: React.FC = () => {
                           )}
                         </span>
                       </div>
-                      <div className="flex justify-between items-center">
+                      <div className="flex justify-between items-center" data-guide-id="payment-daily-interest-rate">
                         <span className="text-sm text-gray-600">
                           {t("pages.payments.createPayment.dailyInterestRate")}
                         </span>
@@ -1131,7 +1082,7 @@ const PaymentCreate: React.FC = () => {
 
           {/* Late Payment Options */}
           {paymentCalculation.isOverdue && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 space-y-4">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 space-y-4" data-guide-id="payment-treat-as-on-time">
               <div className="flex items-start space-x-3">
                 <input
                   type="checkbox"
@@ -1157,7 +1108,7 @@ const PaymentCreate: React.FC = () => {
 
           {/* Payment Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+            <div data-guide-id="payment-amount-field">
               <label
                 htmlFor="amount"
                 className="block text-sm font-medium text-gray-700 mb-2"
@@ -1194,7 +1145,7 @@ const PaymentCreate: React.FC = () => {
               )}
             </div>
 
-            <div>
+            <div data-guide-id="payment-date-field">
               <DatePicker
                 value={formData.paymentDate}
                 onChange={(value) =>
@@ -1245,7 +1196,7 @@ const PaymentCreate: React.FC = () => {
           {selectedContract && (
             <div className="mt-4 space-y-4">
               {/* Partial Payment Option */}
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg" data-guide-id="payment-partial-payment">
                 <div className="flex items-center space-x-3 mb-3">
                   <input
                     type="checkbox"
@@ -1350,15 +1301,6 @@ const PaymentCreate: React.FC = () => {
                           const totalExistingPartialPayments = currentPeriodPayments.reduce((sum, payment) => sum + payment.amount, 0);
                           const remainingAmountAfterPartials = Math.max(0, monthlyPayment - totalExistingPartialPayments);
                           
-                          console.log('🔧 CRITICAL FIX: UI Calculation Debug:', {
-                            monthlyPayment,
-                            totalExistingPartialPayments,
-                            remainingAmountAfterPartials,
-                            partialAmount,
-                            overdueDays: paymentCalculation.overdueDays,
-                            dailyInterestRate
-                          });
-                          
                           // Calculate breakdown for the new partial payment using the REMAINING amount
                           const breakdown = calculateOverduePartialPaymentBreakdown(
                             remainingAmountAfterPartials, // Use remaining amount (364₼) instead of full monthly payment (664₼)
@@ -1368,19 +1310,6 @@ const PaymentCreate: React.FC = () => {
                             0, // No already paid interest since we're calculating from remaining amount
                             currentPeriodPayments // Pass existing partial payments for accurate calculation
                           );
-                          
-                          console.log('🔧 CRITICAL FIX: Partial payment breakdown calculation:', {
-                            monthlyPayment,
-                            totalExistingPartialPayments,
-                            remainingAmountAfterPartials,
-                            partialAmount,
-                            breakdown: breakdown.calculationDebug,
-                            interestPaid: breakdown.interestPaid,
-                            principalPaid: breakdown.principalPaid,
-                            remainingInterest: breakdown.remainingInterest,
-                            remainingPrincipal: breakdown.remainingPrincipal
-                          });
-                          
                           
                           // Calculate future interest after partial payment
                           const partialPaymentDate = new Date(formData.paymentDate);
@@ -1631,7 +1560,7 @@ const PaymentCreate: React.FC = () => {
               </div>
 
               {/* Extra Payment Option */}
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="p-4 bg-green-50 border border-green-200 rounded-lg" data-guide-id="payment-extra-payment">
                 <div className="flex items-center space-x-3 mb-3">
                   <input
                     type="checkbox"
@@ -1657,7 +1586,7 @@ const PaymentCreate: React.FC = () => {
             </div>
           )}
 
-          <div>
+          <div data-guide-id="payment-method-select">
             <label
               htmlFor="paymentMethod"
               className="block text-sm font-medium text-gray-700 mb-2"
@@ -1697,7 +1626,7 @@ const PaymentCreate: React.FC = () => {
             showPreview={true}
           /> */}
 
-          <div>
+          <div data-guide-id="payment-notes-field">
             <label
               htmlFor="notes"
               className="block text-sm font-medium text-gray-700 mb-2"
@@ -1726,6 +1655,7 @@ const PaymentCreate: React.FC = () => {
             </button>
             <button
               type="submit"
+              data-guide-id="payment-save-button"
               disabled={!selectedContract || isSubmitting}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >

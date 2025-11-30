@@ -99,17 +99,10 @@ const ContractEdit: React.FC = () => {
           getVehicles(),
         ]);
 
-        console.log("Data loaded successfully:", {
-          companies: companiesData.length,
-          customers: customersData.length,
-          vehicles: vehiclesData.length,
-        });
-
         setCompanies(companiesData);
         setCustomers(customersData);
         setVehicles(vehiclesData);
       } catch (error) {
-        console.error("Error loading data:", error);
         showError(t('apiErrors.general.loadFailed'));
       }
     };
@@ -137,12 +130,6 @@ const ContractEdit: React.FC = () => {
               (sum, payment) => sum + payment.amount,
               0
             ) || 0;
-          console.log("Loaded payments for contract:", {
-            contractId: id,
-            paymentsCount: contractPayments?.length || 0,
-            totalPaid,
-            contractTotalPaid: contractData.total_paid,
-          });
 
           // Calculate end date using the utility function
 
@@ -152,14 +139,6 @@ const ContractEdit: React.FC = () => {
               v.license_plate === contractData.vehicle?.license_plate &&
               v.make === contractData.vehicle?.make &&
               v.model === contractData.vehicle?.model
-          );
-
-          console.log("Contract data:", contractData);
-          console.log("Available vehicles:", vehicles);
-          console.log("Matching vehicle:", matchingVehicle);
-          console.log(
-            "Payment interval from contract:",
-            contractData.payment_interval
           );
 
           // Find the selected customer for the modal
@@ -178,12 +157,6 @@ const ContractEdit: React.FC = () => {
             paymentsCount,
             PaymentInterval.MONTHLY
           );
-
-          console.log("Contract loaded - calculating next due date:", {
-            baseDate: baseDate.toISOString().split("T")[0],
-            paymentsCount: paymentsCount,
-            calculatedNextDueDate: nextDueDate.toISOString().split("T")[0],
-          });
 
           setFormData({
             customer_id: contractData.customer_id,
@@ -258,12 +231,6 @@ const ContractEdit: React.FC = () => {
 
   // Calculate monthly payment whenever relevant fields change
   useEffect(() => {
-    console.log("Calculation triggered with:", {
-      down_payment: formData.down_payment,
-      term_months: formData.term_months,
-      yearly_interest_rate: formData.yearly_interest_rate,
-    });
-
     // Only calculate if we have valid values
     if (
       formData.down_payment > 0 &&
@@ -285,8 +252,6 @@ const ContractEdit: React.FC = () => {
           formData.term_months
         );
 
-        console.log("Base calculated values:", calculation);
-
         // Calculate remaining balance accounting for existing payments
         let actualRemainingBalance = calculation.totalPayable;
 
@@ -302,12 +267,6 @@ const ContractEdit: React.FC = () => {
             0,
             calculation.totalPayable - totalPaidFromPayments
           );
-          console.log("Remaining balance adjusted for existing payments:", {
-            totalPayable: calculation.totalPayable,
-            totalPaidFromContract: contract?.total_paid || 0,
-            totalPaidFromPayments: totalPaidFromPayments,
-            adjustedRemainingBalance: actualRemainingBalance,
-          });
         }
 
         setFormData((prev) => ({
@@ -317,10 +276,6 @@ const ContractEdit: React.FC = () => {
           remaining_balance: actualRemainingBalance,
         }));
       } else {
-        console.warn(
-          "Contract calculation validation failed:",
-          validation.errors
-        );
         // Reset calculated fields if validation fails
         setFormData((prev) => ({
           ...prev,
@@ -331,7 +286,6 @@ const ContractEdit: React.FC = () => {
       }
     } else {
       // Reset calculated fields if inputs are invalid
-      console.log("Invalid inputs, resetting calculated fields");
       setFormData((prev) => ({
         ...prev,
         monthly_payment: 0,
@@ -402,13 +356,6 @@ const ContractEdit: React.FC = () => {
   // Calculate next due date when start date, payment start date, or months_already_paid changes
   useEffect(() => {
     if ((formData.start_date || formData.payment_start_date) && !loading) {
-      console.log("Recalculating next due date due to form change:", {
-        start_date: formData.start_date,
-        payment_start_date: formData.payment_start_date,
-        months_already_paid: formData.months_already_paid,
-        currentNextDueDate: formData.next_due_date,
-      });
-
       // Use start_date as the base for calculation if available, otherwise use payment_start_date
       const baseDate = formData.start_date
         ? new Date(formData.start_date)
@@ -421,21 +368,9 @@ const ContractEdit: React.FC = () => {
 
       const newNextDueDate = nextDueDate.toISOString().split("T")[0];
 
-      console.log("Form change - calculated next due date:", {
-        baseDate: baseDate.toISOString().split("T")[0],
-        newNextDueDate: newNextDueDate,
-        currentNextDueDate: formData.next_due_date,
-      });
-
       // Only update if the calculated date is different from current
       if (newNextDueDate !== formData.next_due_date) {
         setFormData((prev) => {
-          console.log(
-            "Updating next_due_date from",
-            prev.next_due_date,
-            "to",
-            newNextDueDate
-          );
           return {
             ...prev,
             next_due_date: newNextDueDate,
@@ -483,7 +418,7 @@ const ContractEdit: React.FC = () => {
             }
           }
         } catch (error) {
-          console.error("Error loading permission document:", error);
+          // Permission document loading failed, continue without it
         }
       }
     };
@@ -551,23 +486,10 @@ const ContractEdit: React.FC = () => {
         payments_count: formData.months_already_paid,
       };
 
-      console.log("🔧 ContractEdit: Updating contract with:", {
-        contractId: contract.id,
-        originalPaymentsCount: contract.payments_count,
-        newPaymentsCount: formData.months_already_paid,
-        updatedContract,
-      });
-
       const updatedContractResult = await updateContract(
         contract.id,
         updatedContract
       );
-
-      console.log("🔧 ContractEdit: Contract updated successfully:", {
-        contractId: contract.id,
-        returnedPaymentsCount: updatedContractResult.payments_count,
-        expectedPaymentsCount: formData.months_already_paid,
-      });
 
       // Create payment records only for additional months that weren't already paid
       const originalPaymentCount = contract.payments_count || 0;
@@ -605,18 +527,8 @@ const ContractEdit: React.FC = () => {
               daysLate: 0,
             };
 
-            console.log(`Creating payment ${month + 1}:`, paymentData);
-
-            const createdPayment = await createPayment(paymentData);
-            console.log(
-              `Payment ${month + 1} created successfully:`,
-              createdPayment
-            );
+            await createPayment(paymentData);
           }
-
-          console.log(
-            `All ${additionalPayments} additional payment records created successfully`
-          );
 
           // Check if the payments_count was automatically updated by database triggers
           const contractAfterPayments = await getContractById(contract.id);
@@ -630,7 +542,7 @@ const ContractEdit: React.FC = () => {
             });
           }
         } catch (paymentError) {
-          console.error("Error creating payment records:", paymentError);
+          // Payment records creation failed, continue
         }
       } 
 
@@ -660,7 +572,6 @@ const ContractEdit: React.FC = () => {
       // Navigate to contract detail page after successful update
       navigate(`/contracts/${contract.id}`);
     } catch (error) {
-      console.error("Error updating contract:", error);
       if (error instanceof Error) {
         if (error.message === "Vehicle is already in an active contract") {
           showApiError(t('apiErrors.contract.vehicleNotAvailable'), 'contract');
@@ -790,22 +701,10 @@ const ContractEdit: React.FC = () => {
     return true;
   });
 
-  console.log("Vehicle filtering:", {
-    totalVehicles: vehicles.length,
-    selectedCompanyId: formData.company_id,
-    selectedVehicleId: formData.selected_vehicle_id,
-    availableVehicles: availableVehicles.length,
-    vehicles: vehicles.map((v) => ({
-      id: v.id,
-      license_plate: v.license_plate,
-      company_id: v.company_id,
-    })),
-  });
-
   return (
     <div className="w-full space-y-6">
       {/* Header */}
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4" data-guide-id="contract-edit-header">
         <button
           onClick={() => navigate("/contracts")}
           className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50"
@@ -823,7 +722,7 @@ const ContractEdit: React.FC = () => {
       </div>
 
       {/* Form */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6" data-guide-id="contract-edit-form">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Error Message */}
           {error && (
@@ -1226,7 +1125,7 @@ const ContractEdit: React.FC = () => {
           </div>
 
           {/* Permission Document Section */}
-          <div className="border-t border-gray-200 pt-6">
+          <div className="border-t border-gray-200 pt-6" data-guide-id="contract-edit-extra-drivers">
             {/* Driver Management */}
             <DriverManagement
               drivers={drivers}
@@ -1253,6 +1152,7 @@ const ContractEdit: React.FC = () => {
             </button>
             <button
               type="submit"
+              data-guide-id="contract-edit-save"
               disabled={
                 isSubmitting || !formData.customer_id || !formData.company_id
               }

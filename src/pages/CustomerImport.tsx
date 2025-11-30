@@ -79,18 +79,12 @@ const CustomerImport: React.FC = () => {
           // Convert to JSON
           const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
           
-          console.log('Parsed Excel data:', jsonData);
-          console.log('Number of rows:', jsonData.length);
-          console.log('First few rows:', jsonData.slice(0, 5));
-          
           // Skip header row and parse data
           const customers: CustomerImportData[] = [];
           
           for (let i = 1; i < jsonData.length; i++) {
             try {
               const row = jsonData[i] as any[];
-              console.log(`Row ${i}:`, row);
-              console.log(`Row ${i} type:`, typeof row, Array.isArray(row));
               
               if (row && Array.isArray(row) && row.length >= 4) {
                 // Ensure all values are strings and handle undefined/null
@@ -104,16 +98,10 @@ const CustomerImport: React.FC = () => {
                   additional_contacts: additionalContacts
                 };
                 
-                console.log(`Customer ${i}:`, customer);
-                
                 // Only add if customer name exists and is not empty
                 if (customerName && customerName !== '' && customerName !== 'N') {
                   customers.push(customer);
-                } else {
-                  console.log(`Row ${i} skipped - invalid customer name:`, customerName);
                 }
-              } else {
-                console.log(`Row ${i} skipped - insufficient columns or not array:`, row);
               }
             } catch (rowError) {
               console.error(`Error processing row ${i}:`, rowError, 'Row data:', jsonData[i]);
@@ -234,7 +222,7 @@ const CustomerImport: React.FC = () => {
   return (
     <div className="w-full space-y-6">
       {/* Header */}
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4" data-guide-id="customer-import-header">
         <button
           onClick={() => navigate("/customers")}
           className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50"
@@ -306,7 +294,7 @@ const CustomerImport: React.FC = () => {
       </div>
 
       {/* Excel File Upload */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6" data-guide-id="customer-import-upload">
         <h3 className="text-lg font-medium text-gray-900 mb-4">
           {t("common.uploadExcelFile")}
         </h3>
@@ -359,7 +347,7 @@ const CustomerImport: React.FC = () => {
           )}
         </div>
 
-        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg" data-guide-id="customer-import-template">
           <h4 className="font-medium text-blue-900 mb-2">{t("common.excelFormatRequirements")}</h4>
           <div className="text-sm text-blue-800 space-y-1">
             <p>• <strong>{t("common.customerName")}:</strong> AD SOYAD ATA ADI</p>

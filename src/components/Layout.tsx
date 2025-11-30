@@ -17,7 +17,8 @@ import {
   User,
   Shield,
   FileSignature,
-  BarChart3
+  BarChart3,
+  HelpCircle
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
@@ -27,9 +28,10 @@ import { PAGES } from '../utils/permissions';
 
 interface LayoutProps {
   children: React.ReactNode;
+  onStartGuide?: () => void;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ children, onStartGuide }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -110,7 +112,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       
       {/* Sidebar */}
-      <div className={`mobile-sidebar fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
+      <div 
+        data-guide-id="sidebar"
+        className={`mobile-sidebar fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
         sidebarOpen ? 'translate-x-0 open' : '-translate-x-full'
       }`}>
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
@@ -129,6 +133,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <li key={item.name}>
                   <Link
                     to={item.href}
+                    data-guide-id={item.href === '/dashboard' ? 'dashboard-link' : item.href === '/customers' ? 'customers-link' : item.href === '/contracts' ? 'contracts-link' : item.href === '/vehicles' ? 'vehicles-link' : item.href === '/payments' ? 'payments-link' : undefined}
                     className={`flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200 ${
                       isActive
                         ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
@@ -188,6 +193,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
             
             <div className="flex items-center space-x-4">
+              {/* Guide Tour Button */}
+              <button
+                data-guide-id="guide-tour-button"
+                onClick={() => {
+                  if (onStartGuide) {
+                    onStartGuide();
+                  }
+                }}
+                className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-50 relative"
+                title={t('hoverGuide.startGuide') || 'Rehber Turunu Başlat'}
+              >
+                <HelpCircle className="w-6 h-6" />
+              </button>
+
               {/* Custom Etibarname Button */}
               <button
                 onClick={() => setShowCustomEtibarname(true)}
@@ -198,13 +217,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </button>
 
               {/* Language Switcher */}
-              <LanguageSwitcher />
+              <div data-guide-id="language-switcher">
+                <LanguageSwitcher />
+              </div>
               
 
               
               {/* Notifications */}
               <div className="relative notifications-dropdown">
                 <button
+                  data-guide-id="notifications-bell"
                   onClick={() => setShowNotifications(!showNotifications)}
                   className="p-2 rounded-md text-gray-400 hover:text-gray-600 relative"
                 >
@@ -285,6 +307,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               {/* User Profile Dropdown */}
               <div className="relative profile-dropdown">
                 <button
+                  data-guide-id="user-menu"
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center space-x-2 p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-50"
                 >

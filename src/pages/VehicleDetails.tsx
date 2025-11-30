@@ -131,7 +131,7 @@ const VehicleDetails: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8" data-guide-id="vehicle-detail-header">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
             <div className="flex items-center space-x-4">
               <button
@@ -213,7 +213,7 @@ const VehicleDetails: React.FC = () => {
            {/* Left Column - Vehicle Details */}
            <div className="xl:col-span-2 space-y-8">
              {/* Vehicle Information Card */}
-             <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+             <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden" data-guide-id="vehicle-info-section">
                <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4">
                  <h2 className="text-xl font-semibold text-white flex items-center">
                    <Car className="w-6 h-6 mr-3" />

@@ -287,7 +287,7 @@ const UserEdit: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between" data-guide-id="user-edit-header">
         <div className="flex items-center space-x-4">
           <Button
             variant="outline"
@@ -323,7 +323,7 @@ const UserEdit: React.FC = () => {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
-        <Card className="p-6">
+        <Card className="p-6" data-guide-id="user-edit-form">
           <h2 className="text-lg font-semibold mb-4">
             {t("users.basicInformation")}
           </h2>
@@ -626,6 +626,7 @@ const UserEdit: React.FC = () => {
           </Button>
           <Button
             type="submit"
+            data-guide-id="user-edit-save"
             disabled={loading}
             className="flex items-center"
           >

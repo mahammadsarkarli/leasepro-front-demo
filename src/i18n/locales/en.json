@@ -21,6 +21,9 @@
     "deleting": "Deleting...",
     "print": "Print",
     "download": "Download",
+    "import": "Import",
+    "cardView": "Card View",
+    "tableView": "Table View",
     "customer": "Customer",
     "company": "Company",
     "documentType": "Document Type",
@@ -316,6 +319,7 @@
     "anErrorOccurred": "Error occurred",
     "failedToReadFile": "Failed to read file",
     "failedToUpdateVehicle": "Failed to update vehicle",
+    "errorDeletingVehicle": "Error deleting vehicle",
     "invalidNextPaymentDate": "Invalid next payment date:",
     "selectCustomer": "Customer Select",
     "searchCustomers": "Search customers...",
@@ -583,6 +587,7 @@
     "choosePaymentMethods": "Choose Payment Methods",
     "addDetailedNotes": "Add Detailed Notes",
     "continue": "Continue",
+    "understood": "Understood",
     "noActiveContracts": "No Active Contracts",
     "noLicense": "No License",
     "permissionDocumentCreated": "Permission Document Created",
@@ -1299,6 +1304,7 @@
         "noContracts": "Active Contract not found",
         "viewContract": "View Contract",
         "editVehicle": "Edit Vehicle",
+        "deleteVehicle": "Delete Vehicle",
         "viewDetails": "View Details"
       },
       "filterOptions": {
@@ -2421,5 +2427,749 @@
     "utilization": "Utilization",
     "profitMargin": "Profit Margin",
     "avgContract": "Average Contract"
+  },
+  "hoverGuide": {
+    "title": "Application Guide",
+    "startGuide": "Start Guide",
+    "finish": "Finish",
+    "step": "Step",
+    "infoModal": {
+      "title": "Application Guide",
+      "subtitle": "Complete tutorial for new users",
+      "description": "With this guide system, you can learn all the features of the application. Click on the question mark (?) icon in the top right of any page to get detailed information about that page. Each page has its own guide that you can activate whenever you want.",
+      "howToUse": "How to Use:",
+      "step1": "Navigate to the page you want (Customers, Contracts, Payments, etc.)",
+      "step2": "Click the question mark (?) icon in the top right",
+      "step3": "You will see a specific guide for that page. Elements will be highlighted and explained at each step",
+      "whatYouLearn": "What You'll Learn:",
+      "learn1": "Functions and usage of each page",
+      "learn2": "Purpose of buttons and operations",
+      "learn3": "Efficient use of all application features"
+    },
+    "dashboard": {
+      "sidebar": {
+        "title": "Sidebar Navigation",
+        "content": "This sidebar provides access to all main pages. You can navigate to Dashboard, Customers, Contracts, Vehicles, and Payments sections from here."
+      },
+      "dashboardLink": {
+        "title": "Dashboard",
+        "content": "The Dashboard page is the main control panel of the application. Here you can see information about active contracts, payments due today, and overdue payments."
+      },
+      "customersLink": {
+        "title": "Customers",
+        "content": "In the Customers section, you can view the list of all customers, add new customers, or edit existing customers."
+      },
+      "contractsLink": {
+        "title": "Contracts",
+        "content": "In the Contracts section, you can view the list of all leasing contracts, create new contracts, and manage existing contracts."
+      },
+      "vehiclesLink": {
+        "title": "Vehicles",
+        "content": "In the Vehicles section, you can view the list of all company vehicles and add new vehicles."
+      },
+      "paymentsLink": {
+        "title": "Payments",
+        "content": "In the Payments section, you can view the list of all payments and record new payments."
+      },
+      "notifications": {
+        "title": "Notifications",
+        "content": "With this bell icon, you can see notifications about payments due today and overdue payments."
+      },
+      "userMenu": {
+        "title": "User Menu",
+        "content": "From here you can view your user information and log out of the system."
+      },
+      "languageSwitcher": {
+        "title": "Language Switcher",
+        "content": "You can change the application language with this button. Azerbaijani, English, and Russian languages are supported."
+      },
+      "activeContracts": {
+        "title": "Active Contracts",
+        "content": "This card shows the number of currently active contracts. This indicates the company's current workload."
+      },
+      "dueToday": {
+        "title": "Due Today",
+        "content": "This card shows the number of payments due today. This helps you organize your daily work plan."
+      },
+      "overdue": {
+        "title": "Overdue Payments",
+        "content": "This card shows the number of overdue payments. This helps you quickly identify issues that require attention."
+      },
+      "guideTourButton": {
+        "title": "Guide Tour",
+        "content": "With this button, you can start a guide tour on any page of the application. The guide tour shows you how each function works on each page and highlights elements. You can start the guide tour at any time by clicking this button."
+      }
+    },
+    "customers": {
+      "header": {
+        "title": "Customers Page",
+        "content": "On this page you can view the list of all customers. You can search, filter and manage customers."
+      },
+      "addButton": {
+        "title": "Add New Customer",
+        "content": "With this button you can add a new customer. Fill in the customer information and save."
+      },
+      "importButton": {
+        "title": "Import Customers",
+        "content": "You can import customers in bulk from an Excel file. Download the template, fill it in, and upload it here."
+      },
+      "search": {
+        "title": "Search",
+        "content": "In this field you can search by customer name, surname, phone or other information."
+      },
+      "viewMode": {
+        "title": "View Mode",
+        "content": "You can switch between card and table view. Card view is more suitable for mobile devices."
+      },
+      "actions": {
+        "title": "Actions",
+        "content": "For each customer you can see view, edit and delete actions. Use the view button to access customer details."
+      },
+      "viewButton": {
+        "title": "View Button",
+        "content": "Click this button to view the customer's detailed information and contracts."
+      },
+      "editButton": {
+        "title": "Edit Button",
+        "content": "Click this button to modify customer information."
+      },
+      "deleteButton": {
+        "title": "Delete Button",
+        "content": "Click this button to delete the customer. Warning: Customers with active contracts cannot be deleted."
+      }
+    },
+    "contracts": {
+      "header": {
+        "title": "Contracts Page",
+        "content": "On this page you can view the list of all leasing contracts. You can filter contracts by status, customer or date."
+      },
+      "createButton": {
+        "title": "Create New Contract",
+        "content": "With this button you can create a new leasing contract. Fill in customer, vehicle and financial information."
+      },
+      "search": {
+        "title": "Search",
+        "content": "You can search by contract number, customer name or vehicle license plate number."
+      },
+      "filters": {
+        "title": "Filters",
+        "content": "You can filter contracts by status (active, completed, overdue) or by company."
+      },
+      "viewMode": {
+        "title": "View Mode",
+        "content": "You can switch between card and table view."
+      },
+      "exportButton": {
+        "title": "Export",
+        "content": "You can export contracts to an Excel file. You can export all contracts or the filtered list."
+      },
+      "viewButton": {
+        "title": "View Button",
+        "content": "Click this button to view the contract's detailed information, payment history and other details."
+      },
+      "editButton": {
+        "title": "Edit Button",
+        "content": "Click this button to modify contract information."
+      },
+      "deleteButton": {
+        "title": "Delete Button",
+        "content": "Click this button to delete the contract. Warning: This action will also delete all related payments."
+      }
+    },
+    "vehicles": {
+      "header": {
+        "title": "Vehicles Page",
+        "content": "On this page you can view the list of all company vehicles. You can filter vehicles by company."
+      },
+      "addButton": {
+        "title": "Add New Vehicle",
+        "content": "With this button you can add a new vehicle. Fill in the vehicle information and documents."
+      },
+      "importButton": {
+        "title": "Import Vehicles",
+        "content": "You can import vehicles in bulk from an Excel file."
+      },
+      "search": {
+        "title": "Search",
+        "content": "You can search by vehicle brand, model, license plate number or VIN code."
+      },
+      "statusFilter": {
+        "title": "Status Filter",
+        "content": "You can filter vehicles as available, in use, or all."
+      },
+      "companyFilter": {
+        "title": "Company Filter",
+        "content": "You can view vehicles belonging to a specific company."
+      },
+      "viewButton": {
+        "title": "View Button",
+        "content": "Click this button to view the vehicle's detailed information, contracts and documents."
+      },
+      "editButton": {
+        "title": "Edit Button",
+        "content": "Click this button to modify vehicle information."
+      },
+      "deleteButton": {
+        "title": "Delete Button",
+        "content": "Click this button to delete the vehicle. Warning: Vehicles used in active contracts cannot be deleted."
+      }
+    },
+    "payments": {
+      "header": {
+        "title": "Payments Page",
+        "content": "On this page you can view the list of all payments. You can filter payments by date, method and status."
+      },
+      "addButton": {
+        "title": "Add New Payment",
+        "content": "With this button you can record a new payment. Select the contract and fill in the payment information."
+      },
+      "search": {
+        "title": "Search",
+        "content": "You can search by customer name, contract number or payment amount."
+      },
+      "dateFilter": {
+        "title": "Date Filter",
+        "content": "You can filter payments by a specific date range. Today's payments are shown by default."
+      },
+      "methodFilter": {
+        "title": "Payment Method Filter",
+        "content": "You can filter payments by method: cash, bank transfer, card-to-card, etc."
+      },
+      "viewButton": {
+        "title": "View Button",
+        "content": "Click this button to view the payment's detailed information and its relationship with the contract."
+      },
+      "editButton": {
+        "title": "Edit Button",
+        "content": "Click this button to modify payment information."
+      },
+      "deleteButton": {
+        "title": "Delete Button",
+        "content": "Click this button to delete the payment. Warning: This action cannot be undone."
+      }
+    },
+    "companies": {
+      "header": {
+        "title": "Companies Page",
+        "content": "On this page you can view the list of all companies. You can manage companies and edit their information."
+      },
+      "addButton": {
+        "title": "Add New Company",
+        "content": "With this button you can add a new company. Fill in company information, interest rate and contact information."
+      },
+      "companyList": {
+        "title": "Company List",
+        "content": "Here you can see the list of all companies. For each company you can view details, edit and delete."
+      },
+      "viewButton": {
+        "title": "View Button",
+        "content": "Click this button to view the company's detailed information, statistics and contracts."
+      },
+      "editButton": {
+        "title": "Edit Button",
+        "content": "Click this button to modify company information."
+      },
+      "deleteButton": {
+        "title": "Delete Button",
+        "content": "Click this button to delete the company. Warning: This action cannot be undone."
+      }
+    },
+    "users": {
+      "header": {
+        "title": "Users Page",
+        "content": "On this page you can view the list of system users. Only admin and superadmin can manage users."
+      },
+      "addButton": {
+        "title": "Create New User",
+        "content": "With this button you can create a new user. Assign user information, role and permissions."
+      },
+      "userList": {
+        "title": "User List",
+        "content": "Here you can see the list of all users. For each user you can see edit and delete actions."
+      },
+      "editButton": {
+        "title": "Edit Button",
+        "content": "Click this button to modify user information, role and permissions."
+      },
+      "deleteButton": {
+        "title": "Delete Button",
+        "content": "Click this button to delete the user. Warning: You cannot delete superadmin or your own account."
+      }
+    },
+    "settings": {
+      "header": {
+        "title": "Settings Page",
+        "content": "On this page you can view and change application settings."
+      },
+      "sections": {
+        "title": "Settings Sections",
+        "content": "There are various settings sections: company contact information, system parameters and other configurations."
+      }
+    },
+    "analytics": {
+      "header": {
+        "title": "Analytics Page",
+        "content": "On this page you can analyze company performance. You can see revenue, contracts and customer statistics."
+      },
+      "charts": {
+        "title": "Charts",
+        "content": "You can visualize data with various charts and diagrams."
+      }
+    },
+    "overdueNotifications": {
+      "header": {
+        "title": "Overdue Payment Notifications",
+        "content": "On this page you can view overdue payments. Which contracts have overdue payments and how many days overdue."
+      },
+      "notificationList": {
+        "title": "Notification List",
+        "content": "Here you can see the list of overdue payments. For each notification, customer, amount and overdue days are shown."
+      }
+    },
+    "customerCreate": {
+      "header": {
+        "title": "Create New Customer",
+        "content": "On this page you can add a new customer. Select customer type and fill in the information."
+      },
+      "customerType": {
+        "title": "Customer Type",
+        "content": "Select Individual or Legal Entity. For individual customers, fill in first name, last name, father's name. For legal entities, fill in company name and VOEN."
+      },
+      "formFields": {
+        "title": "Customer Information",
+        "content": "Fill in the customer's basic information: name, phone, address, national ID number and other details."
+      },
+      "contactInformation": {
+        "title": "Contact Information",
+        "content": "Add contact persons to stay in touch with the customer. Enter the name, surname, relationship type, and phone number of spouse, parent, friend, or other contact persons."
+      },
+      "companyDetailsForEtibarname": {
+        "title": "Company Details for Authorization Document",
+        "content": "Activate this option when the contract is in the name of an individual but the permission document is in the company name. In this case, company information will be shown in the authorization document."
+      },
+      "saveButton": {
+        "title": "Save",
+        "content": "After filling in the information, save the customer using this button."
+      }
+    },
+    "customerEdit": {
+      "header": {
+        "title": "Edit Customer",
+        "content": "On this page you can edit the information of an existing customer."
+      },
+      "form": {
+        "title": "Edit Form",
+        "content": "Change and update customer information."
+      },
+      "saveButton": {
+        "title": "Save Changes",
+        "content": "Click this button to apply the changes."
+      }
+    },
+    "customerDetail": {
+      "header": {
+        "title": "Customer Details",
+        "content": "On this page you can view detailed information about the customer."
+      },
+      "infoSection": {
+        "title": "Customer Information",
+        "content": "Customer's basic information, address, contact details and other information are displayed here."
+      },
+      "contractsSection": {
+        "title": "Customer Contracts",
+        "content": "You can view the list of all leasing contracts related to this customer."
+      }
+    },
+    "customerImport": {
+      "header": {
+        "title": "Import Customers",
+        "content": "Import customers in bulk from an Excel file."
+      },
+      "upload": {
+        "title": "Upload File",
+        "content": "Select and upload an Excel file. The file must be in the correct format."
+      },
+      "template": {
+        "title": "Download Template",
+        "content": "Download the template and fill in the information for the correct format."
+      }
+    },
+    "contractCreate": {
+      "header": {
+        "title": "Create New Contract",
+        "content": "On this page you can create a new leasing contract."
+      },
+      "customerSelect": {
+        "title": "Select Customer",
+        "content": "Select a customer for the contract. The customer must be selected from the list."
+      },
+      "vehicleSelect": {
+        "title": "Select Vehicle",
+        "content": "Select a vehicle for the contract. Only available vehicles are shown."
+      },
+      "financialFields": {
+        "title": "Financial Information",
+        "content": "Fill in contract amount, interest rate, term and other financial information."
+      },
+      "extraDrivers": {
+        "title": "Extra Drivers",
+        "content": "In this section you can add extra drivers that will appear in the permission document. When the contract is in the name of an individual but the permission document is in the company name, these drivers will be shown in the permission document."
+      },
+      "saveButton": {
+        "title": "Save Contract",
+        "content": "After filling in the information, save the contract."
+      }
+    },
+    "contractEdit": {
+      "header": {
+        "title": "Edit Contract",
+        "content": "On this page you can edit the information of an existing contract."
+      },
+      "form": {
+        "title": "Edit Form",
+        "content": "Change and update contract information."
+      },
+      "extraDrivers": {
+        "title": "Extra Drivers",
+        "content": "In this section you can add or edit extra drivers that will appear in the permission document. When the contract is in the name of an individual but the permission document is in the company name, these drivers will be shown in the permission document."
+      },
+      "saveButton": {
+        "title": "Save Changes",
+        "content": "Click this button to apply the changes."
+      }
+    },
+    "contractDetail": {
+      "header": {
+        "title": "Contract Details",
+        "content": "On this page you can view detailed information about the contract."
+      },
+      "actionButtons": {
+        "title": "Action Buttons",
+        "content": "With these buttons you can edit the contract, create an authorization document, or delete the contract."
+      },
+      "financialOverview": {
+        "title": "Financial Overview",
+        "content": "In this card you can view the contract's financial information: down payment, total payable amount, monthly payment, total interest, and payment progress."
+      },
+      "detailsCard": {
+        "title": "Contract Details",
+        "content": "This card shows the contract's terms, duration, interest rate, start date, next payment date, and status. Payment summary is also available here."
+      },
+      "vehicleInformation": {
+        "title": "Vehicle Information",
+        "content": "This card shows the vehicle information associated with the contract: license plate, make, model, year, color, body number, and registration certificate number."
+      },
+      "driverInformation": {
+        "title": "Driver Information",
+        "content": "This card shows the driver information listed in the permission document: name, license number, category, and other details."
+      },
+      "quickActions": {
+        "title": "Quick Actions",
+        "content": "This card contains quick actions related to the contract: record payment, edit contract, view customer details, all payments, and payment schedule."
+      },
+      "customerInformation": {
+        "title": "Customer Information",
+        "content": "This card shows detailed information about the customer associated with the contract: personal information, contact information, and status."
+      },
+      "companyInformation": {
+        "title": "Company Information",
+        "content": "This card shows the company information associated with the contract: company name, interest rate, and status."
+      },
+      "recentPayments": {
+        "title": "Recent Payments",
+        "content": "This card shows a list of the last 5 payments made for this contract. Each payment's amount, date, and payment method are displayed."
+      },
+      "printDocuments": {
+        "title": "Print Documents",
+        "content": "In this section you can print or download various documents related to the contract in PDF format: contract, delivery-acceptance, termination, commitment, purchase-sale, and application."
+      }
+    },
+    "paymentCreate": {
+      "header": {
+        "title": "Create New Payment",
+        "content": "On this page you can register a new payment."
+      },
+      "contractSelect": {
+        "title": "Select Contract",
+        "content": "Select a contract for the payment. Only active contracts are shown."
+      },
+      "amountField": {
+        "title": "Payment Amount",
+        "content": "Enter the amount paid. This amount will reduce the contract's remaining debt."
+      },
+      "dateField": {
+        "title": "Payment Date",
+        "content": "Select the date the payment was made."
+      },
+      "calculationSection": {
+        "title": "Payment Calculation",
+        "content": "This section shows the payment calculation: monthly payment, overdue days, interest rate and penalty amount."
+      },
+      "dailyInterestRate": {
+        "title": "Daily Interest Rate",
+        "content": "This is the company's daily interest rate. This rate is used when calculating penalties for overdue payments. For example, 1% daily interest means that for each overdue day, 1% of the remaining debt is added as a penalty."
+      },
+      "treatAsOnTime": {
+        "title": "Treat as On-Time Payment",
+        "content": "Check this option to treat an overdue payment as an on-time payment. In this case, no penalty will be calculated and only the base payment amount will be charged."
+      },
+      "partialPayment": {
+        "title": "Partial Payment",
+        "content": "Check this option to pay a portion of the monthly payment. When making a partial payment, the paid amount is deducted from the remaining debt and the remaining amount is calculated for the next payment. For overdue payments, interest is paid first."
+      },
+      "extraPayment": {
+        "title": "Extra Payment",
+        "content": "Check this option to pay an amount exceeding the monthly payment. Extra payments reduce the contract's remaining balance and affect future payments."
+      },
+      "paymentMethod": {
+        "title": "Payment Method",
+        "content": "Select the method by which the payment was made: Cash, Bank Transfer, Card-to-Card, or Automatic."
+      },
+      "notesField": {
+        "title": "Notes",
+        "content": "You can add additional notes or information about the payment. This field is optional."
+      },
+      "saveButton": {
+        "title": "Save Payment",
+        "content": "Save the payment information."
+      }
+    },
+    "paymentEdit": {
+      "header": {
+        "title": "Edit Payment",
+        "content": "On this page you can edit the information of an existing payment."
+      },
+      "form": {
+        "title": "Edit Form",
+        "content": "Change and update payment information."
+      },
+      "saveButton": {
+        "title": "Save Changes",
+        "content": "Click this button to apply the changes."
+      }
+    },
+    "paymentDetail": {
+      "header": {
+        "title": "Payment Details",
+        "content": "On this page you can view detailed information about the payment."
+      },
+      "infoSection": {
+        "title": "Payment Information",
+        "content": "Payment amount, date, method and other details are displayed here."
+      }
+    },
+    "vehicleCreate": {
+      "header": {
+        "title": "Create New Vehicle",
+        "content": "On this page you can add a new vehicle."
+      },
+      "formFields": {
+        "title": "Vehicle Information",
+        "content": "Fill in the vehicle's make, model, plate number and other information."
+      },
+      "saveButton": {
+        "title": "Save",
+        "content": "After filling in the information, save the vehicle."
+      }
+    },
+    "vehicleEdit": {
+      "header": {
+        "title": "Edit Vehicle",
+        "content": "On this page you can edit the information of an existing vehicle."
+      },
+      "form": {
+        "title": "Edit Form",
+        "content": "Change and update vehicle information."
+      },
+      "saveButton": {
+        "title": "Save Changes",
+        "content": "Click this button to apply the changes."
+      }
+    },
+    "vehicleDetail": {
+      "header": {
+        "title": "Vehicle Details",
+        "content": "On this page you can view detailed information about the vehicle."
+      },
+      "infoSection": {
+        "title": "Vehicle Information",
+        "content": "Vehicle's basic information, documents and contracts are displayed here."
+      }
+    },
+    "vehicleImport": {
+      "header": {
+        "title": "Import Vehicles",
+        "content": "Import vehicles in bulk from an Excel file."
+      },
+      "upload": {
+        "title": "Upload File",
+        "content": "Select and upload an Excel file. The file must be in the correct format."
+      }
+    },
+    "companyCreate": {
+      "header": {
+        "title": "Create New Company",
+        "content": "On this page you can add a new company."
+      },
+      "formFields": {
+        "title": "Company Information",
+        "content": "Fill in the company's name, address, phone and other information."
+      },
+      "saveButton": {
+        "title": "Save",
+        "content": "After filling in the information, save the company."
+      }
+    },
+    "companyEdit": {
+      "header": {
+        "title": "Edit Company",
+        "content": "On this page you can edit the information of an existing company."
+      },
+      "form": {
+        "title": "Edit Form",
+        "content": "Change and update company information."
+      },
+      "saveButton": {
+        "title": "Save Changes",
+        "content": "Click this button to apply the changes."
+      }
+    },
+    "companyDetail": {
+      "header": {
+        "title": "Company Details",
+        "content": "On this page you can view detailed information about the company."
+      },
+      "infoSection": {
+        "title": "Company Information",
+        "content": "Company's basic information, customers, contracts and vehicles are displayed here."
+      }
+    },
+    "userCreate": {
+      "header": {
+        "title": "Create New User",
+        "content": "On this page you can create a new system user."
+      },
+      "formFields": {
+        "title": "User Information",
+        "content": "Fill in the user's name, email, password and other information."
+      },
+      "nameField": {
+        "title": "Name Field",
+        "content": "Enter the user's full name. This field is required."
+      },
+      "usernameField": {
+        "title": "Username Field",
+        "content": "Enter the username. Must be at least 3 characters and can only contain letters, numbers and underscores."
+      },
+      "securitySection": {
+        "title": "Security Section",
+        "content": "In this section, set a password for the user. The password must be at least 6 characters and must match the confirmation password."
+      },
+      "roleSelect": {
+        "title": "Permissions Table",
+        "content": "In this table, you can configure permissions for the user. You can select read, create, edit and delete permissions for each page. Note: Permissions can only be configured for the User role."
+      },
+      "saveButton": {
+        "title": "Save User",
+        "content": "After filling in the information, save the user."
+      }
+    },
+    "userEdit": {
+      "header": {
+        "title": "Edit User",
+        "content": "On this page you can edit the information of an existing user."
+      },
+      "form": {
+        "title": "Edit Form",
+        "content": "Change and update user information."
+      },
+      "saveButton": {
+        "title": "Save Changes",
+        "content": "Click this button to apply the changes."
+      }
+    },
+    "paymentSchedule": {
+      "header": {
+        "title": "Payment Schedule",
+        "content": "On this page you can view the schedule of all payments for the contract."
+      },
+      "table": {
+        "title": "Payment Schedule",
+        "content": "For each payment, date, amount, interest, principal debt and remaining debt information are displayed."
+      },
+      "actions": {
+        "title": "Actions",
+        "content": "You can print or download the payment schedule as PDF."
+      }
+    },
+    "contractDemo": {
+      "header": {
+        "title": "Contract Demo",
+        "content": "On this page you can view a sample of contract documents."
+      },
+      "form": {
+        "title": "Contract Information",
+        "content": "Fill in the contract information and create documents."
+      },
+      "actions": {
+        "title": "Document Actions",
+        "content": "You can print or download etibarname and other documents."
+      }
+    },
+    "dypSenedleri": {
+      "header": {
+        "title": "DYP Documents",
+        "content": "On this page you can create DYP (State Road Police) documents."
+      },
+      "form": {
+        "title": "Document Information",
+        "content": "Fill in vehicle and seller information."
+      },
+      "actions": {
+        "title": "Document Actions",
+        "content": "You can print or download DYP documents as PDF."
+      }
+    },
+    "users": {
+      "header": {
+        "title": "Users Page",
+        "content": "On this page you can view the list of all system users, add new users and manage existing users."
+      },
+      "addButton": {
+        "title": "Create New User",
+        "content": "With this button you can create a new user account."
+      },
+      "search": {
+        "title": "User Search",
+        "content": "In this field you can search by user name, role or other information."
+      },
+      "roleFilter": {
+        "title": "Role Filters",
+        "content": "You can filter users by role: Superadmin, Admin or User."
+      },
+      "viewMode": {
+        "title": "View Mode",
+        "content": "You can switch between card and table view. Card view is more suitable for mobile devices."
+      },
+      "userList": {
+        "title": "User List",
+        "content": "Here you can see the list of all system users."
+      },
+      "editButton": {
+        "title": "Edit Button",
+        "content": "Click this button to change user information, role and permissions."
+      },
+      "deleteButton": {
+        "title": "Delete Button",
+        "content": "Click this button to delete the user. Warning: Superadmin users cannot be deleted."
+      }
+    },
+    "general": {
+      "sidebar": {
+        "title": "Sidebar Navigation",
+        "content": "This sidebar provides access to all main pages."
+      }
+    },
+    "elementNotFound": "Element not found"
   }
 }

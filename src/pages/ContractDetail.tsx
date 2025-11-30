@@ -52,11 +52,6 @@ const ContractDetail: React.FC = () => {
   const [showCloseContractModal, setShowCloseContractModal] = useState(false);
   const [isClosingContract, setIsClosingContract] = useState(false);
   const [monthProgress, setMonthProgress] = useState<any>(null);
-  
-  // Use monthProgress to prevent linter warning
-  if (monthProgress) {
-    console.log("Month progress available:", monthProgress);
-  }
 
   // Load data only once on mount
   useEffect(() => {
@@ -105,21 +100,6 @@ const ContractDetail: React.FC = () => {
   // Find contract and related data from context
   const contract = useMemo((): ContractWithPayments | null => {
     const foundContract = contracts.find((c) => c.id === id) || null;
-    if (foundContract) {
-      console.log("🔍 ContractDetail - Contract data:", {
-        id: foundContract.id,
-        monthly_payment: foundContract.monthly_payment,
-        original_monthly_payment: foundContract.original_monthly_payment,
-        adjusted_monthly_payment: foundContract.adjusted_monthly_payment,
-        total_extra_payments: foundContract.total_extra_payments,
-        total_principal_paid: foundContract.total_principal_paid,
-        remaining_balance: foundContract.remaining_balance,
-        hasAdjustedPayment: !!foundContract.adjusted_monthly_payment,
-        adjustedValue: foundContract.adjusted_monthly_payment,
-        payments: (foundContract as any).payments?.length || 0,
-        displayMonthlyPayment: getDisplayMonthlyPayment(foundContract)
-      });
-    }
     return foundContract as ContractWithPayments;
   }, [contracts, id]);
 
@@ -148,18 +128,6 @@ const ContractDetail: React.FC = () => {
         ? contractPaymentsFromAPI
         : contextPayments;
 
-    console.log(`🔍 ContractDetail - Contract ${contract.id} payments:`, {
-      totalContextPayments: payments.length,
-      contractPaymentsFromAPI: contractPaymentsFromAPI.length,
-      contextPayments: contextPayments.length,
-      finalPayments: finalPayments.length,
-      payments: finalPayments.map((p: Payment) => ({
-        id: p.id,
-        amount: p.amount,
-        payment_date: p.payment_date,
-        company_id: p.company_id,
-      })),
-    });
     return finalPayments;
   }, [payments, contract]);
 
@@ -169,7 +137,6 @@ const ContractDetail: React.FC = () => {
       if (contract?.id && getContractMonthProgress) {
         try {
           const progress = await getContractMonthProgress(contract.id);
-          console.log("Month progress data:", progress);
           setMonthProgress(progress);
         } catch (error) {
           console.error("Error fetching month progress:", error);
@@ -334,7 +301,7 @@ const ContractDetail: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
       <div className="w-full px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
-        <div className="mb-8">
+        <div className="mb-8" data-guide-id="contract-detail-header">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -345,7 +312,7 @@ const ContractDetail: React.FC = () => {
               </p>
             </div>
             {/* Action Buttons */}
-            <div className="flex flex-wrap gap-3 mt-6">
+            <div className="flex flex-wrap gap-3 mt-6" data-guide-id="contract-action-buttons">
               {canEdit("contracts") && (
                 <button
                   onClick={() => navigate(`/contracts/${id}/edit`)}
@@ -380,9 +347,9 @@ const ContractDetail: React.FC = () => {
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           {/* Main Content - Contract Information */}
-          <div className="xl:col-span-2 space-y-8">
+          <div className="xl:col-span-2 space-y-8" data-guide-id="contract-info-section">
             {/* Financial Overview Card */}
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" data-guide-id="contract-financial-overview">
               <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
                 <h2 className="text-xl font-semibold text-white">
                   {t("pages.contractDetail.financialOverview")}
@@ -479,7 +446,7 @@ const ContractDetail: React.FC = () => {
             </div>
 
             {/* Contract Details Card */}
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" data-guide-id="contract-details-card">
               <div className="bg-gradient-to-r from-gray-600 to-gray-700 px-6 py-4">
                 <h2 className="text-xl font-semibold text-white">
                   {t("pages.contractDetail.contractDetails")}
@@ -646,7 +613,7 @@ const ContractDetail: React.FC = () => {
             </div>
 
             {/* Vehicle Information Card */}
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" data-guide-id="contract-vehicle-information">
               <div className="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-4">
                 <h2 className="text-xl font-semibold text-white flex items-center">
                   <svg
@@ -832,7 +799,7 @@ const ContractDetail: React.FC = () => {
             {contract.permission_document &&
               contract.permission_document.drivers &&
               contract.permission_document.drivers.length > 0 && (
-                <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" data-guide-id="contract-driver-information">
                   <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4">
                     <h2 className="text-xl font-semibold text-white flex items-center">
                       <svg
@@ -943,7 +910,7 @@ const ContractDetail: React.FC = () => {
               )}
 
             {/* Quick Actions Card */}
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" data-guide-id="contract-quick-actions">
               <div className="bg-gradient-to-r from-teal-600 to-cyan-600 px-6 py-4">
                 <h2 className="text-xl font-semibold text-white flex items-center">
                   <svg
@@ -1108,7 +1075,7 @@ const ContractDetail: React.FC = () => {
           <div className="space-y-6">
             {/* Customer Information */}
             {customer && (
-              <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" data-guide-id="contract-customer-information">
                 <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4">
                   <h3 className="text-lg font-semibold text-white flex items-center">
                     <svg
@@ -1383,7 +1350,7 @@ const ContractDetail: React.FC = () => {
 
             {/* Company Information */}
             {company && (
-              <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" data-guide-id="contract-company-information">
                 <div className="bg-gradient-to-r from-orange-600 to-red-600 px-6 py-4">
                   <h3 className="text-lg font-semibold text-white flex items-center">
                     <svg
@@ -1439,7 +1406,7 @@ const ContractDetail: React.FC = () => {
             )}
 
             {/* Recent Payments */}
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" data-guide-id="contract-recent-payments">
               <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
                 <h3 className="text-lg font-semibold text-white flex items-center">
                   <svg
@@ -1590,7 +1557,7 @@ const ContractDetail: React.FC = () => {
 
         {/* Print Buttons Section */}
         {contract && customer && company && contract.vehicle && (
-          <div className="mt-8 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+          <div className="mt-8 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" data-guide-id="contract-print-documents">
             <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
               <h2 className="text-xl font-semibold text-white flex items-center">
                 <FileText className="w-6 h-6 mr-2" />

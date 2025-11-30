@@ -30,6 +30,13 @@ const PaymentSchedule: React.FC = () => {
   const { contractId } = useParams<{ contractId: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  // Redirect if contractId is missing
+  useEffect(() => {
+    if (!contractId) {
+      navigate('/contracts');
+    }
+  }, [contractId, navigate]);
   const { contracts, customers, companies, payments, loadPayments } = useData();
 
   const [paymentSchedule, setPaymentSchedule] = useState<PaymentScheduleRow[]>(
@@ -48,36 +55,14 @@ const PaymentSchedule: React.FC = () => {
 
   useEffect(() => {
     if (contract) {
-      console.log("🔄 PaymentSchedule useEffect triggered:", {
-        contractId: contract.id,
-        monthly_payment: contract.monthly_payment,
-        adjusted_monthly_payment: contract.adjusted_monthly_payment,
-        total_paid: contract.total_paid,
-        remaining_balance: contract.remaining_balance,
-      });
       loadContractPayments();
     }
   }, [contract?.id]); // Only trigger when contract ID changes, not when contract properties change
 
   // Payments state'i değiştiğinde payment schedule'ı yeniden hesapla
   useEffect(() => {
-    console.log("🔄 PaymentSchedule useEffect - payments changed:", {
-      hasContract: !!contract,
-      contractId: contract?.id,
-      paymentsLength: payments.length,
-      isLoading,
-      yearly_interest_rate: contract?.yearly_interest_rate
-    });
-    
     if (contract && !isLoading) {
       // Always generate payment schedule for any valid contract
-      console.log("🔄 Payments state updated, regenerating payment schedule", {
-        paymentsLength: payments.length,
-        contractId: contract.id,
-        extraPayments: payments.filter(p => p.is_extra).length,
-        isZeroInterest: contract.yearly_interest_rate === 0,
-        yearly_interest_rate: contract.yearly_interest_rate
-      });
       generatePaymentSchedule(payments);
     }
   }, [payments, contract, isLoading]);
@@ -94,13 +79,9 @@ const PaymentSchedule: React.FC = () => {
     
     try {
       setIsLoading(true);
-      console.log("🔄 Loading contract payments for:", contract.id);
       
       // Sadece bu kontrata ait ödemeleri yükle
       await loadPayments({ contract_id: contract.id });
-      
-      // State güncellendikten sonra useEffect otomatik olarak tetiklenecek
-      console.log("🔄 Contract payments loaded, useEffect will handle schedule generation");
     } catch (error) {
       console.error("Error loading contract payments:", error);
       setIsLoading(false);
@@ -113,40 +94,17 @@ const PaymentSchedule: React.FC = () => {
       return;
     }
 
-    console.log("🔄 PaymentSchedule generatePaymentSchedule called with:", {
-      totalPayments: payments.length,
-      contractId: contract.id,
-      yearly_interest_rate: contract.yearly_interest_rate,
-      term_months: contract.term_months
-    });
-
     // Sadece bu kontrata ait olanları filtrele
     const contractSpecificPayments = payments.filter(
       (p) => p.contract_id === contract.id
     );
 
-    console.log("🔄 Contract-specific payments:", {
-      count: contractSpecificPayments.length,
-      extraPayments: contractSpecificPayments.filter(p => p.is_extra).length,
-      payments: contractSpecificPayments.map(p => ({
-        id: p.id,
-        amount: p.amount,
-        is_extra: p.is_extra,
-        notes: p.notes
-      }))
-    });
-
     // For zero interest contracts, generate fallback schedule immediately
     if (contract.yearly_interest_rate === 0 && contract.term_months > 0) {
-      console.log("🔄 Zero interest contract detected, generating fallback schedule");
       const fallbackSchedule = generateFallbackSchedule(contract);
       setPaymentSchedule(fallbackSchedule);
       setTotalInterest(0);
       setIsLoading(false);
-      console.log("✅ PaymentSchedule Fallback schedule generated:", {
-        scheduleLength: fallbackSchedule.length,
-        firstItem: fallbackSchedule[0]
-      });
       return;
     }
 
@@ -158,7 +116,6 @@ const PaymentSchedule: React.FC = () => {
       );
       
       // Try fallback for any contract
-      console.log("🔄 Attempting to generate fallback schedule due to validation failure");
       const fallbackSchedule = generateFallbackSchedule(contract);
       setPaymentSchedule(fallbackSchedule);
       setTotalInterest(0);
@@ -169,22 +126,13 @@ const PaymentSchedule: React.FC = () => {
     if (validation.warnings.length > 0) {
       console.warn("Payment calculation warnings:", validation.warnings);
     }
-
-    console.log("Contract-specific payments:", contractSpecificPayments);
     
     // Use centralized payment calculation with contract-specific payments
     try {
       const schedule = calculatePaymentSchedule(contract, contractSpecificPayments);
 
-      console.log("🔄 Payment schedule generated:", {
-        scheduleLength: schedule.length,
-        extraPaymentMonths: schedule.filter(s => s.isExtraPaymentMonth).length,
-        totalExtraPayments: schedule.reduce((sum, s) => sum + s.extraPayment, 0)
-      });
-
       // If schedule is empty, try fallback
       if (schedule.length === 0) {
-        console.log("🔄 Empty schedule, generating fallback");
         const fallbackSchedule = generateFallbackSchedule(contract);
         setPaymentSchedule(fallbackSchedule);
         setTotalInterest(0);
@@ -201,11 +149,9 @@ const PaymentSchedule: React.FC = () => {
       );
       setTotalInterest(totalInterestAmount);
       setIsLoading(false);
-      console.log("✅ Payment schedule generated successfully");
     } catch (error) {
       console.error("❌ Error generating payment schedule:", error);
       // Try fallback on error
-      console.log("🔄 Attempting to generate fallback schedule due to error");
       const fallbackSchedule = generateFallbackSchedule(contract);
       setPaymentSchedule(fallbackSchedule);
       setTotalInterest(0);
@@ -214,26 +160,10 @@ const PaymentSchedule: React.FC = () => {
   };
 
   const generateFallbackSchedule = (contract: any) => {
-    console.log("🔄 PaymentSchedule generateFallbackSchedule - Contract data:", {
-      contractId: contract.id,
-      down_payment: contract.down_payment,
-      standard_purchase_price: contract.standard_purchase_price,
-      term_months: contract.term_months,
-      monthly_payment: contract.monthly_payment,
-      start_date: contract.start_date
-    });
-    
     const schedule = [];
     const loanAmount = Math.abs(contract.down_payment || contract.standard_purchase_price || 0);
     const monthlyPayment = contract.monthly_payment || (loanAmount / contract.term_months);
     const startDate = new Date(contract.start_date);
-    
-    console.log("🔄 PaymentSchedule Fallback calculation:", {
-      loanAmount,
-      monthlyPayment,
-      termMonths: contract.term_months,
-      startDate: startDate.toISOString()
-    });
     
     let remainingBalance = loanAmount;
     
@@ -257,21 +187,7 @@ const PaymentSchedule: React.FC = () => {
       };
       
       schedule.push(scheduleItem);
-      
-      console.log(`🔄 PaymentSchedule Fallback month ${i}:`, {
-        paymentAmount,
-        remainingBalance: scheduleItem.remainingBalance,
-        dueDate: paymentDate.toISOString()
-      });
     }
-    
-    console.log("✅ PaymentSchedule Fallback schedule completed:", {
-      totalItems: schedule.length,
-      totalLoanAmount: loanAmount,
-      monthlyPayment,
-      firstItem: schedule[0],
-      lastItem: schedule[schedule.length - 1]
-    });
     
     return schedule;
   };
@@ -628,7 +544,7 @@ const PaymentSchedule: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
+      <div className="bg-white shadow-sm border-b border-gray-200" data-guide-id="payment-schedule-header">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
@@ -642,7 +558,7 @@ const PaymentSchedule: React.FC = () => {
                 {t("common.paymentSchedule")}
               </h1>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3" data-guide-id="payment-schedule-actions">
               <button
                 onClick={handlePrint}
                 className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
@@ -742,7 +658,7 @@ const PaymentSchedule: React.FC = () => {
         {/* Extra Payment Notice */}
 
         {/* Payment Schedule Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200" data-guide-id="payment-schedule-table">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50">
@@ -781,12 +697,6 @@ const PaymentSchedule: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {console.log("🔍 PaymentSchedule Rendering payment schedule:", { 
-                  scheduleLength: paymentSchedule.length, 
-                  schedule: paymentSchedule,
-                  firstItem: paymentSchedule[0],
-                  lastItem: paymentSchedule[paymentSchedule.length - 1]
-                })}
                 {paymentSchedule.map((row) => {
                   let rowClass = "";
                   let scenarioLabel = t("common.regularPayment");

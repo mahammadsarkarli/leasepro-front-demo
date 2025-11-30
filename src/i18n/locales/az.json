@@ -2764,18 +2764,19 @@
     "avgContract": "Orta Müqavilə"
   },
   "hoverGuide": {
-    "title": "Proqram Rehberi",
-    "startGuide": "Rehberi Başlat",
+    "title": "Proqram Bələdçisi",
+    "startGuide": "Bələdçini Başlat",
     "finish": "Bitir",
     "step": "Addım",
+    "elementNotFound": "Element tapılmadı",
     "infoModal": {
-      "title": "Proqram Rehberi",
+      "title": "Proqram Bələdçisi",
       "subtitle": "Yeni gələnlər üçün tam təlimat",
-      "description": "Bu rehber sistemi ilə proqramın bütün funksiyalarını öyrənə bilərsiniz. Hər səhifədə sağ üstdəki soru işarəsi (?) ikonuna tıklayaraq o səhifə haqqında ətraflı məlumat ala bilərsiniz. Hər səhifənin öz rehberi var və siz istədiyiniz zaman aktiv edə bilərsiniz.",
+      "description": "Bu bələdçi sistemi ilə proqramın bütün funksiyalarını öyrənə bilərsiniz. Hər səhifədə sağ üstdəki soru işarəsi (?) ikonuna tıklayaraq o səhifə haqqında ətraflı məlumat ala bilərsiniz. Hər səhifənin öz bələdçisi var və siz istədiyiniz zaman aktiv edə bilərsiniz.",
       "howToUse": "İstifadə Qaydası:",
       "step1": "İstədiyiniz səhifəyə daxil olun (Müştərilər, Müqavilələr, Ödənişlər və s.)",
       "step2": "Sağ üstdəki soru işarəsi (?) ikonuna tıklayın",
-      "step3": "O səhifə üçün xüsusi rehberi görəcəksiniz. Hər addımda elementlər vurğulanacaq və izah ediləcək",
+      "step3": "O səhifə üçün xüsusi bələdçini görəcəksiniz. Hər addımda elementlər vurğulanacaq və izah ediləcək",
       "whatYouLearn": "Nə öyrənəcəksiniz:",
       "learn1": "Hər səhifənin funksiyaları və istifadə qaydası",
       "learn2": "Düymələrin və əməliyyatların məqsədi",
@@ -2831,8 +2832,8 @@
         "content": "Bu kartda gecikmiş ödənişlərin sayını görə bilərsiniz. Bu, diqqət tələb edən məsələləri tez müəyyən etməyə kömək edir."
       },
       "guideTourButton": {
-        "title": "Rehber Turu",
-        "content": "Bu düymə ilə proqramın istənilən səhifəsində rehber turunu başlada bilərsiniz. Rehber turu sizə hər səhifədəki funksiyaların necə işlədiyini göstərir və elementləri vurğulayır. İstənilən vaxt bu düyməyə basaraq rehber turunu başlada bilərsiniz."
+        "title": "Bələdçi Turu",
+        "content": "Bu düymə ilə proqramın istənilən səhifəsində bələdçi turunu başlada bilərsiniz. Bələdçi turu sizə hər səhifədəki funksiyaların necə işlədiyini göstərir və elementləri vurğulayır. İstənilən vaxt bu düyməyə basaraq bələdçi turunu başlada bilərsiniz."
       }
     },
     "customers": {
@@ -3506,5 +3507,40 @@
       }
     },
     "elementNotFound": "Element tapılmadı"
+  },
+  "guideTour": {
+    "welcome": "Xoş gəlmisiniz!",
+    "title": "Proqram Bələdçisi",
+    "subtitle": "Proqramın bütün funksiyalarını öyrənmək üçün bələdçi turuna başlayın",
+    "startTour": "Bələdçi Turuna Başla",
+    "skip": "Keç",
+    "dashboard": {
+      "title": "İdarəetmə Paneli",
+      "description": "Proqramın əsas idarəetmə paneli. Burada aktiv müqavilələr, bu gün ödənilməli olan ödənişlər və gecikmiş ödənişlər haqqında məlumat görə bilərsiniz."
+    },
+    "customers": {
+      "title": "Müştərilər",
+      "description": "Bütün müştərilərin siyahısını görə, yeni müştəri əlavə edə və ya mövcud müştəriləri idarə edə bilərsiniz."
+    },
+    "contracts": {
+      "title": "Müqavilələr",
+      "description": "Bütün leasing müqavilələrinin siyahısını görə, yeni müqavilə yarada və mövcud müqavilələri idarə edə bilərsiniz."
+    },
+    "vehicles": {
+      "title": "Nəqliyyat Vasitələri",
+      "description": "Şirkətin bütün nəqliyyat vasitələrinin siyahısını görə, yeni nəqliyyat vasitəsi əlavə edə bilərsiniz."
+    },
+    "payments": {
+      "title": "Ödənişlər",
+      "description": "Bütün ödənişlərin siyahısını görə, yeni ödəniş qeydiyyatı edə bilərsiniz."
+    },
+    "notifications": {
+      "title": "Bildirişlər",
+      "description": "Bu gün ödənilməli olan və gecikmiş ödənişlər haqqında bildirişləri görə bilərsiniz."
+    },
+    "settings": {
+      "title": "Tənzimləmələr",
+      "description": "Proqramın tənzimləmələrini dəyişdirə bilərsiniz."
+    }
   }
 }

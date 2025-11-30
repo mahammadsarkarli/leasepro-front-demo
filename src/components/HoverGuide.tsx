@@ -325,14 +325,14 @@ const HoverGuide: React.FC<HoverGuideProps> = ({ isActive, onClose }) => {
             <span className="hidden sm:inline">{t('common.back')}</span>
           </button>
 
-          <div className="flex items-center space-x-1.5 sm:space-x-2 flex-1 justify-center">
+          <div className="flex items-center space-x-1 sm:space-x-1.5 flex-1 justify-center">
             {steps.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToStep(index)}
-                className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-200 ${
+                className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-200 ${
                   index === currentStep
-                    ? 'bg-blue-600 scale-125 shadow-md'
+                    ? 'bg-blue-600 scale-110 sm:scale-125 shadow-md'
                     : index < currentStep
                     ? 'bg-green-500'
                     : 'bg-gray-300'

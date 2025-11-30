@@ -3171,5 +3171,40 @@
       }
     },
     "elementNotFound": "Element not found"
+  },
+  "guideTour": {
+    "welcome": "Welcome!",
+    "title": "Application Guide",
+    "subtitle": "Start a guide tour to learn all the features of the application",
+    "startTour": "Start Guide Tour",
+    "skip": "Skip",
+    "dashboard": {
+      "title": "Dashboard",
+      "description": "The main control panel of the application. Here you can see information about active contracts, payments due today, and overdue payments."
+    },
+    "customers": {
+      "title": "Customers",
+      "description": "View the list of all customers, add new customers, or manage existing customers."
+    },
+    "contracts": {
+      "title": "Contracts",
+      "description": "View the list of all leasing contracts, create new contracts, and manage existing contracts."
+    },
+    "vehicles": {
+      "title": "Vehicles",
+      "description": "View the list of all company vehicles and add new vehicles."
+    },
+    "payments": {
+      "title": "Payments",
+      "description": "View the list of all payments and record new payments."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "See notifications about payments due today and overdue payments."
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Change the application settings."
+    }
   }
 }

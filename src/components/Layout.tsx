@@ -168,9 +168,9 @@ const Layout: React.FC<LayoutProps> = ({ children, onStartGuide }) => {
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-600"
+                className="lg:hidden p-1.5 rounded-md text-gray-400 hover:text-gray-600"
               >
-                <Menu className="w-6 h-6" />
+                <Menu className="w-5 h-5" />
               </button>
               
               {/* Company Selector - moved to navbar left side */}
@@ -192,7 +192,7 @@ const Layout: React.FC<LayoutProps> = ({ children, onStartGuide }) => {
               )}
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
               {/* Guide Tour Button */}
               <button
                 data-guide-id="guide-tour-button"
@@ -201,19 +201,19 @@ const Layout: React.FC<LayoutProps> = ({ children, onStartGuide }) => {
                     onStartGuide();
                   }
                 }}
-                className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-50 relative"
+                className="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-50 relative"
                 title={t('hoverGuide.startGuide') || 'Rehber Turunu Başlat'}
               >
-                <HelpCircle className="w-6 h-6" />
+                <HelpCircle className="w-4 h-4" />
               </button>
 
               {/* Custom Etibarname Button */}
               <button
                 onClick={() => setShowCustomEtibarname(true)}
-                className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-50"
+                className="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-50"
                 title="Xüsusi Etibarnamə Yarat"
               >
-                <FileSignature className="w-6 h-6" />
+                <FileSignature className="w-4 h-4" />
               </button>
 
               {/* Language Switcher */}
@@ -228,12 +228,12 @@ const Layout: React.FC<LayoutProps> = ({ children, onStartGuide }) => {
                 <button
                   data-guide-id="notifications-bell"
                   onClick={() => setShowNotifications(!showNotifications)}
-                  className="p-2 rounded-md text-gray-400 hover:text-gray-600 relative"
+                  className="p-1.5 rounded-md text-gray-400 hover:text-gray-600 relative"
                 >
-                  <Bell className="w-6 h-6" />
+                  <Bell className="w-4 h-4" />
                   {totalNotifications > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs font-medium text-white">
-                      {totalNotifications}
+                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[10px] font-medium text-white">
+                      {totalNotifications > 9 ? '9+' : totalNotifications}
                     </span>
                   )}
                 </button>
@@ -309,18 +309,18 @@ const Layout: React.FC<LayoutProps> = ({ children, onStartGuide }) => {
                 <button
                   data-guide-id="user-menu"
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center space-x-2 p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-50"
+                  className="flex items-center space-x-1.5 p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-50"
                 >
-                  <div className="flex-shrink-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-medium text-gray-700">
+                  <div className="flex-shrink-0 w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
+                    <span className="text-xs font-medium text-gray-700">
                       {user?.full_name ? user.full_name.split(' ').map(n => n[0]).join('') : 'U'}
                     </span>
                   </div>
                   <div className="hidden md:block text-left flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 text-overflow-safe">{user?.full_name}</p>
-                    <p className="text-xs text-gray-500 capitalize text-overflow-safe">{user?.role ? user.role.replace('_', ' ') : ''}</p>
+                    <p className="text-xs font-medium text-gray-900 text-overflow-safe">{user?.full_name}</p>
+                    <p className="text-[10px] text-gray-500 capitalize text-overflow-safe">{user?.role ? user.role.replace('_', ' ') : ''}</p>
                   </div>
-                  <ChevronDown className="flex-shrink-0 w-4 h-4" />
+                  <ChevronDown className="flex-shrink-0 w-3 h-3" />
                 </button>
                 
                 {showUserMenu && (

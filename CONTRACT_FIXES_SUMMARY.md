@@ -4,7 +4,7 @@
    v 
 1. **Remaining Balance Calculation**: When editing contracts, the remaining balance was recalculated from scratch without considering existing payments made. 
               
-2. **Payment Integration**: Contract edit didn't fetch and factor in existing payments when calculating the remaining balance.      
+2. **Payment Integration**: Contract edit didn't fetch and factor in existing payments when calculating the remaining balance.       
 adsf      
 3. **Total Paid Tracking**: Contracts weren't tracking the total amount paid correctly when terms were modified.   
 v

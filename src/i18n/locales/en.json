@@ -2447,6 +2447,10 @@
       "learn3": "Efficient use of all application features"
     },
     "dashboard": {
+      "overview": {
+        "title": "Dashboard Page",
+        "content": "This Dashboard page is the main control panel of the application. Here you can see active contracts, payments due today, overdue payments, and other important statistics. Below you will also see information about contracts due today and today's payments."
+      },
       "sidebar": {
         "title": "Sidebar Navigation",
         "content": "This sidebar provides access to all main pages. You can navigate to Dashboard, Customers, Contracts, Vehicles, and Payments sections from here."

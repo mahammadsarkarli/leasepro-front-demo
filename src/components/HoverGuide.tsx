@@ -19,6 +19,15 @@ interface HoverGuideProps {
 const HoverGuide: React.FC<HoverGuideProps> = ({ isActive, onClose }) => {
   const { t } = useTranslation();
   const location = useLocation();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   const guideSteps = React.useMemo(() => {
     const steps = getGuideSteps(t, location.pathname);
@@ -67,27 +76,59 @@ const HoverGuide: React.FC<HoverGuideProps> = ({ isActive, onClose }) => {
       let top = 0;
       let left = 0;
 
-      switch (position) {
-        case 'top':
-          top = rect.top - (tooltipRect?.height || 0) - spacing;
-          left = rect.left + (rect.width / 2) - ((tooltipRect?.width || 0) / 2);
-          break;
-        case 'bottom':
-          top = rect.bottom + spacing;
-          left = rect.left + (rect.width / 2) - ((tooltipRect?.width || 0) / 2);
-          break;
-        case 'left':
-          top = rect.top + (rect.height / 2) - ((tooltipRect?.height || 0) / 2);
-          left = rect.left - (tooltipRect?.width || 0) - spacing;
-          break;
-        case 'right':
+      if (isMobile) {
+        // Special handling for sidebar step - position tooltip to the right of sidebar
+        if (currentStepData.id === 'sidebar' && position === 'right') {
+          // Position tooltip to the right of the sidebar
           top = rect.top + (rect.height / 2) - ((tooltipRect?.height || 0) / 2);
           left = rect.right + spacing;
-          break;
+          // Ensure it doesn't go off screen
+          if (tooltipRect && left + tooltipRect.width > window.innerWidth - 16) {
+            left = window.innerWidth - tooltipRect.width - 16;
+          }
+        } else {
+          // On mobile: center tooltip above the target element, or below if not enough space
+          // Leave space for control panel at bottom (approximately 200px)
+          const controlPanelHeight = 200;
+          const availableTopSpace = rect.top;
+          const availableBottomSpace = window.innerHeight - rect.bottom - controlPanelHeight;
+          
+          if (availableTopSpace > availableBottomSpace && availableTopSpace > 150) {
+            // Position above
+            top = rect.top - (tooltipRect?.height || 0) - spacing;
+            left = Math.max(16, Math.min(16, window.innerWidth / 2 - ((tooltipRect?.width || 0) / 2)));
+          } else {
+            // Position below, but above control panel
+            top = Math.min(rect.bottom + spacing, window.innerHeight - controlPanelHeight - (tooltipRect?.height || 0) - 16);
+            left = Math.max(16, Math.min(16, window.innerWidth / 2 - ((tooltipRect?.width || 0) / 2)));
+          }
+          
+          // Center horizontally on mobile (except for sidebar)
+          left = Math.max(16, (window.innerWidth - (tooltipRect?.width || 0)) / 2);
+        }
+      } else {
+        // Desktop: use original positioning logic
+        switch (position) {
+          case 'top':
+            top = rect.top - (tooltipRect?.height || 0) - spacing;
+            left = rect.left + (rect.width / 2) - ((tooltipRect?.width || 0) / 2);
+            break;
+          case 'bottom':
+            top = rect.bottom + spacing;
+            left = rect.left + (rect.width / 2) - ((tooltipRect?.width || 0) / 2);
+            break;
+          case 'left':
+            top = rect.top + (rect.height / 2) - ((tooltipRect?.height || 0) / 2);
+            left = rect.left - (tooltipRect?.width || 0) - spacing;
+            break;
+          case 'right':
+            top = rect.top + (rect.height / 2) - ((tooltipRect?.height || 0) / 2);
+            left = rect.right + spacing;
+            break;
+        }
       }
 
       // Keep tooltip within viewport with responsive padding
-      const padding = isMobile ? 16 : 20;
       const minPadding = isMobile ? 8 : 12;
       
       // Ensure tooltip stays within viewport bounds
@@ -155,6 +196,29 @@ const HoverGuide: React.FC<HoverGuideProps> = ({ isActive, onClose }) => {
       window.removeEventListener('resize', updatePosition);
     };
   }, [isActive, currentStep, steps, nextStep]);
+
+  // Open sidebar on mobile only when guide step requires it (only for 'sidebar' step, not for links)
+  // Sidebar will NOT open automatically - user must manually open it or it will open when sidebar step is reached
+  useEffect(() => {
+    if (!isActive || steps.length === 0) return;
+    
+    const stepData = steps[currentStep];
+    if (!stepData) return;
+    
+    const stepId = stepData.id;
+    const isMobile = window.innerWidth < 1024;
+    // Only open sidebar when we reach the 'sidebar' step itself, not for link steps
+    const requiresSidebar = stepId === 'sidebar';
+    
+    if (isMobile && requiresSidebar) {
+      // Small delay to ensure smooth transition
+      setTimeout(() => {
+        // Dispatch custom event to open sidebar
+        const event = new CustomEvent('openSidebarForGuide');
+        window.dispatchEvent(event);
+      }, 100);
+    }
+  }, [isActive, currentStep, steps]);
 
   const handleClose = () => {
     stopGuide();
@@ -231,11 +295,14 @@ const HoverGuide: React.FC<HoverGuideProps> = ({ isActive, onClose }) => {
       {targetRect && (
         <div
           ref={tooltipRef}
-          className="fixed z-[10000] pointer-events-none px-4 sm:px-0"
+          className={`fixed z-[10000] pointer-events-none ${
+            window.innerWidth < 768 && currentStepData.id !== 'sidebar' ? 'left-1/2 -translate-x-1/2 px-4' : 'px-0'
+          }`}
           style={{
             top: `${tooltipPosition.top}px`,
-            left: `${tooltipPosition.left}px`,
+            left: window.innerWidth < 768 && currentStepData.id !== 'sidebar' ? '50%' : `${tooltipPosition.left}px`,
             maxWidth: window.innerWidth < 768 ? `${window.innerWidth - 32}px` : '384px',
+            transform: window.innerWidth < 768 && currentStepData.id !== 'sidebar' ? 'translateX(-50%)' : 'none',
           }}
         >
           <div className="bg-white rounded-xl shadow-2xl border-2 border-blue-200 max-w-sm w-full p-4 sm:p-5">
@@ -245,67 +312,68 @@ const HoverGuide: React.FC<HoverGuideProps> = ({ isActive, onClose }) => {
               </div>
               <div className="flex-1 min-w-0">
                 <h4 className="text-sm sm:text-base font-bold text-gray-900 mb-2 leading-tight">
-                  {t(currentStepData.titleKey)}
+                  {currentStepData.titleKey ? t(currentStepData.titleKey) : ''}
                 </h4>
                 <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-                  {t(currentStepData.contentKey)}
+                  {currentStepData.contentKey ? t(currentStepData.contentKey) : ''}
                 </p>
               </div>
             </div>
-            {/* Arrow pointing to target */}
-            <div
-              className={`absolute w-0 h-0 border-8 sm:border-10 border-transparent ${
-                currentStepData.position === 'top'
-                  ? 'top-full left-1/2 -translate-x-1/2 border-t-white'
-                  : currentStepData.position === 'bottom'
-                  ? 'bottom-full left-1/2 -translate-x-1/2 border-b-white'
-                  : currentStepData.position === 'left'
-                  ? 'left-full top-1/2 -translate-y-1/2 border-l-white'
-                  : 'right-full top-1/2 -translate-y-1/2 border-r-white'
-              }`}
-            />
+            {/* Arrow pointing to target - Hidden on mobile */}
+            {window.innerWidth >= 768 && (
+              <div
+                className={`absolute w-0 h-0 border-10 border-transparent ${
+                  currentStepData.position === 'top'
+                    ? 'top-full left-1/2 -translate-x-1/2 border-t-white'
+                    : currentStepData.position === 'bottom'
+                    ? 'bottom-full left-1/2 -translate-x-1/2 border-b-white'
+                    : currentStepData.position === 'left'
+                    ? 'left-full top-1/2 -translate-y-1/2 border-l-white'
+                    : 'right-full top-1/2 -translate-y-1/2 border-r-white'
+                }`}
+              />
+            )}
           </div>
         </div>
       )}
 
       {/* Control Panel - Responsive */}
-      <div className="fixed bottom-4 sm:bottom-6 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-[10001] bg-white rounded-xl shadow-2xl border-2 border-blue-200 p-4 sm:p-5 sm:min-w-[400px] sm:max-w-lg pointer-events-auto">
-        <div className="flex items-center justify-between mb-3 sm:mb-4">
+      <div className="fixed bottom-4 sm:bottom-6 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-[10001] bg-white rounded-xl shadow-2xl border-2 border-blue-200 p-3 sm:p-5 sm:min-w-[400px] sm:max-w-lg pointer-events-auto" style={{ marginBottom: 'env(safe-area-inset-bottom, 0)' }}>
+        <div className="flex items-center justify-between mb-2 sm:mb-4">
           <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg">
-              <Play className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg">
+              <Play className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
             </div>
             <div>
-              <h3 className="text-sm sm:text-base font-bold text-gray-900">
+              <h3 className="text-xs sm:text-base font-bold text-gray-900">
                 {t('hoverGuide.title')}
               </h3>
-              <p className="text-xs sm:text-sm text-gray-500 font-medium">
+              <p className="text-[10px] sm:text-sm text-gray-500 font-medium">
                 {currentStep + 1} / {steps.length} {t('hoverGuide.step')}
               </p>
             </div>
           </div>
           <button
             onClick={handleClose}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
             title={t('common.close')}
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
 
-        {/* Step Info */}
-        <div className="mb-3 sm:mb-4">
+        {/* Step Info - Hidden on mobile to avoid duplication with tooltip */}
+        <div className="hidden sm:block mb-3 sm:mb-4">
           <h4 className="text-sm sm:text-base font-bold text-gray-900 mb-2">
-            {t(currentStepData.titleKey)}
+            {currentStepData.titleKey ? t(currentStepData.titleKey) : ''}
           </h4>
           <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-            {t(currentStepData.contentKey)}
+            {currentStepData.contentKey ? t(currentStepData.contentKey) : ''}
           </p>
-          {/* Removed element not found warning - elements will auto-skip if not found */}
         </div>
 
-        {/* Progress Bar */}
-        <div className="mb-3 sm:mb-4">
+        {/* Progress Bar - Hidden on mobile */}
+        <div className="hidden sm:block mb-3 sm:mb-4">
           <div className="w-full bg-gray-200 rounded-full h-2.5 sm:h-3">
             <div
               className="bg-gradient-to-r from-blue-600 to-indigo-600 h-2.5 sm:h-3 rounded-full transition-all duration-300 shadow-sm"
@@ -325,19 +393,36 @@ const HoverGuide: React.FC<HoverGuideProps> = ({ isActive, onClose }) => {
             <span className="hidden sm:inline">{t('common.back')}</span>
           </button>
 
-          <div className="flex items-center space-x-1 sm:space-x-1.5 flex-1 justify-center">
+          <div className="flex items-center space-x-1 sm:space-x-1.5 flex-1 justify-center max-w-full overflow-x-auto px-1">
             {steps.map((_, index) => (
-              <button
+              <div
                 key={index}
                 onClick={() => goToStep(index)}
-                className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-200 ${
+                className={`flex-shrink-0 rounded-full transition-all duration-200 cursor-pointer hover:opacity-80 ${
                   index === currentStep
-                    ? 'bg-blue-600 scale-110 sm:scale-125 shadow-md'
+                    ? 'bg-blue-600 sm:scale-125 shadow-md'
                     : index < currentStep
                     ? 'bg-green-500'
                     : 'bg-gray-300'
                 }`}
+                style={{
+                  width: isMobile ? '6px' : '8px',
+                  height: isMobile ? '6px' : '8px',
+                  minWidth: 0,
+                  minHeight: 0,
+                  padding: 0,
+                  margin: 0,
+                  flexShrink: 0,
+                }}
                 title={`${t('hoverGuide.step')} ${index + 1}`}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    goToStep(index);
+                  }
+                }}
               />
             ))}
           </div>
@@ -374,9 +459,45 @@ const getGuideSteps = (t: (key: string) => string, path: string): GuideStep[] =>
   if (path === '/dashboard' || path === '/') {
     return [
       {
-        id: 'guide-tour-button',
-        titleKey: 'hoverGuide.dashboard.guideTourButton.title',
-        contentKey: 'hoverGuide.dashboard.guideTourButton.content',
+        id: 'dashboard-overview',
+        titleKey: 'hoverGuide.dashboard.overview.title',
+        contentKey: 'hoverGuide.dashboard.overview.content',
+        position: 'top',
+      },
+      {
+        id: 'active-contracts-stat',
+        titleKey: 'hoverGuide.dashboard.activeContracts.title',
+        contentKey: 'hoverGuide.dashboard.activeContracts.content',
+        position: 'top',
+      },
+      {
+        id: 'due-today-stat',
+        titleKey: 'hoverGuide.dashboard.dueToday.title',
+        contentKey: 'hoverGuide.dashboard.dueToday.content',
+        position: 'top',
+      },
+      {
+        id: 'overdue-stat',
+        titleKey: 'hoverGuide.dashboard.overdue.title',
+        contentKey: 'hoverGuide.dashboard.overdue.content',
+        position: 'top',
+      },
+      {
+        id: 'notifications-bell',
+        titleKey: 'hoverGuide.dashboard.notifications.title',
+        contentKey: 'hoverGuide.dashboard.notifications.content',
+        position: 'bottom',
+      },
+      {
+        id: 'user-menu',
+        titleKey: 'hoverGuide.dashboard.userMenu.title',
+        contentKey: 'hoverGuide.dashboard.userMenu.content',
+        position: 'bottom',
+      },
+      {
+        id: 'language-switcher',
+        titleKey: 'hoverGuide.dashboard.languageSwitcher.title',
+        contentKey: 'hoverGuide.dashboard.languageSwitcher.content',
         position: 'bottom',
       },
       {
@@ -414,42 +535,6 @@ const getGuideSteps = (t: (key: string) => string, path: string): GuideStep[] =>
         titleKey: 'hoverGuide.dashboard.paymentsLink.title',
         contentKey: 'hoverGuide.dashboard.paymentsLink.content',
         position: 'right',
-      },
-      {
-        id: 'notifications-bell',
-        titleKey: 'hoverGuide.dashboard.notifications.title',
-        contentKey: 'hoverGuide.dashboard.notifications.content',
-        position: 'bottom',
-      },
-      {
-        id: 'user-menu',
-        titleKey: 'hoverGuide.dashboard.userMenu.title',
-        contentKey: 'hoverGuide.dashboard.userMenu.content',
-        position: 'bottom',
-      },
-      {
-        id: 'language-switcher',
-        titleKey: 'hoverGuide.dashboard.languageSwitcher.title',
-        contentKey: 'hoverGuide.dashboard.languageSwitcher.content',
-        position: 'bottom',
-      },
-      {
-        id: 'active-contracts-stat',
-        titleKey: 'hoverGuide.dashboard.activeContracts.title',
-        contentKey: 'hoverGuide.dashboard.activeContracts.content',
-        position: 'top',
-      },
-      {
-        id: 'due-today-stat',
-        titleKey: 'hoverGuide.dashboard.dueToday.title',
-        contentKey: 'hoverGuide.dashboard.dueToday.content',
-        position: 'top',
-      },
-      {
-        id: 'overdue-stat',
-        titleKey: 'hoverGuide.dashboard.overdue.title',
-        contentKey: 'hoverGuide.dashboard.overdue.content',
-        position: 'top',
       },
     ];
   }

@@ -2783,6 +2783,10 @@
       "learn3": "Proqramın bütün imkanlarından səmərəli istifadə"
     },
     "dashboard": {
+      "overview": {
+        "title": "Dashboard Səhifəsi",
+        "content": "Bu Dashboard səhifəsi proqramın əsas idarəetmə panelidir. Burada aktiv müqavilələr, bu gün ödənilməli olan ödənişlər, gecikmiş ödənişlər və digər mühüm statistikaları görə bilərsiniz. Aşağıda bu gün ödənilməli müqavilələr və bugünkü ödənişlər haqqında məlumatlar da göstərilir."
+      },
       "sidebar": {
         "title": "Yan Panəl",
         "content": "Bu yan paneldə bütün əsas səhifələrə keçid edə bilərsiniz. Dashboard, Müştərilər, Müqavilələr, Nəqliyyat Vasitələri və Ödənişlər kimi bölmələrə buradan çata bilərsiniz."

@@ -5,9 +5,10 @@ import { X, HelpCircle, Info } from 'lucide-react';
 interface GuideInfoModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onStartGuide?: () => void;
 }
 
-const GuideInfoModal: React.FC<GuideInfoModalProps> = ({ isOpen, onClose }) => {
+const GuideInfoModal: React.FC<GuideInfoModalProps> = ({ isOpen, onClose, onStartGuide }) => {
   const { t } = useTranslation();
 
   if (!isOpen) return null;
@@ -75,9 +76,20 @@ const GuideInfoModal: React.FC<GuideInfoModalProps> = ({ isOpen, onClose }) => {
 
           {/* Action Buttons */}
           <div className="flex space-x-3">
+            {onStartGuide && (
+              <button
+                onClick={() => {
+                  onStartGuide();
+                  onClose();
+                }}
+                className="flex-1 px-5 sm:px-6 py-3 sm:py-3.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-200 font-semibold text-sm sm:text-base shadow-lg"
+              >
+                {t('hoverGuide.startGuide')}
+              </button>
+            )}
             <button
               onClick={onClose}
-              className="flex-1 px-5 sm:px-6 py-3 sm:py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold text-sm sm:text-base shadow-lg"
+              className={`px-5 sm:px-6 py-3 sm:py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold text-sm sm:text-base shadow-lg ${onStartGuide ? 'flex-1' : 'flex-1'}`}
             >
               {t('common.understood')}
             </button>

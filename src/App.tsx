@@ -154,11 +154,16 @@ function AuthenticatedApp() {
 
   const handleStartGuide = () => {
     setShowGuideWelcome(false);
+    setShowGuideInfo(false); // Close info modal when starting guide
     setShowHoverGuide(true);
   };
 
   const handleCloseGuide = () => {
     setShowHoverGuide(false);
+  };
+
+  const handleCloseGuideInfo = () => {
+    setShowGuideInfo(false);
   };
 
   if (isLoading) {
@@ -178,9 +183,12 @@ function AuthenticatedApp() {
 
   return (
     <>
-      <Layout onStartGuide={() => {
-        setShowHoverGuide(true);
-      }}>
+      <Layout 
+        onStartGuide={() => {
+          setShowHoverGuide(true);
+        }}
+        isGuideActive={showHoverGuide}
+      >
         <Routes>
         <Route path="/dashboard" element={<ProtectedRoute requiredPermission={{ page: 'dashboard', action: 'read' }}><Dashboard /></ProtectedRoute>} />
         <Route path="/analytics" element={<Analytics />} />
@@ -234,10 +242,14 @@ function AuthenticatedApp() {
         onClose={handleCloseGuide}
       />
       
-      {/* Guide Info Modal */}
+      {/* Guide Info Modal - Only show if guide is not active */}
       <GuideInfoModal
-        isOpen={showGuideInfo}
-        onClose={() => setShowGuideInfo(false)}
+        isOpen={showGuideInfo && !showHoverGuide}
+        onClose={handleCloseGuideInfo}
+        onStartGuide={() => {
+          setShowGuideInfo(false);
+          setShowHoverGuide(true);
+        }}
       />
     </>
   );

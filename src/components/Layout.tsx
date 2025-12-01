@@ -29,9 +29,10 @@ import { PAGES } from '../utils/permissions';
 interface LayoutProps {
   children: React.ReactNode;
   onStartGuide?: () => void;
+  isGuideActive?: boolean;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, onStartGuide }) => {
+const Layout: React.FC<LayoutProps> = ({ children, onStartGuide, isGuideActive }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -106,6 +107,20 @@ const Layout: React.FC<LayoutProps> = ({ children, onStartGuide }) => {
   const dueToday = notifications.filter(n => n.type === 'due_today').length;
   const overdue = notifications.filter(n => n.type === 'overdue').length;
   const totalNotifications = dueToday + overdue;
+
+  // Open sidebar on mobile when guide step requires it
+  useEffect(() => {
+    const handleOpenSidebar = () => {
+      if (window.innerWidth < 1024) {
+        setSidebarOpen(true);
+      }
+    };
+    
+    window.addEventListener('openSidebarForGuide', handleOpenSidebar);
+    return () => {
+      window.removeEventListener('openSidebarForGuide', handleOpenSidebar);
+    };
+  }, []);
 
   return (
     <div className="flex h-screen bg-gray-50 mobile-viewport-fix">
@@ -345,7 +360,7 @@ const Layout: React.FC<LayoutProps> = ({ children, onStartGuide }) => {
         </header>
 
         {/* Main Content Area */}
-        <main className="mobile-main flex-1 overflow-auto p-6 mobile-scroll-container">
+        <main className="mobile-main flex-1 overflow-auto p-6 mobile-scroll-container pb-24 sm:pb-6">
           {children}
         </main>
       </div>

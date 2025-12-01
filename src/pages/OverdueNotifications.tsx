@@ -14,6 +14,8 @@ import {
   Filter,
   Eye,
   Plus,
+  Grid3X3,
+  List,
 } from "lucide-react";
 import { useData } from "../contexts/DataContext";
 import { useAuth } from "../contexts/AuthContext";
@@ -144,6 +146,13 @@ const OverdueNotifications: React.FC = () => {
     "daysOverdue" | "amount" | "customerName"
   >("daysOverdue");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [viewMode, setViewMode] = useState<"cards" | "table">(() => {
+    // Default to table view on desktop, card view on mobile
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768 ? "table" : "cards";
+    }
+    return "table";
+  });
 
   // Load data when component mounts
   useEffect(() => {
@@ -650,7 +659,31 @@ const OverdueNotifications: React.FC = () => {
             </select>
           </div>
 
-          <div className="flex items-end">
+          <div className="flex items-end space-x-2">
+            <div className="flex items-center border border-gray-300 rounded-md" data-guide-id="view-mode-toggle">
+              <button
+                onClick={() => setViewMode("cards")}
+                className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+                  viewMode === "cards"
+                    ? "bg-blue-600 text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+                title={t("common.cards")}
+              >
+                <Grid3X3 className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode("table")}
+                className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+                  viewMode === "table"
+                    ? "bg-blue-600 text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+                title={t("common.table")}
+              >
+                <List className="w-4 h-4" />
+              </button>
+            </div>
             <button
               onClick={() => {
                 setSearchTerm("");
@@ -664,348 +697,531 @@ const OverdueNotifications: React.FC = () => {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t("pages.overdueNotifications.customer")}
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t("pages.overdueNotifications.vehicle")}
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t("pages.overdueNotifications.company")}
-                </th>
-                <th
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                  onClick={() => handleSort("daysOverdue")}
+      {/* Cards/Table View */}
+      {viewMode === "cards" ? (
+        /* Notification Cards */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-guide-id="notification-list">
+          {filteredNotifications.length === 0 ? (
+            <div className="col-span-full">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+                <Bell className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-lg font-medium text-gray-500">
+                  {t("pages.overdueNotifications.noOverdueFound")}
+                </p>
+                <p className="text-sm text-gray-400 mt-2">
+                  {t("pages.overdueNotifications.noOverdueSubtext")}
+                </p>
+              </div>
+            </div>
+          ) : (
+            filteredNotifications.map((notification) => {
+              const customer = customers.find(c => c.id === notification.customerId);
+              const isCompany = customer?.customer_type === 'company';
+              
+              return (
+                <div
+                  key={notification.id}
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
                 >
-                  <div className="flex items-center">
-                    {t("pages.overdueNotifications.daysOverdue")}
-                    <Filter className="w-3 h-3 ml-1" />
-                  </div>
-                </th>
-                <th
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                  onClick={() => handleSort("amount")}
-                >
-                  <div className="flex items-center">
-                    {t("pages.overdueNotifications.amount")}
-                    <Filter className="w-3 h-3 ml-1" />
-                  </div>
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t("pages.overdueNotifications.actions")}
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200" data-guide-id="notification-list">
-              {filteredNotifications.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="px-6 py-12 text-center text-gray-500"
-                  >
-                    <div className="flex flex-col items-center">
-                      <Bell className="w-12 h-12 text-gray-300 mb-4" />
-                      <p className="text-lg font-medium">
-                        {t("pages.overdueNotifications.noOverdueFound")}
-                      </p>
-                      <p className="text-sm">
-                        {t("pages.overdueNotifications.noOverdueSubtext")}
-                      </p>
+                  <div className="p-6">
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                            isCompany ? 'bg-blue-100' : 'bg-gray-300'
+                          }`}>
+                            {isCompany ? (
+                              <Building2 className="w-5 h-5 text-blue-600" />
+                            ) : (
+                              <User className="w-5 h-5 text-gray-600" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-lg font-semibold text-gray-900 text-overflow-safe">
+                              {notification.customerName}
+                            </h3>
+                            <div className="flex items-center text-sm text-gray-500 mt-1">
+                              <Phone className="w-3 h-3 mr-1 text-gray-400" />
+                              <a
+                                href={`tel:${notification.customerPhone}`}
+                                className="hover:text-blue-600 hover:underline text-overflow-safe"
+                              >
+                                {notification.customerPhone}
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ml-2 ${
+                          notification.daysOverdue <= 7
+                            ? "bg-yellow-100 text-yellow-800"
+                            : notification.daysOverdue <= 30
+                            ? "bg-orange-100 text-orange-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {notification.daysOverdue}{" "}
+                        {notification.daysOverdue === 1
+                          ? t("pages.overdueNotifications.day")
+                          : t("pages.overdueNotifications.days")}
+                      </span>
                     </div>
-                  </td>
+
+                    {/* Vehicle Info */}
+                    <div className="flex items-center mb-4 pb-4 border-b border-gray-200">
+                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Car className="w-4 h-4 text-blue-600" />
+                      </div>
+                      <div className="ml-3 flex-1 min-w-0">
+                        <div className="text-sm font-medium text-gray-900 text-overflow-safe">
+                          {notification.vehicleMake} {notification.vehicleModel}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {notification.vehicleLicensePlate}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Company Info */}
+                    <div className="flex items-center mb-4 pb-4 border-b border-gray-200">
+                      <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Building2 className="w-4 h-4 text-green-600" />
+                      </div>
+                      <div className="ml-3 flex-1 min-w-0">
+                        <div className="text-sm font-medium text-gray-900 text-overflow-safe">
+                          {notification.companyName}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Amount Info */}
+                    <div className="mb-4">
+                      <div className="text-2xl font-bold text-gray-900 mb-2">
+                        ₼{safeFormatNumber(notification.totalOverdueAmount)}
+                      </div>
+                      <div className="space-y-1 text-xs">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">
+                            {t("pages.overdueNotifications.baseAmount")}:
+                          </span>
+                          <span className="text-blue-600 font-medium">
+                            ₼{safeFormatNumber(notification.amount)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">
+                            {t("pages.overdueNotifications.newInterest")}:
+                          </span>
+                          <span className="text-red-600 font-medium">
+                            ₼{safeFormatNumber(notification.lateFees)}
+                          </span>
+                        </div>
+                        <div className="text-gray-500 mt-1">
+                          {t('notifications.due')}: {formatDisplayDate(notification.dueDate)}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Partial Payments Info (Simplified for Card) */}
+                    {notification.hasPartialPayments && (
+                      <div
+                        className={`mb-4 p-3 rounded border ${
+                          notification.remainingAmount <= 0
+                            ? "bg-green-50 border-green-200"
+                            : "bg-blue-50 border-blue-200"
+                        }`}
+                      >
+                        <div className="text-xs font-medium mb-2">
+                          {notification.remainingAmount <= 0
+                            ? "✅ " + t("pages.overdueNotifications.partialPaymentStatus") + " (Sufficient)"
+                            : t("pages.overdueNotifications.partialPaymentStatus")}
+                        </div>
+                        <div className="space-y-1 text-xs">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">{t("pages.overdueNotifications.paid")}:</span>
+                            <span className="font-medium text-green-700">
+                              ₼{safeFormatNumber(notification.partialPaymentDetails.totalPaid)}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">{t("pages.overdueNotifications.remaining")}:</span>
+                            <span className="font-medium text-blue-700">
+                              ₼{safeFormatNumber(notification.partialPaymentDetails.remainingToPay)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Actions */}
+                    <div className="flex space-x-2 pt-4 border-t border-gray-200">
+                      <button
+                        onClick={() => handleViewContract(notification.contractId)}
+                        className="flex-1 inline-flex items-center justify-center px-4 py-2 border border-blue-300 rounded-lg text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors"
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        {t("pages.overdueNotifications.viewDetails")}
+                      </button>
+                      <button
+                        onClick={() => handleRecordPayment(notification.contractId)}
+                        className="flex-1 inline-flex items-center justify-center px-4 py-2 border border-green-300 rounded-lg text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100 transition-colors"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        {t("pages.overdueNotifications.recordPayment")}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      ) : (
+        /* Table View */
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t("pages.overdueNotifications.customer")}
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t("pages.overdueNotifications.vehicle")}
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t("pages.overdueNotifications.company")}
+                  </th>
+                  <th
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort("daysOverdue")}
+                  >
+                    <div className="flex items-center">
+                      {t("pages.overdueNotifications.daysOverdue")}
+                      <Filter className="w-3 h-3 ml-1" />
+                    </div>
+                  </th>
+                  <th
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort("amount")}
+                  >
+                    <div className="flex items-center">
+                      {t("pages.overdueNotifications.amount")}
+                      <Filter className="w-3 h-3 ml-1" />
+                    </div>
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t("pages.overdueNotifications.actions")}
+                  </th>
                 </tr>
-              ) : (
-                filteredNotifications.map((notification) => {
-                  const customer = customers.find(c => c.id === notification.customerId);
-                  const isCompany = customer?.customer_type === 'company';
-                  
-                  return (
-                  <tr key={notification.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                          isCompany ? 'bg-blue-100' : 'bg-gray-300'
-                        }`}>
-                          {isCompany ? (
-                            <Building2 className="w-4 h-4 text-blue-600" />
-                          ) : (
-                            <User className="w-4 h-4 text-gray-600" />
-                          )}
-                        </div>
-                        <div className="ml-3">
-                          <div className="text-sm font-medium text-gray-900">
-                            {notification.customerName}
-                          </div>
-                          <div className="flex items-center text-sm text-gray-500">
-                            <Phone className="w-3 h-3 mr-2 text-gray-400" />
-                            <a
-                              href={`tel:${notification.customerPhone}`}
-                              className="hover:text-blue-600 hover:underline"
-                            >
-                              {notification.customerPhone}
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <Car className="w-4 h-4 text-blue-600" />
-                        </div>
-                        <div className="ml-3">
-                          <div className="text-sm font-medium text-gray-900">
-                            {notification.vehicleMake}{" "}
-                            {notification.vehicleModel}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {notification.vehicleLicensePlate}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                          <Building2 className="w-4 h-4 text-green-600" />
-                        </div>
-                        <div className="ml-3">
-                          <div className="text-sm font-medium text-gray-900">
-                            {notification.companyName}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            notification.daysOverdue <= 7
-                              ? "bg-yellow-100 text-yellow-800"
-                              : notification.daysOverdue <= 30
-                              ? "bg-orange-100 text-orange-800"
-                              : "bg-red-100 text-red-800"
-                          }`}
-                        >
-                          {notification.daysOverdue}{" "}
-                          {notification.daysOverdue === 1
-                            ? t("pages.overdueNotifications.day")
-                            : t("pages.overdueNotifications.days")}
-                        </span>
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {t('notifications.due')}: {formatDisplayDate(notification.dueDate)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
-                        <div className="font-medium">
-                          ₼{safeFormatNumber(notification.totalOverdueAmount)}
-                        </div>
-                        <div className="text-xs text-blue-600">
-                          {t("pages.overdueNotifications.baseAmount")}: ₼
-                          {safeFormatNumber(notification.amount)}
-                        </div>
-                        <div className="text-xs text-red-600">
-                          {t("pages.overdueNotifications.newInterest")}: ₼
-                          {safeFormatNumber(notification.lateFees)}
-                        </div>
-                        {notification.daysOverdue > 0 &&
-                          notification.lateFees > 0 && (
-                            <div className="text-xs text-gray-500">
-                              {t(
-                                "pages.payments.createPayment.dailyInterestRate"
-                              )}
-                              : {safeNumber(notification.dailyInterestRate)}%
-                              {t("pages.payments.createPayment.perDay")}
-                            </div>
-                          )}
-                        
-                        {/* Multi-month overdue breakdown */}
-                        {notification.isMultiMonthOverdue && notification.multiMonthCalculation && (
-                          <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded">
-                            <div className="text-xs font-medium text-orange-800 mb-2">
-                              📅 {t("pages.overdueNotifications.multiMonthOverdueBreakdown")} ({notification.multiMonthCalculation.monthsOverdue} {t("pages.overdueNotifications.months")})
-                            </div>
-                            
-                            {/* Show interest calculation info if there was a last partial payment */}
-                            {notification.partialPaymentDetails.lastPartialPaymentDate && (
-                              <div className="text-xs text-blue-700 mb-2 p-2 bg-blue-50 rounded">
-                                💡 {t("pages.overdueNotifications.interestCalculatedFrom")}: {formatDisplayDate(notification.partialPaymentDetails.lastPartialPaymentDate)}
-                              </div>
-                            )}
-                            
-                            <div className="space-y-2">
-                              {notification.multiMonthCalculation.monthlyBreakdown.map((month, index) => (
-                                <div key={index} className="p-2 bg-white rounded border border-orange-200">
-                                  <div className="flex justify-between items-center mb-1">
-                                    <span className="text-sm font-medium text-gray-800">
-                                      {month.monthName}
-                                    </span>
-                                    <span className="text-xs text-gray-500">
-                                      {month.days} {t("pages.overdueNotifications.daysOverdue")}
-                                    </span>
-                                  </div>
-                                  <div className="grid grid-cols-2 gap-2 text-xs">
-                                    <div className="text-gray-600">
-                                      {t("pages.overdueNotifications.baseAmount")}:
-                                    </div>
-                                    <div className="text-right font-medium">
-                                      ₼{safeFormatNumber(month.amount)}
-                                    </div>
-                                    <div className="text-gray-600">
-                                      {t("pages.overdueNotifications.interest")}:
-                                    </div>
-                                    <div className="text-right text-red-600 font-medium">
-                                      ₼{safeFormatNumber(month.interest)}
-                                    </div>
-                                    <div className="text-gray-600 font-medium">
-                                      {t("pages.overdueNotifications.total")}:
-                                    </div>
-                                    <div className="text-right text-orange-700 font-bold">
-                                      ₼{safeFormatNumber(month.total)}
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
-                              <div className="border-t border-orange-300 pt-2 mt-2">
-                                <div className="flex justify-between text-sm font-bold">
-                                  <span className="text-orange-800">{t("pages.overdueNotifications.totalMultiMonth")}:</span>
-                                  <span className="text-orange-800">
-                                    ₼{safeFormatNumber(notification.multiMonthCalculation.totalDue)}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                        {notification.hasPartialPayments && (
-                          <div
-                            className={`mt-2 p-3 rounded border ${
-                              notification.remainingAmount <= 0
-                                ? "bg-green-50 border-green-200"
-                                : "bg-blue-50 border-blue-200"
-                            }`}
-                          >
-                            <div
-                              className={`text-xs font-medium mb-2 ${
-                                notification.remainingAmount <= 0
-                                  ? "text-green-800"
-                                  : "text-blue-800"
-                              }`}
-                            >
-                              {notification.remainingAmount <= 0
-                                ? "✅ " +
-                                  t(
-                                    "pages.overdueNotifications.partialPaymentStatus"
-                                  ) +
-                                  " (Sufficient)"
-                                : t(
-                                    "pages.overdueNotifications.partialPaymentStatus"
-                                  )}
-                            </div>
-                            
-                            {/* Enhanced partial payment details */}
-                            <div className="space-y-1">
-                              <div className="flex justify-between text-xs">
-                                <span className="text-gray-600">
-                                  {t("pages.overdueNotifications.paid")}:
-                                </span>
-                                <span className="font-medium text-green-700">
-                                  ₼{safeFormatNumber(notification.partialPaymentDetails.totalPaid)}
-                                </span>
-                              </div>
-                              
-                              <div className="flex justify-between text-xs">
-                                <span className="text-gray-600">
-                                  {t("pages.overdueNotifications.remaining")}:
-                                </span>
-                                <span className="font-medium text-blue-700">
-                                  ₼{safeFormatNumber(notification.partialPaymentDetails.remainingToPay)}
-                                </span>
-                              </div>
-                              
-                              {notification.partialPaymentDetails.lastPartialPaymentDate && (
-                                <div className="flex justify-between text-xs">
-                                  <span className="text-gray-600">
-                                    {t("pages.overdueNotifications.lastPayment")}:
-                                  </span>
-                                  <span className="text-gray-700">
-                                    {formatDisplayDate(notification.partialPaymentDetails.lastPartialPaymentDate)}
-                                  </span>
-                                </div>
-                              )}
-                              
-                              {notification.partialPaymentDetails.daysSinceLastPartial > 0 && (
-                                <div className="flex justify-between text-xs">
-                                  <span className="text-gray-600">
-                                    {t("pages.overdueNotifications.daysSinceLastPayment")}:
-                                  </span>
-                                  <span className="text-gray-700">
-                                    {notification.partialPaymentDetails.daysSinceLastPartial} {t("common.days")}
-                                  </span>
-                                </div>
-                              )}
-                              
-                        
-                              
-                              {notification.partialPaymentDetails.interestFromPartials > 0 && (
-                                <div className="text-xs text-gray-500 italic mt-1">
-                                  {t("pages.overdueNotifications.interestCalculation")}: 
-                                  ₼{safeFormatNumber(notification.partialPaymentDetails.remainingToPay)} × 
-                                  {safeNumber(notification.dailyInterestRate)}% × 
-                                  {notification.partialPaymentDetails.daysSinceLastPartial} {t("common.days")}
-                                </div>
-                              )}
-                            </div>
-                            
-                            {notification.remainingAmount <= 0 && (
-                              <div className="text-xs text-green-700 font-medium mt-2">
-                                {t(
-                                  "pages.overdueNotifications.paymentCompletedForPeriod"
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() =>
-                            handleViewContract(notification.contractId)
-                          }
-                          className="text-blue-600 hover:text-blue-900 flex items-center text-xs"
-                        >
-                          <Eye className="w-3 h-3 mr-1" />
-                          {t("pages.overdueNotifications.viewDetails")}
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleRecordPayment(notification.contractId)
-                          }
-                          className="text-green-600 hover:text-green-900 flex items-center text-xs"
-                        >
-                          <Plus className="w-3 h-3 mr-1" />
-                          {t("pages.overdueNotifications.recordPayment")}
-                        </button>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200" data-guide-id="notification-list">
+                {filteredNotifications.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="px-6 py-12 text-center text-gray-500"
+                    >
+                      <div className="flex flex-col items-center">
+                        <Bell className="w-12 h-12 text-gray-300 mb-4" />
+                        <p className="text-lg font-medium">
+                          {t("pages.overdueNotifications.noOverdueFound")}
+                        </p>
+                        <p className="text-sm">
+                          {t("pages.overdueNotifications.noOverdueSubtext")}
+                        </p>
                       </div>
                     </td>
                   </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  filteredNotifications.map((notification) => {
+                    const customer = customers.find(c => c.id === notification.customerId);
+                    const isCompany = customer?.customer_type === 'company';
+                    
+                    return (
+                    <tr key={notification.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                            isCompany ? 'bg-blue-100' : 'bg-gray-300'
+                          }`}>
+                            {isCompany ? (
+                              <Building2 className="w-4 h-4 text-blue-600" />
+                            ) : (
+                              <User className="w-4 h-4 text-gray-600" />
+                            )}
+                          </div>
+                          <div className="ml-3">
+                            <div className="text-sm font-medium text-gray-900">
+                              {notification.customerName}
+                            </div>
+                            <div className="flex items-center text-sm text-gray-500">
+                              <Phone className="w-3 h-3 mr-2 text-gray-400" />
+                              <a
+                                href={`tel:${notification.customerPhone}`}
+                                className="hover:text-blue-600 hover:underline"
+                              >
+                                {notification.customerPhone}
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <Car className="w-4 h-4 text-blue-600" />
+                          </div>
+                          <div className="ml-3">
+                            <div className="text-sm font-medium text-gray-900">
+                              {notification.vehicleMake}{" "}
+                              {notification.vehicleModel}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {notification.vehicleLicensePlate}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                            <Building2 className="w-4 h-4 text-green-600" />
+                          </div>
+                          <div className="ml-3">
+                            <div className="text-sm font-medium text-gray-900">
+                              {notification.companyName}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              notification.daysOverdue <= 7
+                                ? "bg-yellow-100 text-yellow-800"
+                                : notification.daysOverdue <= 30
+                                ? "bg-orange-100 text-orange-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {notification.daysOverdue}{" "}
+                            {notification.daysOverdue === 1
+                              ? t("pages.overdueNotifications.day")
+                              : t("pages.overdueNotifications.days")}
+                          </span>
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {t('notifications.due')}: {formatDisplayDate(notification.dueDate)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">
+                          <div className="font-medium">
+                            ₼{safeFormatNumber(notification.totalOverdueAmount)}
+                          </div>
+                          <div className="text-xs text-blue-600">
+                            {t("pages.overdueNotifications.baseAmount")}: ₼
+                            {safeFormatNumber(notification.amount)}
+                          </div>
+                          <div className="text-xs text-red-600">
+                            {t("pages.overdueNotifications.newInterest")}: ₼
+                            {safeFormatNumber(notification.lateFees)}
+                          </div>
+                          {notification.daysOverdue > 0 &&
+                            notification.lateFees > 0 && (
+                              <div className="text-xs text-gray-500">
+                                {t(
+                                  "pages.payments.createPayment.dailyInterestRate"
+                                )}
+                                : {safeNumber(notification.dailyInterestRate)}%
+                                {t("pages.payments.createPayment.perDay")}
+                              </div>
+                            )}
+                          
+                          {/* Multi-month overdue breakdown */}
+                          {notification.isMultiMonthOverdue && notification.multiMonthCalculation && (
+                            <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded">
+                              <div className="text-xs font-medium text-orange-800 mb-2">
+                                📅 {t("pages.overdueNotifications.multiMonthOverdueBreakdown")} ({notification.multiMonthCalculation.monthsOverdue} {t("pages.overdueNotifications.months")})
+                              </div>
+                              
+                              {/* Show interest calculation info if there was a last partial payment */}
+                              {notification.partialPaymentDetails.lastPartialPaymentDate && (
+                                <div className="text-xs text-blue-700 mb-2 p-2 bg-blue-50 rounded">
+                                  💡 {t("pages.overdueNotifications.interestCalculatedFrom")}: {formatDisplayDate(notification.partialPaymentDetails.lastPartialPaymentDate)}
+                                </div>
+                              )}
+                              
+                              <div className="space-y-2">
+                                {notification.multiMonthCalculation.monthlyBreakdown.map((month, index) => (
+                                  <div key={index} className="p-2 bg-white rounded border border-orange-200">
+                                    <div className="flex justify-between items-center mb-1">
+                                      <span className="text-sm font-medium text-gray-800">
+                                        {month.monthName}
+                                      </span>
+                                      <span className="text-xs text-gray-500">
+                                        {month.days} {t("pages.overdueNotifications.daysOverdue")}
+                                      </span>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2 text-xs">
+                                      <div className="text-gray-600">
+                                        {t("pages.overdueNotifications.baseAmount")}:
+                                      </div>
+                                      <div className="text-right font-medium">
+                                        ₼{safeFormatNumber(month.amount)}
+                                      </div>
+                                      <div className="text-gray-600">
+                                        {t("pages.overdueNotifications.interest")}:
+                                      </div>
+                                      <div className="text-right text-red-600 font-medium">
+                                        ₼{safeFormatNumber(month.interest)}
+                                      </div>
+                                      <div className="text-gray-600 font-medium">
+                                        {t("pages.overdueNotifications.total")}:
+                                      </div>
+                                      <div className="text-right text-orange-700 font-bold">
+                                        ₼{safeFormatNumber(month.total)}
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                                <div className="border-t border-orange-300 pt-2 mt-2">
+                                  <div className="flex justify-between text-sm font-bold">
+                                    <span className="text-orange-800">{t("pages.overdueNotifications.totalMultiMonth")}:</span>
+                                    <span className="text-orange-800">
+                                      ₼{safeFormatNumber(notification.multiMonthCalculation.totalDue)}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          {notification.hasPartialPayments && (
+                            <div
+                              className={`mt-2 p-3 rounded border ${
+                                notification.remainingAmount <= 0
+                                  ? "bg-green-50 border-green-200"
+                                  : "bg-blue-50 border-blue-200"
+                              }`}
+                            >
+                              <div
+                                className={`text-xs font-medium mb-2 ${
+                                  notification.remainingAmount <= 0
+                                    ? "text-green-800"
+                                    : "text-blue-800"
+                                }`}
+                              >
+                                {notification.remainingAmount <= 0
+                                  ? "✅ " +
+                                    t(
+                                      "pages.overdueNotifications.partialPaymentStatus"
+                                    ) +
+                                    " (Sufficient)"
+                                  : t(
+                                      "pages.overdueNotifications.partialPaymentStatus"
+                                    )}
+                              </div>
+                              
+                              {/* Enhanced partial payment details */}
+                              <div className="space-y-1">
+                                <div className="flex justify-between text-xs">
+                                  <span className="text-gray-600">
+                                    {t("pages.overdueNotifications.paid")}:
+                                  </span>
+                                  <span className="font-medium text-green-700">
+                                    ₼{safeFormatNumber(notification.partialPaymentDetails.totalPaid)}
+                                  </span>
+                                </div>
+                                
+                                <div className="flex justify-between text-xs">
+                                  <span className="text-gray-600">
+                                    {t("pages.overdueNotifications.remaining")}:
+                                  </span>
+                                  <span className="font-medium text-blue-700">
+                                    ₼{safeFormatNumber(notification.partialPaymentDetails.remainingToPay)}
+                                  </span>
+                                </div>
+                                
+                                {notification.partialPaymentDetails.lastPartialPaymentDate && (
+                                  <div className="flex justify-between text-xs">
+                                    <span className="text-gray-600">
+                                      {t("pages.overdueNotifications.lastPayment")}:
+                                    </span>
+                                    <span className="text-gray-700">
+                                      {formatDisplayDate(notification.partialPaymentDetails.lastPartialPaymentDate)}
+                                    </span>
+                                  </div>
+                                )}
+                                
+                                {notification.partialPaymentDetails.daysSinceLastPartial > 0 && (
+                                  <div className="flex justify-between text-xs">
+                                    <span className="text-gray-600">
+                                      {t("pages.overdueNotifications.daysSinceLastPayment")}:
+                                    </span>
+                                    <span className="text-gray-700">
+                                      {notification.partialPaymentDetails.daysSinceLastPartial} {t("common.days")}
+                                    </span>
+                                  </div>
+                                )}
+                                
+                          
+                                
+                                {notification.partialPaymentDetails.interestFromPartials > 0 && (
+                                  <div className="text-xs text-gray-500 italic mt-1">
+                                    {t("pages.overdueNotifications.interestCalculation")}: 
+                                    ₼{safeFormatNumber(notification.partialPaymentDetails.remainingToPay)} × 
+                                    {safeNumber(notification.dailyInterestRate)}% × 
+                                    {notification.partialPaymentDetails.daysSinceLastPartial} {t("common.days")}
+                                  </div>
+                                )}
+                              </div>
+                              
+                              {notification.remainingAmount <= 0 && (
+                                <div className="text-xs text-green-700 font-medium mt-2">
+                                  {t(
+                                    "pages.overdueNotifications.paymentCompletedForPeriod"
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() =>
+                              handleViewContract(notification.contractId)
+                            }
+                            className="text-blue-600 hover:text-blue-900 flex items-center text-xs"
+                          >
+                            <Eye className="w-3 h-3 mr-1" />
+                            {t("pages.overdueNotifications.viewDetails")}
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleRecordPayment(notification.contractId)
+                            }
+                            className="text-green-600 hover:text-green-900 flex items-center text-xs"
+                          >
+                            <Plus className="w-3 h-3 mr-1" />
+                            {t("pages.overdueNotifications.recordPayment")}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -9,6 +9,7 @@ adsf
 3. **Total Paid Tracking**: Contracts weren't tracking the total amount paid correctly when terms were modified.   
 v
 ## Fixes Implemented  
+
  
 ### 1. Enhanced Contract Edit Logic (`src/pages/ContractEdit.tsx`)
 

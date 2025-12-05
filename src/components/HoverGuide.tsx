@@ -19,15 +19,20 @@ interface HoverGuideProps {
 const HoverGuide: React.FC<HoverGuideProps> = ({ isActive, onClose }) => {
   const { t } = useTranslation();
   const location = useLocation();
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 640);
+      setIsMobile(window.innerWidth < 1024);
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+  
+  // Guide tour sadece desktop'ta çalışır, mobilde devre dışı
+  if (isMobile) {
+    return null;
+  }
   
   const guideSteps = React.useMemo(() => {
     const steps = getGuideSteps(t, location.pathname);

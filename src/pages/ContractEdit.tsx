@@ -28,6 +28,14 @@ import { createPayment } from "../services/payments";
 import { showApiError, showApiSuccess } from "../utils/errorHandler";
 import { showError } from "../services/notifications";
 
+/** Müştəri adı: şirkətdirsə company_name, fiziki şəxsdirsə ad + soyad (null null qarşısını alır). */
+function getCustomerDisplayName(customer: { customer_type?: string; company_name?: string | null; first_name?: string | null; last_name?: string | null } | null | undefined): string {
+  if (!customer) return "";
+  if (customer.customer_type === "company" && customer.company_name) return customer.company_name;
+  const full = [customer.first_name, customer.last_name].filter(Boolean).join(" ").trim();
+  return full || (customer.company_name ?? "") || "";
+}
+
 const ContractEdit: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -510,15 +518,17 @@ const ContractEdit: React.FC = () => {
             paymentDate.setMonth(paymentDate.getMonth() + month);
 
             const dueDate = new Date(baseDate);
-            dueDate.setMonth(dueDate.getMonth() + month);
+            dueDate.setMonth(dueDate.getMonth() + month + 1); // due = next month after payment period
 
             const paymentData = {
               contractId: contract.id,
               customerId: formData.customer_id,
               companyId: formData.company_id,
               amount: formData.monthly_payment,
-              dateISO: paymentDate.toISOString(),
-              methodUI: "MANUAL",
+              dateISO: paymentDate.toISOString().split("T")[0], // YYYY-MM-DD for API
+              dueDate: dueDate.toISOString().split("T")[0],
+              paymentPeriod: month + 1,
+              methodUI: "cash",
               isExtra: false,
               isPartial: false,
               notes: `Payment for month ${
@@ -542,7 +552,11 @@ const ContractEdit: React.FC = () => {
             });
           }
         } catch (paymentError) {
-          // Payment records creation failed, continue
+          console.error("Payment records creation failed:", paymentError);
+          showApiError(
+            paymentError instanceof Error ? paymentError : new Error(String(paymentError)),
+            "payment"
+          );
         }
       } 
 
@@ -768,9 +782,10 @@ const ContractEdit: React.FC = () => {
                 >
                   {selectedCustomerForModal ? (
                     <span className="text-gray-900">
-                      {selectedCustomerForModal.first_name}{" "}
-                      {selectedCustomerForModal.last_name} -{" "}
-                      {selectedCustomerForModal.national_id || t("common.noId")}
+                      {getCustomerDisplayName(selectedCustomerForModal) || t("common.unknownCustomer")} –{" "}
+                      {selectedCustomerForModal.customer_type === "company"
+                        ? (selectedCustomerForModal.voen || t("common.noId"))
+                        : (selectedCustomerForModal.national_id || t("common.noId"))}
                     </span>
                   ) : (
                     <span className="text-gray-500">
@@ -1074,12 +1089,13 @@ const ContractEdit: React.FC = () => {
                 <p className="text-xs text-gray-500 mt-1">
                   {t("common.autoCalculatedBasedOnPaymentInterval")}
                   <span className="block mt-1">
-                    Başlangıç tarihinden veya ödeme başlama tarihinden
-                    hesaplanır
+                    {t("common.nextDueDateFromStartOrPaymentStart")}
                   </span>
                   {contract && (
                     <span className="block mt-1">
-                      {contract.payments_count || 0} ödəniş əsasında hesablanır
+                      {t("common.nextDueDateBasedOnPaymentsCount", {
+                        count: contract.payments_count || 0,
+                      })}
                     </span>
                   )}
                 </p>

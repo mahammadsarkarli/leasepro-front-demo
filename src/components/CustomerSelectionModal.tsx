@@ -13,6 +13,13 @@ interface CustomerSelectionModalProps {
   selectedCompanyId?: string;
 }
 
+function getCustomerDisplayName(c: Customer): string {
+  if (!c) return "";
+  if (c.customer_type === "company" && c.company_name) return c.company_name;
+  const full = [c.first_name, c.last_name].filter(Boolean).join(" ").trim();
+  return full || (c.company_name ?? "") || "";
+}
+
 const CustomerSelectionModal: React.FC<CustomerSelectionModalProps> = ({
   isOpen,
   onClose,
@@ -228,7 +235,7 @@ const CustomerSelectionModal: React.FC<CustomerSelectionModalProps> = ({
                              {customer.company_name || '-'}
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                             {customer.first_name} {customer.last_name}
+                             {customer.customer_type === 'company' ? '-' : `${customer.first_name || ''} ${customer.last_name || ''}`.trim() || '-'}
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                              {customer.phone || '-'}

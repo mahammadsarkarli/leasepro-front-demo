@@ -1119,9 +1119,9 @@ const ContractDetail: React.FC = () => {
                       )}
                     </div>
                     <h4 className="text-lg font-semibold text-gray-900">
-                      {customer.customer_type === 'company' 
-                        ? customer.company_name 
-                        : `${customer.first_name} ${customer.last_name}`}
+                      {customer.customer_type === 'company'
+                        ? (customer.company_name || t("common.unknown"))
+                        : [customer.first_name, customer.last_name].filter(Boolean).join(" ").trim() || customer.company_name || t("common.unknown")}
                     </h4>
                     <span
                       className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full mt-2 ${

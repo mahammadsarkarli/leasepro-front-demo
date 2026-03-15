@@ -661,6 +661,8 @@
     "annually": "Ежегодно",
     "nextDueDate": "Дата следующего платежа",
     "autoCalculatedBasedOnPaymentInterval": "Автоматически рассчитывается на основе интервала платежей",
+    "nextDueDateFromStartOrPaymentStart": "Рассчитывается от даты начала или даты начала платежей",
+    "nextDueDateBasedOnPaymentsCount": "Рассчитывается на основе {{count}} платежей",
     "autoSetOneMonthAfter": "Автоматически устанавливается через месяц после даты начала",
     "autoSetPermissionEndDate": "Автоматически устанавливается через месяц после даты начала",
     "dateFormatHint": "Формат: DD.MM.YYYY, DD/MM/YYYY или YYYY-MM-DD",

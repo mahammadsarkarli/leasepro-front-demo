@@ -25,6 +25,14 @@ import DeleteConfirmationDialog from "../components/DeleteConfirmationDialog";
 import EnhancedExtraPaymentModal from "../components/EnhancedExtraPaymentModal";
 import { deletePayment } from "../services/payments";
 
+/** Müştəri tipi şirkətdirsə company_name, yoxdursa ad + soyad göstərir (null null qarşısını alır). */
+function getCustomerDisplayName(customer: { customer_type?: string; company_name?: string | null; first_name?: string | null; last_name?: string | null } | null | undefined): string {
+  if (!customer) return "";
+  if (customer.customer_type === "company" && customer.company_name) return customer.company_name;
+  const full = [customer.first_name, customer.last_name].filter(Boolean).join(" ").trim();
+  return full || (customer.company_name ?? "") || "";
+}
+
 const Payments: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -209,7 +217,7 @@ const Payments: React.FC = () => {
         const contract = contracts.find((c) => c.id === payment.contract_id);
         return (
           (customer &&
-            `${customer.first_name} ${customer.last_name}`
+            getCustomerDisplayName(customer)
               .toLowerCase()
               .includes(searchTerm.toLowerCase())) ||
           (contract &&
@@ -414,7 +422,7 @@ const Payments: React.FC = () => {
       availableContracts = availableContracts.filter((contract) => {
         const customer = customers.find((c) => c.id === contract.customer_id);
         const customerName = customer
-          ? `${customer.first_name} ${customer.last_name}`.toLowerCase()
+          ? getCustomerDisplayName(customer).toLowerCase()
           : "";
         const licensePlate =
           contract.vehicle?.license_plate?.toLowerCase() || "";
@@ -478,7 +486,7 @@ const Payments: React.FC = () => {
                       ? customers.find((c) => c.id === contract.customer_id)
                       : null;
                     return contract && customer
-                      ? `${customer.first_name} ${customer.last_name} - ${
+                      ? `${getCustomerDisplayName(customer)} - ${
                           contract.vehicle?.license_plate || "N/A"
                         }`
                       : t("pages.payments.contractNotFound");
@@ -712,7 +720,7 @@ const Payments: React.FC = () => {
                       <div>
                         <div className="text-sm font-medium text-gray-900">
                           {customer
-                            ? `${customer.first_name} ${customer.last_name}`
+                            ? getCustomerDisplayName(customer) || t("pages.payments.unknownCustomer")
                             : t("pages.payments.unknownCustomer")}
                         </div>
 
@@ -841,7 +849,7 @@ const Payments: React.FC = () => {
                                 payment.id,
                                 `₼${roundPaymentAmount(payment.amount)} - ${
                                   customer
-                                    ? `${customer.first_name} ${customer.last_name}`
+                                    ? getCustomerDisplayName(customer) || t("common.unknownCustomer")
                                     : t("common.unknownCustomer")
                                 }`
                               )
@@ -997,7 +1005,7 @@ const Payments: React.FC = () => {
                             <div>
                               <div className="text-sm font-medium text-gray-900">
                                 {customer
-                                  ? `${customer.first_name} ${customer.last_name}`
+                                  ? getCustomerDisplayName(customer) || t("common.unknownCustomer")
                                   : t("common.unknownCustomer")}
                               </div>
                               <div className="text-xs text-gray-500">

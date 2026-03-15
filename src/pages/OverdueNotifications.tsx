@@ -1037,7 +1037,7 @@ const OverdueNotifications: React.FC = () => {
                                 {t(
                                   "pages.payments.createPayment.dailyInterestRate"
                                 )}
-                                : {safeNumber(notification.dailyInterestRate)}%
+                                : {safeNumber(notification.dailyInterestRate)}
                                 {t("pages.payments.createPayment.perDay")}
                               </div>
                             )}

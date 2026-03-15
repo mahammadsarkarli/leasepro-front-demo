@@ -729,6 +729,8 @@
     "annually": "İllik",
     "nextDueDate": "Növbəti Ödəniş Tarixi",
     "autoCalculatedBasedOnPaymentInterval": "Ödəniş intervalına əsaslanaraq avtomatik hesablanır",
+    "nextDueDateFromStartOrPaymentStart": "Başlanğıc tarixindən və ya ödəniş başlama tarixindən hesablanır",
+    "nextDueDateBasedOnPaymentsCount": "{{count}} ödəniş əsasında hesablanır",
     "autoSetOneMonthAfter": "Başlama tarixindən bir ay sonra avtomatik təyin edilir",
     "autoSetPermissionEndDate": "Başlama tarixindən bir ay sonra avtomatik təyin edilir",
     "dateFormatHint": "Format: DD.MM.YYYY, DD/MM/YYYY və ya YYYY-MM-DD",

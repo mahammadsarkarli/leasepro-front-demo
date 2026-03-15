@@ -661,6 +661,8 @@
     "annually": "Annually",
     "nextDueDate": "Next Payment Date",
     "autoCalculatedBasedOnPaymentInterval": "Automatically calculated based on the payment interval",
+    "nextDueDateFromStartOrPaymentStart": "Calculated from start date or payment start date",
+    "nextDueDateBasedOnPaymentsCount": "Calculated based on {{count}} payments",
     "autoSetOneMonthAfter": "Automatically set one month after the start date",
     "autoSetPermissionEndDate": "Automatically set one month after the start date",
     "dateFormatHint": "Format: DD.MM.YYYY, DD/MM/YYYY or YYYY-MM-DD",

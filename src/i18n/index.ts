@@ -32,7 +32,7 @@ i18n
       order: ["localStorage", "navigator"],
       caches: ["localStorage"],
     },
-    lng: "az", // Set default language to Azerbaijani
+    lng: "en", // Default language: English
     keySeparator: ".",
     nsSeparator: ":",
     returnEmptyString: false,

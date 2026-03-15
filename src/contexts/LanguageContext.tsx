@@ -15,7 +15,7 @@ interface LanguageProviderProps {
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
   const { i18n } = useTranslation();
-  const [currentLanguage, setCurrentLanguage] = useState(i18n.language || 'az');
+  const [currentLanguage, setCurrentLanguage] = useState(i18n.language || 'en');
 
   const availableLanguages = [
     { code: 'en', name: 'English', nativeName: 'English' },
@@ -34,8 +34,8 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     if (savedLanguage && availableLanguages.some(lang => lang.code === savedLanguage)) {
       changeLanguage(savedLanguage);
     } else {
-      // Set default language to Azerbaijani if no saved language
-      changeLanguage('az');
+      // Set default language to English if no saved language
+      changeLanguage('en');
     }
   }, []);
 

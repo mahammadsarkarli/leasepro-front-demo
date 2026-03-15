@@ -226,7 +226,7 @@ const Layout: React.FC<LayoutProps> = ({ children, onStartGuide, isGuideActive }
               <button
                 onClick={() => setShowCustomEtibarname(true)}
                 className="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-50"
-                title="Xüsusi Etibarnamə Yarat"
+                title={t('customEtibarname.title')}
               >
                 <FileSignature className="w-4 h-4" />
               </button>

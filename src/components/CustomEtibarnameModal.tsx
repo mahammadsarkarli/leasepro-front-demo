@@ -190,12 +190,12 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
     }
 
     if (mode === 'drivers' && drivers.length === 0) {
-      alert('Zəhmət olmasa ən azı bir sürücü əlavə edin');
+      alert(t('customEtibarname.pleaseAddAtLeastOneDriver'));
       return;
     }
 
-    if (mode === 'company' && (!companyInfo.name || !companyInfo.voen)) {
-      alert('Zəhmət olmasa şirkət məlumatlarını doldurun');
+    if (mode === 'company' && (!companyInfo.full_name || !companyInfo.voen)) {
+      alert(t('customEtibarname.pleaseFillCompanyDetails'));
       return;
     }
 
@@ -204,7 +204,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
       id: 'custom-company',
       first_name: '',
       last_name: '',
-      company_name: companyInfo.name,
+      company_name: companyInfo.full_name,
       customer_type: 'company',
       national_id: undefined,
       voen: companyInfo.voen,
@@ -276,7 +276,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-gray-900 flex items-center">
               <FileText className="w-6 h-6 mr-2 text-blue-600" />
-              Xüsusi Etibarnamə Yarat
+              {t('customEtibarname.title')}
             </h2>
             <button
               onClick={onClose}
@@ -286,7 +286,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
             </button>
           </div>
           <p className="text-gray-600 mt-2">
-            Avtomobil və sürücü məlumatlarını daxil edərək etibarnamə yaradın
+            {t('customEtibarname.subtitle')}
           </p>
         </div>
 
@@ -295,7 +295,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center">
               <Building2 className="w-5 h-5 mr-2" />
-              Şirkət Seçimi
+              {t('customEtibarname.companySelection')}
             </h3>
             <select
               value={selectedCompany?.id || ''}
@@ -305,7 +305,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="">Şirkət seçin</option>
+              <option value="">{t('customEtibarname.selectCompanyPlaceholder')}</option>
               {companies.map(company => (
                 <option key={company.id} value={company.id}>
                   {company.name}
@@ -318,7 +318,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center">
               <Car className="w-5 h-5 mr-2" />
-              Avtomobil Seçimi
+              {t('customEtibarname.vehicleSelection')}
             </h3>
             <button
               type="button"
@@ -332,7 +332,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
                 </span>
               ) : (
                 <span className="text-gray-500">
-                  {selectedCompany ? 'Avtomobil seçin' : 'Əvvəlcə şirkət seçin'}
+                  {selectedCompany ? t('customEtibarname.selectVehicle') : t('customEtibarname.selectVehicleFirst')}
                 </span>
               )}
             </button>
@@ -344,18 +344,18 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
               <ImprovedDateInput
                 value={beginDate}
                 onChange={setBeginDate}
-                label="Başlanğıc Tarixi"
+                label={t('customEtibarname.startDateLabel')}
                 required
-                placeholder="Başlanğıc tarixini seçin"
+                placeholder={t('customEtibarname.startDatePlaceholder')}
               />
             </div>
             <div>
               <ImprovedDateInput
                 value={endDate}
                 onChange={setEndDate}
-                label="Bitmə Tarixi"
+                label={t('customEtibarname.endDateLabel')}
                 required
-                placeholder="Bitmə tarixini seçin"
+                placeholder={t('customEtibarname.endDatePlaceholder')}
               />
             </div>
           </div>
@@ -364,7 +364,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
           {/* Mode Toggle */}
           <div className="mb-6">
             <h3 className="text-lg font-medium text-gray-900 mb-3">
-              Məlumat Tipi
+              {t('customEtibarname.informationType')}
             </h3>
             <div className="flex space-x-4">
               <label className="flex items-center">
@@ -375,7 +375,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
                   onChange={(e) => setMode(e.target.value as 'drivers' | 'company')}
                   className="mr-2"
                 />
-                Sürücülər
+                {t('customEtibarname.driversLabel')}
               </label>
               <label className="flex items-center">
                 <input
@@ -385,7 +385,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
                   onChange={(e) => setMode(e.target.value as 'drivers' | 'company')}
                   className="mr-2"
                 />
-                Şirkət
+                {t('customEtibarname.companyLabel')}
               </label>
             </div>
           </div>
@@ -396,7 +396,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-medium text-gray-900 flex items-center">
                   <User className="w-5 h-5 mr-2" />
-                  Sürücülər ({drivers.length})
+                  {t('customEtibarname.driversLabel')} ({drivers.length})
                 </h3>
                 <button
                   type="button"
@@ -404,7 +404,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
                   className="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   <Plus className="w-4 h-4 mr-1" />
-                  Sürücü Əlavə Et
+                  {t('customEtibarname.addDriver')}
                 </button>
               </div>
 
@@ -412,36 +412,36 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
             {isAddingNew && (
               <div className="bg-gray-50 p-4 rounded-lg border mb-4">
                 <h4 className="text-sm font-medium text-gray-900 mb-3">
-                  Yeni Sürücü Əlavə Et
+                  {t('customEtibarname.addNewDriverTitle')}
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Ad Soyad *
+                      {t('customEtibarname.fullName')} *
                     </label>
                     <input
                       type="text"
                       value={newDriver.name}
                       onChange={(e) => setNewDriver(prev => ({ ...prev, name: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Ad soyadını daxil edin"
+                      placeholder={t('customEtibarname.fullNamePlaceholder')}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Sürücülük Vəsiqəsi *
+                      {t('customEtibarname.licenseNumber')} *
                     </label>
                     <input
                       type="text"
                       value={newDriver.licenseNumber}
                       onChange={(e) => setNewDriver(prev => ({ ...prev, licenseNumber: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Vəsiqə nömrəsini daxil edin"
+                      placeholder={t('customEtibarname.licenseNumberPlaceholder')}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Kateqoriya
+                      {t('customEtibarname.category')}
                     </label>
                     <input
                       type="text"
@@ -455,7 +455,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
                     <ImprovedDateInput
                       value={newDriver.license_given_date || ''}
                       onChange={(value) => setNewDriver(prev => ({ ...prev, license_given_date: value }))}
-                      label="Verilmə Tarixi"
+                      label={t('customEtibarname.issueDate')}
                     />
                   </div>
                 </div>
@@ -465,7 +465,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
                     onClick={handleCancelAddNew}
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
                   >
-                    Ləğv et
+                    {t('common.cancel')}
                   </button>
                   <button
                     type="button"
@@ -473,7 +473,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
                     disabled={!newDriver.name || !newDriver.licenseNumber}
                     className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
                   >
-                    Əlavə Et
+                    {t('customEtibarname.addButton')}
                   </button>
                 </div>
               </div>
@@ -485,9 +485,9 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
                 <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Plus className="w-6 h-6 text-gray-400" />
                 </div>
-                <p className="text-gray-500">Sürücü yoxdur</p>
+                <p className="text-gray-500">{t('customEtibarname.noDrivers')}</p>
                 <p className="text-sm text-gray-400 mt-1">
-                  Sürücü əlavə etmək üçün yuxarıdakı düyməni basın
+                  {t('customEtibarname.noDriversHint')}
                 </p>
               </div>
             ) : drivers.length > 0 ? (
@@ -498,36 +498,36 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
                       // Edit Form
                       <div className="bg-gray-50 p-4 rounded-lg border">
                         <h4 className="text-sm font-medium text-gray-900 mb-3">
-                          Sürücü Redaktə Et
+                          {t('customEtibarname.editDriver')}
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Ad Soyad *
+                              {t('customEtibarname.fullName')} *
                             </label>
                             <input
                               type="text"
                               value={editingDriver.name}
                               onChange={(e) => setEditingDriver(prev => ({ ...prev, name: e.target.value }))}
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              placeholder="Ad soyadını daxil edin"
+                              placeholder={t('customEtibarname.fullNamePlaceholder')}
                             />
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Sürücülük Vəsiqəsi *
+                              {t('customEtibarname.licenseNumber')} *
                             </label>
                             <input
                               type="text"
                               value={editingDriver.licenseNumber}
                               onChange={(e) => setEditingDriver(prev => ({ ...prev, licenseNumber: e.target.value }))}
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              placeholder="Vəsiqə nömrəsini daxil edin"
+                              placeholder={t('customEtibarname.licenseNumberPlaceholder')}
                             />
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Kateqoriya
+                              {t('customEtibarname.category')}
                             </label>
                             <input
                               type="text"
@@ -541,7 +541,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
                             <ImprovedDateInput
                               value={editingDriver.license_given_date || ''}
                               onChange={(value) => setEditingDriver(prev => ({ ...prev, license_given_date: value }))}
-                              label="Verilmə Tarixi"
+                              label={t('customEtibarname.issueDate')}
                             />
                           </div>
                         </div>
@@ -551,7 +551,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
                             onClick={handleCancelEdit}
                             className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
                           >
-                            Ləğv et
+                            {t('common.cancel')}
                           </button>
                           <button
                             type="button"
@@ -559,7 +559,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
                             disabled={!editingDriver.name || !editingDriver.licenseNumber}
                             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
                           >
-                            Yenilə
+                            {t('customEtibarname.updateButton')}
                           </button>
                         </div>
                       </div>
@@ -574,16 +574,16 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
                                 {driver.name}
                               </h4>
                               <p className="text-sm text-gray-500">
-                                Sürücülük Vəsiqəsi: {driver.licenseNumber || 'Məlumat yoxdur'}
+                                {t('customEtibarname.licenseLabel')}: {driver.licenseNumber || t('customEtibarname.noInfo')}
                               </p>
                               {driver.license_category && (
                                 <p className="text-sm text-gray-500">
-                                  Kateqoriya: {driver.license_category}
+                                  {t('customEtibarname.category')}: {driver.license_category}
                                 </p>
                               )}
                               {driver.license_given_date && (
                                 <p className="text-sm text-gray-500">
-                                  Verilmə Tarixi: {formatDisplayDate(driver.license_given_date)}
+                                  {t('customEtibarname.issueDate')}: {formatDisplayDate(driver.license_given_date)}
                                 </p>
                               )}
                             </div>
@@ -620,7 +620,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
               <div className="mb-4">
                 <h3 className="text-lg font-medium text-gray-900 flex items-center">
                   <Building2 className="w-5 h-5 mr-2" />
-                  Şirkət Məlumatları
+                  {t('customEtibarname.companyDetails')}
                 </h3>
               </div>
               
@@ -628,26 +628,26 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Şirkət Adı *
+                      {t('customEtibarname.companyNameLabel')} *
                     </label>
                     <input
                       type="text"
-                      value={companyInfo.name}
-                      onChange={(e) => setCompanyInfo(prev => ({ ...prev, name: e.target.value }))}
+                      value={companyInfo.full_name}
+                      onChange={(e) => setCompanyInfo(prev => ({ ...prev, full_name: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Şirkət adını daxil edin"
+                      placeholder={t('customEtibarname.companyNamePlaceholder')}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      VÖEN *
+                      {t('common.voen')} *
                     </label>
                     <input
                       type="text"
                       value={companyInfo.voen}
                       onChange={(e) => setCompanyInfo(prev => ({ ...prev, voen: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="VÖEN daxil edin"
+                      placeholder={t('customEtibarname.voenPlaceholder')}
                     />
                   </div>
                 </div>
@@ -662,7 +662,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
-            Ləğv et
+            {t('common.cancel')}
           </button>
           <button
             onClick={handlePrint}
@@ -670,7 +670,7 @@ const CustomEtibarnameModal: React.FC<CustomEtibarnameModalProps> = ({
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <FileText className="w-4 h-4 mr-2" />
-            Etibarnaməni Çap Et
+            {t('customEtibarname.printButton')}
           </button>
         </div>
       </div>
